@@ -107,20 +107,32 @@ struct MainPopoverView: View {
     }
 
     private var rightFooterBar: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: .center, spacing: 10) {
+            Image(systemName: "lightbulb.fill")
+                .font(.system(size: 14))
+                .foregroundStyle(.yellow)
+
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 8) {
-                    Image(systemName: "lightbulb")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
-                    Text("agentsbin.pages.dev")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                    Text("zhaolongfei@gmail.com")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(.secondary)
+                    Button {
+                        openExternal("https://agentsbin.pages.dev")
+                    } label: {
+                        Text("agentsbin.pages.dev")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(brandBlue)
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        openExternal("mailto:zhaolongfei@gmail.com")
+                    } label: {
+                        Text("zhaolongfei@gmail.com")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(brandBlue)
+                    }
+                    .buttonStyle(.plain)
                 }
-                Text(localization.text("footer_contact_text"))
+                Text("—— " + localization.text("footer_contact_text"))
                     .font(.system(size: 10))
                     .foregroundStyle(.tertiary)
                     .lineLimit(1)
