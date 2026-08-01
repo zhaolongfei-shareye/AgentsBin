@@ -80,7 +80,7 @@ struct MainPopoverView: View {
                 }
             }
         }
-        .frame(minWidth: sidebarCollapsed ? 680 : 900, minHeight: 640)
+        .frame(minWidth: sidebarCollapsed ? 640 : 900, minHeight: 640)
         .onAppear {
             faviconStore.ensureLoaded(for: agentStore.agents)
             launchAtLogin = SMAppService.mainApp.status == .enabled
@@ -92,9 +92,7 @@ struct MainPopoverView: View {
 
     private var sidebarToggleBar: some View {
         Button {
-            withAnimation(.easeInOut(duration: 0.16)) {
-                toggleSidebar()
-            }
+            toggleSidebar()
         } label: {
             Image(systemName: sidebarCollapsed ? "chevron.right" : "chevron.left")
                 .font(.system(size: 11, weight: .bold))
@@ -114,15 +112,16 @@ struct MainPopoverView: View {
         }
         let current = panel.frame.size
         let height = current.height
-        if sidebarCollapsed {
-            let width = max(640, previousSidebarWidth)
-            panel.setContentSize(NSSize(width: width, height: height))
-            sidebarCollapsed = false
-        } else {
+        sidebarCollapsed.toggle()
+        let collapsed = sidebarCollapsed
+        if collapsed {
             previousSidebarWidth = current.width
-            let width = max(640, current.width - 224)
+        }
+        let width = collapsed
+            ? max(640, previousSidebarWidth - 224)
+            : max(640, previousSidebarWidth)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
             panel.setContentSize(NSSize(width: width, height: height))
-            sidebarCollapsed = true
         }
     }
 
