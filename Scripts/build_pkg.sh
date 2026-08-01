@@ -6,7 +6,7 @@ cd "$ROOT"
 
 ./Scripts/build_app.sh release
 
-VERSION="1.0.0"
+VERSION="$(cat "$ROOT/version.txt")"
 APP="$ROOT/dist/build-new/AgentsBin.app"
 COMPONENT="$ROOT/dist/AgentsBin-component.pkg"
 FINAL="$ROOT/dist/AgentsBin-$VERSION.pkg"

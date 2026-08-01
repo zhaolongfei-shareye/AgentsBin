@@ -6,7 +6,7 @@ cd "$ROOT"
 
 ./Scripts/build_app.sh release
 
-VERSION="1.0.0"
+VERSION="$(cat "$ROOT/version.txt")"
 DMG_DIR="$ROOT/dist/dmg"
 APP="$ROOT/dist/build-new/AgentsBin.app"
 DMG="$ROOT/dist/AgentsBin-$VERSION.dmg"

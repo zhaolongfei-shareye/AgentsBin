@@ -2,6 +2,8 @@ import AppKit
 import SwiftUI
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    static weak var mainPanel: NSPanel?
+
     private var statusItem: NSStatusItem?
     private var panel: NSPanel?
     private var hostingController: NSHostingController<AnyView>?
@@ -113,6 +115,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             panel.contentViewController = hostingController
             panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
             self.panel = panel
+            Self.mainPanel = panel
         }
 
         panel?.setContentSize(defaultSize)

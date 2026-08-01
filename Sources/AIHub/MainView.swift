@@ -57,11 +57,11 @@ struct MainPopoverView: View {
     @State private var mode: RightMode = .chat
     @State private var hoveredAgentID: String?
     @State private var draggedAgentID: String?
-    @State private var isDarkAppearance = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+    @State private var sidebarCollapsed = false
+    @State private var previousSidebarWidth: CGFloat = 224
     @State private var manageAgents = false
     @State private var showAgentPicker = false
     @State private var launchAtLogin = false
-    @State private var sidebarCollapsed = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -77,9 +77,6 @@ struct MainPopoverView: View {
                     rightPane
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .background(Color(nsColor: .textBackgroundColor))
-                    if case .chat = mode {
-                        rightBottomBar
-                    }
                 }
             }
         }
@@ -96,7 +93,7 @@ struct MainPopoverView: View {
     private var sidebarToggleBar: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.16)) {
-                sidebarCollapsed.toggle()
+                toggleSidebar()
             }
         } label: {
             Image(systemName: sidebarCollapsed ? "chevron.right" : "chevron.left")
@@ -110,9 +107,28 @@ struct MainPopoverView: View {
         .background(Color(nsColor: .windowBackgroundColor))
     }
 
+    private func toggleSidebar() {
+        guard let panel = AppDelegate.mainPanel else {
+            sidebarCollapsed.toggle()
+            return
+        }
+        let current = panel.frame.size
+        let height = current.height
+        if sidebarCollapsed {
+            let width = max(720, previousSidebarWidth)
+            panel.setContentSize(NSSize(width: width, height: height))
+            sidebarCollapsed = false
+        } else {
+            previousSidebarWidth = current.width
+            let width = max(720, current.width - 224)
+            panel.setContentSize(NSSize(width: width, height: height))
+            sidebarCollapsed = true
+        }
+    }
+
     private var header: some View {
         HStack(spacing: 12) {
-            Text("AgentsBin")
+            Text("AgentsBin V\(appVersion)")
                 .font(.system(size: 22, weight: .heavy))
             Text(localization.text("beta_note"))
                 .font(.caption.weight(.semibold))
@@ -125,25 +141,24 @@ struct MainPopoverView: View {
             Text(localization.agentName(agentStore.activeAgent.name))
                 .font(.system(size: 20, weight: .heavy))
                 .lineLimit(1)
+            Button {
+                openExternal(agentStore.activeAgent.urlString)
+            } label: {
+                Image(systemName: "safari")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 26, height: 26)
+            }
+            .buttonStyle(.plain)
+            .help(localization.text("browser"))
         }
         .padding(.horizontal, 12)
         .frame(height: 48)
         .background(.bar)
     }
 
-    private var rightBottomBar: some View {
-        HStack(spacing: 8) {
-            Spacer()
-            ToolbarTextButton(
-                icon: "arrow.up.right.square",
-                title: localization.text("browser")
-            ) {
-                openExternal(agentStore.activeAgent.urlString)
-            }
-        }
-        .padding(.horizontal, 12)
-        .frame(height: 40)
-        .background(.bar)
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
     }
 
     private var sidebar: some View {
@@ -199,17 +214,6 @@ struct MainPopoverView: View {
                 .labelsHidden()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Button {
-                    toggleAppearance()
-                } label: {
-                    Image(systemName: isDarkAppearance ? "sun.max.fill" : "moon.fill")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 22, height: 22)
-                }
-                .buttonStyle(.plain)
-                .help(isDarkAppearance ? localization.text("light_mode") : localization.text("dark_mode"))
-
-                Button {
                     mode = .manage
                 } label: {
                     Image(systemName: "gearshape")
@@ -236,15 +240,6 @@ struct MainPopoverView: View {
         }
         .padding(10)
         .background(Color(nsColor: .windowBackgroundColor))
-    }
-
-    private func toggleAppearance() {
-        let dark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-        NSApp.appearance = dark ? NSAppearance(named: .aqua) : NSAppearance(named: .darkAqua)
-        isDarkAppearance = !dark
-        if let name = NSApp.appearance?.name.rawValue {
-            UserDefaults.standard.set(name, forKey: "aihome.appearance")
-        }
     }
 
     private func toggleLaunchAtLogin() {
@@ -326,6 +321,19 @@ struct MainPopoverView: View {
                 }
             }
             .buttonStyle(.plain)
+
+            if manageAgents && agent.id.hasPrefix("custom-") {
+                Button {
+                    agentStore.delete(agent.id)
+                } label: {
+                    Image(systemName: "trash")
+                        .font(.system(size: 13))
+                        .foregroundStyle(.red)
+                        .frame(width: 22, height: 22)
+                }
+                .buttonStyle(.plain)
+                .help(localization.text("delete"))
+            }
         }
         .onDrag {
             draggedAgentID = agent.id
@@ -422,16 +430,20 @@ struct ManageView: View {
                 unlockView
             } else {
                 Picker("", selection: $settingsTab) {
-                    Text(localization.text("api_backup")).tag(0)
-                    Text(localization.text("general_settings")).tag(1)
+                    Text(localization.text("general_settings")).tag(0)
+                    Text(localization.text("api_backup")).tag(1)
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
                 .padding(10)
                 if settingsTab == 0 {
-                    configListView
-                } else {
                     generalSettingsView
+                } else {
+                    if adminAuth.isUnlocked {
+                        configListView
+                    } else {
+                        unlockView
+                    }
                 }
             }
         }
@@ -839,7 +851,7 @@ struct AgentPickerView: View {
     var body: some View {
         VStack(spacing: 14) {
             HStack {
-                Text(localization.text("add_custom_agent"))
+                Text(localization.text("custom_agent_title"))
                     .font(.headline)
                 Spacer()
                 Button {
@@ -856,7 +868,7 @@ struct AgentPickerView: View {
                 Text(localization.text("name"))
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.secondary)
-                TextField(localization.text("name"), text: $customName)
+                TextField(localization.text("name_placeholder"), text: $customName)
                     .textFieldStyle(.roundedBorder)
             }
 
@@ -864,7 +876,7 @@ struct AgentPickerView: View {
                 Text(localization.text("web_url"))
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.secondary)
-                TextField(localization.text("web_url"), text: $customURL)
+                TextField(localization.text("url_placeholder"), text: $customURL)
                     .textFieldStyle(.roundedBorder)
             }
 
@@ -892,6 +904,27 @@ struct AgentPickerView: View {
         }
         .padding(18)
         .frame(width: 380)
+        .onChange(of: customName) { _ in validate() }
+        .onChange(of: customURL) { _ in validate() }
+    }
+
+    private func validate() {
+        let name = customName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let url = customURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        if name.isEmpty {
+            errorMessage = localization.text("name_required")
+            return
+        }
+        if !url.isEmpty {
+            let candidate = url.hasPrefix("http") ? url : "https://" + url
+            if let value = URL(string: candidate), value.host != nil {
+                errorMessage = ""
+            } else {
+                errorMessage = localization.text("url_invalid")
+            }
+        } else {
+            errorMessage = ""
+        }
     }
 
     private func saveCustom() {
@@ -900,6 +933,13 @@ struct AgentPickerView: View {
         guard !name.isEmpty else {
             errorMessage = localization.text("name_required")
             return
+        }
+        if !url.isEmpty {
+            let candidate = url.hasPrefix("http") ? url : "https://" + url
+            guard let value = URL(string: candidate), value.host != nil else {
+                errorMessage = localization.text("url_invalid")
+                return
+            }
         }
         agentStore.add(name: name, urlString: url)
         dismiss()

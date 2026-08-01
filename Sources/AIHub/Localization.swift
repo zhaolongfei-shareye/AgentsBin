@@ -633,6 +633,31 @@ final class LocalizedStore: ObservableObject {
             .fr: "Basculer la barre latérale", .de: "Seitenleiste umschalten",
             .ru: "Свернуть/развернуть панель", .pt: "Alternar barra lateral"
         ],
+        "custom_agent_title": [
+            .zh: "自定义智能体", .zhHant: "自訂智能體", .en: "Custom Agent",
+            .ja: "カスタムエージェント", .ko: "사용자 에이전트", .es: "Agente personalizado",
+            .fr: "Agent personnalisé", .de: "Benutzerdefinierter Agent",
+            .ru: "Свой агент", .pt: "Agente personalizado"
+        ],
+        "name_placeholder": [
+            .zh: "名称，如：我的助手", .zhHant: "名稱，如：我的助手", .en: "Name, e.g. My Assistant",
+            .ja: "名前（例：マイアシスタント）", .ko: "이름 (예: 내 도우미)", .es: "Nombre, p. ej. Mi asistente",
+            .fr: "Nom, ex. Mon assistant", .de: "Name, z. B. Mein Assistent",
+            .ru: "Название, напр. Мой ассистент", .pt: "Nome, ex. Meu assistente"
+        ],
+        "url_placeholder": [
+            .zh: "网址，如：https://example.com/chat", .zhHant: "網址，如：https://example.com/chat", .en: "URL, e.g. https://example.com/chat",
+            .ja: "URL（例：https://example.com/chat）", .ko: "URL (예: https://example.com/chat)",
+            .es: "URL, p. ej. https://example.com/chat", .fr: "URL, ex. https://example.com/chat",
+            .de: "URL, z. B. https://example.com/chat", .ru: "URL, напр. https://example.com/chat",
+            .pt: "URL, ex. https://example.com/chat"
+        ],
+        "url_invalid": [
+            .zh: "网址格式不正确", .zhHant: "網址格式不正確", .en: "Invalid URL",
+            .ja: "URL が正しくありません", .ko: "URL 형식이 올바르지 않습니다", .es: "URL no válida",
+            .fr: "URL invalide", .de: "Ungültige URL",
+            .ru: "Неверный URL", .pt: "URL inválida"
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"
