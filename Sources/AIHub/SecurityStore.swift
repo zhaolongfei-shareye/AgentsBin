@@ -170,6 +170,15 @@ final class APIKeyStore: ObservableObject {
         return id
     }
 
+    func deleteProvider(_ id: String) {
+        guard let index = configs.firstIndex(where: { $0.id == id }) else { return }
+        for credential in configs[index].credentials {
+            KeychainService.delete("agentsbin.apikey." + credential.id.uuidString)
+        }
+        configs.remove(at: index)
+        persist()
+    }
+
     func updateCredential(configID: String, credential: APICredential) {
         guard let index = configs.firstIndex(where: { $0.id == configID }),
               let credentialIndex = configs[index].credentials.firstIndex(where: { $0.id == credential.id }) else { return }

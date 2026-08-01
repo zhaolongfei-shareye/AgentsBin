@@ -136,12 +136,6 @@ struct MainPopoverView: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 3)
                 .background(.quaternary, in: Capsule())
-            Text(localization.text("beta_note"))
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(.quaternary, in: Capsule())
             Spacer()
             avatar(agentStore.activeAgent)
             Text(localization.agentName(agentStore.activeAgent.name))
@@ -427,6 +421,9 @@ struct ManageView: View {
     @State private var generalItem = 0
     @State private var showAddAPIProvider = false
     @State private var addAPIProviderName = ""
+    @FocusState private var addProviderFocused: Bool
+    @State private var pendingDeleteID: String?
+    @State private var passwordMasked = true
     @State private var launchAtLogin = false
     @State private var darkModeEnabled = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
 
@@ -627,6 +624,9 @@ struct ManageView: View {
                                                 .font(.system(size: 12, weight: .semibold))
                                                 .foregroundStyle(selectedConfigID == config.id ? Color.white : Color.primary)
                                                 .lineLimit(1)
+                                            if config.id.hasPrefix("custom-") {
+                                                deleteProviderButton(config: config)
+                                            }
                                             Spacer(minLength: 0)
                                         }
                                         .padding(.horizontal, 8)
@@ -643,19 +643,24 @@ struct ManageView: View {
                         }
 
                         if showAddAPIProvider {
-                            HStack(spacing: 6) {
-                                TextField(localization.text("name"), text: $addAPIProviderName)
-                                    .textFieldStyle(.roundedBorder)
-                                Button(localization.text("save")) {
+                            TextField(localization.text("name_placeholder"), text: $addAPIProviderName)
+                                .textFieldStyle(.roundedBorder)
+                                .focused($addProviderFocused)
+                                .onSubmit {
                                     addCustomProvider()
                                 }
-                                .buttonStyle(.plain)
-                            }
+                                .onChange(of: addProviderFocused) { focused in
+                                    if !focused {
+                                        addCustomProvider()
+                                    }
+                                }
                         }
 
                         Button {
                             showAddAPIProvider.toggle()
-                            if !showAddAPIProvider {
+                            if showAddAPIProvider {
+                                addProviderFocused = true
+                            } else {
                                 addAPIProviderName = ""
                             }
                         } label: {
@@ -664,6 +669,8 @@ struct ManageView: View {
                                 .foregroundStyle(brandBlue)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 26)
+                                .padding(.horizontal, 8)
+                                .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                         .help(localization.text("add_custom_agent"))
@@ -702,10 +709,40 @@ struct ManageView: View {
 
     private func addCustomProvider() {
         let name = addAPIProviderName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !name.isEmpty else { return }
+        guard !name.isEmpty else {
+            addAPIProviderName = ""
+            showAddAPIProvider = false
+            return
+        }
         selectedConfigID = apiKeyStore.addCustomProvider(name: name)
         addAPIProviderName = ""
         showAddAPIProvider = false
+    }
+
+    private func deleteProviderButton(config: AgentAPIConfig) -> some View {
+        Button {
+            if pendingDeleteID == config.id {
+                apiKeyStore.deleteProvider(config.id)
+                if selectedConfigID == config.id {
+                    selectedConfigID = nil
+                }
+                pendingDeleteID = nil
+            } else {
+                pendingDeleteID = config.id
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    if pendingDeleteID == config.id {
+                        pendingDeleteID = nil
+                    }
+                }
+            }
+        } label: {
+            Image(systemName: pendingDeleteID == config.id ? "minus.circle.fill" : "minus.circle")
+                .font(.system(size: 13))
+                .foregroundStyle(pendingDeleteID == config.id ? Color.red : Color.secondary)
+                .frame(width: 18, height: 18)
+        }
+        .buttonStyle(.plain)
+        .help(localization.text("delete"))
     }
 
     private var generalSettingsView: some View {
@@ -780,97 +817,136 @@ struct ManageView: View {
     }
 
     private var passwordSettings: some View {
-        GroupBox(localization.text("change_password")) {
-            VStack(spacing: 8) {
+        VStack(spacing: 8) {
+            HStack {
+                Text(localization.text("password_rule"))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button {
+                    passwordMasked.toggle()
+                } label: {
+                    Image(systemName: passwordMasked ? "eye" : "eye.slash")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .help(localization.text(passwordMasked ? "show_password" : "hide_password"))
+            }
+            if passwordMasked {
                 SecureField(localization.text("old_password"), text: $oldPassword)
                     .textFieldStyle(.roundedBorder)
                 SecureField(localization.text("new_password"), text: $newPassword)
                     .textFieldStyle(.roundedBorder)
-                HStack {
-                    Spacer()
-                    Button(localization.text("save")) {
-                        _ = adminAuth.changePassword(old: oldPassword, new: newPassword)
-                        oldPassword = ""
-                        newPassword = ""
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
+            } else {
+                TextField(localization.text("old_password"), text: $oldPassword)
+                    .textFieldStyle(.roundedBorder)
+                TextField(localization.text("new_password"), text: $newPassword)
+                    .textFieldStyle(.roundedBorder)
             }
-            .padding(8)
+            HStack {
+                Spacer()
+                Button(localization.text("save")) {
+                    _ = adminAuth.changePassword(old: oldPassword, new: newPassword)
+                    oldPassword = ""
+                    newPassword = ""
+                }
+                .buttonStyle(.borderedProminent)
+            }
         }
+        .padding(8)
+        .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
     }
 
     private var emailSettings: some View {
-        GroupBox(localization.text("change_email")) {
-            VStack(spacing: 8) {
-                TextField(localization.text("new_email"), text: $newEmail)
-                    .textFieldStyle(.roundedBorder)
-                TextField(localization.text("confirm_email"), text: $confirmEmail)
-                    .textFieldStyle(.roundedBorder)
-                SecureField(localization.text("admin_password"), text: $emailPassword)
-                    .textFieldStyle(.roundedBorder)
-                HStack {
-                    Spacer()
-                    Button(localization.text("save")) {
-                        if adminAuth.changeEmail(new: newEmail, confirm: confirmEmail, password: emailPassword) {
-                            newEmail = ""
-                            confirmEmail = ""
-                            emailPassword = ""
-                        }
+        VStack(spacing: 8) {
+            TextField(localization.text("new_email"), text: $newEmail)
+                .textFieldStyle(.roundedBorder)
+            TextField(localization.text("confirm_email"), text: $confirmEmail)
+                .textFieldStyle(.roundedBorder)
+            SecureField(localization.text("admin_password"), text: $emailPassword)
+                .textFieldStyle(.roundedBorder)
+            HStack {
+                Spacer()
+                Button(localization.text("save")) {
+                    if adminAuth.changeEmail(new: newEmail, confirm: confirmEmail, password: emailPassword) {
+                        newEmail = ""
+                        confirmEmail = ""
+                        emailPassword = ""
                     }
-                    .buttonStyle(.borderedProminent)
                 }
+                .buttonStyle(.borderedProminent)
             }
-            .padding(8)
         }
+        .padding(8)
+        .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
     }
 
     private var launchSettings: some View {
-        GroupBox(localization.text("auto_launch")) {
-            Toggle(isOn: $launchAtLogin) {
-                Text(localization.text("auto_launch"))
+        VStack(spacing: 6) {
+            radioRow(title: localization.text("auto_launch"), selected: launchAtLogin) {
+                setLaunchAtLogin(true)
             }
-            .padding(8)
-            .onChange(of: launchAtLogin) { enabled in
-                do {
-                    if enabled {
-                        try SMAppService.mainApp.register()
-                    } else {
-                        try SMAppService.mainApp.unregister()
-                    }
-                    launchAtLogin = SMAppService.mainApp.status == .enabled
-                } catch {
-                    launchAtLogin = SMAppService.mainApp.status == .enabled
-                }
+            radioRow(title: localization.text("manual_launch"), selected: !launchAtLogin) {
+                setLaunchAtLogin(false)
             }
         }
+        .padding(8)
+        .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
     }
 
     private var languageSettings: some View {
-        GroupBox(localization.text("language")) {
-            Picker(localization.text("language"), selection: $localization.language) {
-                ForEach(AppLanguage.allCases, id: \.self) { lang in
-                    Text(lang.displayName).tag(lang)
+        VStack(spacing: 6) {
+            ForEach(AppLanguage.allCases, id: \.self) { lang in
+                radioRow(title: lang.displayName, selected: localization.language == lang) {
+                    localization.language = lang
                 }
             }
-            .pickerStyle(.menu)
-            .padding(8)
         }
+        .padding(8)
+        .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
     }
 
     private var appearanceSettings: some View {
-        GroupBox(localization.text("appearance")) {
-            Toggle(isOn: $darkModeEnabled) {
-                Text(localization.text("dark_mode"))
+        VStack(spacing: 6) {
+            radioRow(title: localization.text("dark_mode"), selected: darkModeEnabled) {
+                darkModeEnabled = true
             }
-            .padding(8)
-            .onChange(of: darkModeEnabled) { enabled in
-                NSApp.appearance = enabled ? NSAppearance(named: .darkAqua) : NSAppearance(named: .aqua)
-                UserDefaults.standard.set(
-                    enabled ? NSAppearance.Name.darkAqua.rawValue : NSAppearance.Name.aqua.rawValue,
-                    forKey: "aihome.appearance"
-                )
+            radioRow(title: localization.text("light_mode"), selected: !darkModeEnabled) {
+                darkModeEnabled = false
             }
+        }
+        .padding(8)
+        .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
+    }
+
+    private func radioRow(title: String, selected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Image(systemName: selected ? "largecircle.fill.circle" : "circle")
+                    .font(.system(size: 14))
+                    .foregroundStyle(selected ? brandBlue : Color.secondary)
+                Text(title)
+                    .font(.system(size: 13))
+                Spacer()
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 7)
+            .background(selected ? brandBlue.opacity(0.12) : Color.clear, in: RoundedRectangle(cornerRadius: 7))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func setLaunchAtLogin(_ enabled: Bool) {
+        do {
+            if enabled {
+                try SMAppService.mainApp.register()
+            } else {
+                try SMAppService.mainApp.unregister()
+            }
+            launchAtLogin = SMAppService.mainApp.status == .enabled
+        } catch {
+            launchAtLogin = SMAppService.mainApp.status == .enabled
         }
     }
 

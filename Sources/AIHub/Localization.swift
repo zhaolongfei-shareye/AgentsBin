@@ -658,6 +658,23 @@ final class LocalizedStore: ObservableObject {
             .fr: "URL invalide", .de: "Ungültige URL",
             .ru: "Неверный URL", .pt: "URL inválida"
         ],
+        "manual_launch": [
+            .zh: "手动启动", .zhHant: "手動啟動", .en: "Manual start",
+            .ja: "手動起動", .ko: "수동 시작", .es: "Inicio manual", .fr: "Démarrage manuel",
+            .de: "Manueller Start", .ru: "Ручной запуск", .pt: "Início manual"
+        ],
+        "show_password": [
+            .zh: "显示密码", .zhHant: "顯示密碼", .en: "Show password",
+            .ja: "パスワード表示", .ko: "비밀번호 표시", .es: "Mostrar contraseña",
+            .fr: "Afficher le mot de passe", .de: "Passwort anzeigen",
+            .ru: "Показать пароль", .pt: "Mostrar senha"
+        ],
+        "hide_password": [
+            .zh: "隐藏密码", .zhHant: "隱藏密碼", .en: "Hide password",
+            .ja: "パスワード非表示", .ko: "비밀번호 숨기기", .es: "Ocultar contraseña",
+            .fr: "Masquer le mot de passe", .de: "Passwort verbergen",
+            .ru: "Скрыть пароль", .pt: "Ocultar senha"
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"

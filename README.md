@@ -10,7 +10,7 @@ App 图标是单色字母 A logo，源图在 `Assets/AppIcon.png`，菜单栏模
 
 ```bash
 ./Scripts/build_dmg.sh
-open dist/AgentsBin-1.0.4.dmg
+open dist/AgentsBin-1.0.5.dmg
 ```
 
 打开 DMG 后把 `AgentsBin.app` 拖进 `Applications` 即可。
