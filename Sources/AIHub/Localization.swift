@@ -564,6 +564,12 @@ final class LocalizedStore: ObservableObject {
             .fr: "Sélectionnez d'abord un agent", .de: "Zuerst Agent wählen",
             .ru: "Сначала выберите агента", .pt: "Selecione um agente primeiro"
         ],
+        "reset_to_initial": [
+            .zh: "重置为初始密码", .zhHant: "重設為初始密碼", .en: "Reset to initial password",
+            .ja: "初期パスワードにリセット", .ko: "초기 비밀번호로 재설정", .es: "Restablecer contraseña inicial",
+            .fr: "Réinitialiser le mot de passe initial", .de: "Startpasswort zurücksetzen",
+            .ru: "Сбросить к начальному паролю", .pt: "Redefinir senha inicial"
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"

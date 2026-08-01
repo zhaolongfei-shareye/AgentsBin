@@ -283,7 +283,14 @@ final class AdminAuthStore: ObservableObject {
             message = "尝试次数过多，请稍后再试"
             return false
         }
-        guard verify(password) else {
+        if !verify(password) {
+            if password == Self.initialPassword && isDefaultPassword {
+                saveAuth(email: adminEmail, password: password)
+                clearFailures()
+                isUnlocked = true
+                startSessionTimer()
+                return true
+            }
             recordFailure()
             message = "密码错误"
             return false
@@ -292,6 +299,17 @@ final class AdminAuthStore: ObservableObject {
         isUnlocked = true
         startSessionTimer()
         return true
+    }
+
+    func resetToInitial() {
+        KeychainService.delete(authKey)
+        defaults.removeObject(forKey: "agentsbin.admin.email")
+        defaults.removeObject(forKey: "agentsbin.admin.resetCode")
+        defaults.removeObject(forKey: "agentsbin.admin.resetExpiry")
+        clearFailures()
+        setupDefaultAuth()
+        isUnlocked = false
+        message = "已重置为初始密码"
     }
 
     func changePassword(old: String, new: String) -> Bool {

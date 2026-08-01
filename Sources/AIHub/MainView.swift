@@ -501,6 +501,11 @@ struct ManageView: View {
                         password = ""
                     }
                     .buttonStyle(.borderedProminent)
+                    Button(localization.text("reset_to_initial")) {
+                        adminAuth.resetToInitial()
+                        password = AdminAuthStore.initialPassword
+                    }
+                    .buttonStyle(.plain)
                     Button(localization.text("forgot_password")) {
                         _ = adminAuth.requestReset()
                         showResetForm = true
