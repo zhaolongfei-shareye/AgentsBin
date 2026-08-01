@@ -154,7 +154,6 @@ struct MainPopoverView: View {
 
     private var header: some View {
         HStack(spacing: 10) {
-            trafficDots
             Text("AgentsBin")
                 .font(.system(size: 22, weight: .heavy))
             Text("V\(appVersion)")
@@ -217,43 +216,6 @@ struct MainPopoverView: View {
         .padding(.horizontal, 12)
         .frame(height: 48)
         .background(.bar)
-    }
-
-    private var trafficDots: some View {
-        HStack(spacing: 8) {
-            Button {
-                AppDelegate.mainPanel?.orderOut(nil)
-            } label: {
-                Circle()
-                    .fill(Color(red: 1.0, green: 0.37, blue: 0.34))
-                    .frame(width: 12, height: 12)
-            }
-            .buttonStyle(.plain)
-            .help(localization.text("close_to_menu"))
-
-            Button {
-                let size = AppDelegate.mainPanel?.minSize ?? NSSize(width: 640, height: 520)
-                AppDelegate.mainPanel?.setContentSize(size)
-            } label: {
-                Circle()
-                    .fill(Color(red: 1.0, green: 0.74, blue: 0.18))
-                    .frame(width: 12, height: 12)
-            }
-            .buttonStyle(.plain)
-            .help(localization.text("minimize_size"))
-
-            Button {
-                if let screen = NSScreen.main {
-                    AppDelegate.mainPanel?.setFrame(screen.visibleFrame, display: true)
-                }
-            } label: {
-                Circle()
-                    .fill(Color(red: 0.16, green: 0.78, blue: 0.25))
-                    .frame(width: 12, height: 12)
-            }
-            .buttonStyle(.plain)
-            .help(localization.text("maximize_size"))
-        }
     }
 
     private var appVersion: String {
@@ -445,7 +407,7 @@ struct MainPopoverView: View {
         case .chat:
             chatPane
         case .manage:
-            ManageView()
+            ManageView(onBack: { mode = .chat })
         }
     }
 
@@ -470,6 +432,7 @@ struct ManageView: View {
     @EnvironmentObject private var apiKeyStore: APIKeyStore
     @EnvironmentObject private var adminAuth: AdminAuthStore
     @EnvironmentObject private var localization: LocalizedStore
+    let onBack: () -> Void
     @State private var email = ""
     @State private var password = ""
     @State private var confirm = ""
@@ -526,6 +489,15 @@ struct ManageView: View {
 
     private var header: some View {
         HStack(spacing: 8) {
+            Button(action: onBack) {
+                Image(systemName: "door.left.hand.open")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 24, height: 24)
+            }
+            .buttonStyle(.plain)
+            .help(localization.text("back"))
+
             Label(localization.text("settings"), systemImage: "gearshape")
                 .font(.headline)
             Text("· " + settingsTitle)

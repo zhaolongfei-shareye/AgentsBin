@@ -705,6 +705,11 @@ final class LocalizedStore: ObservableObject {
             .fr: "Agrandir au maximum", .de: "Maximieren",
             .ru: "Увеличить до максимума", .pt: "Maximizar"
         ],
+        "back": [
+            .zh: "返回", .zhHant: "返回", .en: "Back",
+            .ja: "戻る", .ko: "뒤로", .es: "Atrás", .fr: "Retour",
+            .de: "Zurück", .ru: "Назад", .pt: "Voltar"
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"
