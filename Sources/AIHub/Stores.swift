@@ -133,11 +133,17 @@ final class AgentStore: ObservableObject {
 
     func add(name: String, urlString: String) {
         let palette = ["#7c3aed", "#0d9488", "#ea580c", "#dc2626", "#2563eb", "#65a30d"]
+        let host = (urlString.hasPrefix("http") ? urlString : "https://" + urlString)
+            .components(separatedBy: "/").first ?? urlString
+        let letter = host.prefix(1).uppercased()
+        let sameLetterCount = agents.filter {
+            $0.urlString.components(separatedBy: "/").first?.prefix(1).uppercased() == letter
+        }.count
         let agent = Agent(
             id: "custom-\(UUID().uuidString.lowercased())",
             name: name,
-            letter: String(name.prefix(1)).uppercased(),
-            colorHex: palette[agents.count % palette.count],
+            letter: letter,
+            colorHex: palette[sameLetterCount % palette.count],
             urlString: urlString.isEmpty ? "example.com" : urlString,
             isOnline: false,
             isEnabled: true,

@@ -9,7 +9,10 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "AIHub",
-            path: "Sources/AIHub"
+            path: "Sources/AIHub",
+            linkerSettings: [
+                .linkedLibrary("sqlite3")
+            ]
         )
     ]
 )

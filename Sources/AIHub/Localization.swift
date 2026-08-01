@@ -308,6 +308,105 @@ final class LocalizedStore: ObservableObject {
             .ko: "무료 베타", .es: "Beta gratis", .fr: "Bêta gratuite", .de: "Kostenlose Beta",
             .ru: "Бесплатная бета", .pt: "Beta grátis"
         ],
+        "hide_agents_hint": [
+            .zh: "管理显示", .zhHant: "管理顯示", .en: "Manage visibility"
+        ],
+        "add_agents_hint": [
+            .zh: "添加智能体", .zhHant: "新增智能體", .en: "Add agents"
+        ],
+        "agent_picker_title": [
+            .zh: "显示智能体", .zhHant: "顯示智能體", .en: "Visible Agents"
+        ],
+        "visible_agents": [
+            .zh: "当前显示", .zhHant: "目前顯示", .en: "Currently shown"
+        ],
+        "all_agents": [
+            .zh: "全部智能体", .zhHant: "全部智能體", .en: "All agents"
+        ],
+        "custom_agent": [
+            .zh: "自定义", .zhHant: "自訂", .en: "Custom"
+        ],
+        "done": [
+            .zh: "完成", .zhHant: "完成", .en: "Done"
+        ],
+        "api_settings": [
+            .zh: "API 设置", .zhHant: "API 設定", .en: "API Settings"
+        ],
+        "change_password": [
+            .zh: "修改密码", .zhHant: "修改密碼", .en: "Change Password"
+        ],
+        "lock": [
+            .zh: "锁定", .zhHant: "鎖定", .en: "Lock"
+        ],
+        "admin_setup_title": [
+            .zh: "首次使用设置管理员", .zhHant: "首次使用設定管理員", .en: "Set up administrator"
+        ],
+        "admin_setup_desc": [
+            .zh: "API Key 只会在验证管理员后显示和复制，并本地加密保存。", .zhHant: "API Key 只會在驗證管理員後顯示和複製，並本地加密儲存。", .en: "API keys are encrypted locally and only visible after admin verification."
+        ],
+        "admin_email": [
+            .zh: "管理员邮箱", .zhHant: "管理員信箱", .en: "Admin Email"
+        ],
+        "admin_password": [
+            .zh: "管理员密码", .zhHant: "管理員密碼", .en: "Admin Password"
+        ],
+        "admin_confirm": [
+            .zh: "确认密码", .zhHant: "確認密碼", .en: "Confirm Password"
+        ],
+        "password_rule": [
+            .zh: "密码至少 8 位，需包含字母、数字和符号。", .zhHant: "密碼至少 8 位，需包含字母、數字和符號。", .en: "At least 8 characters with letters, numbers and symbols."
+        ],
+        "password_mismatch": [
+            .zh: "两次密码不一致", .zhHant: "兩次密碼不一致", .en: "Passwords do not match"
+        ],
+        "admin_unlock_title": [
+            .zh: "输入管理员密码", .zhHant: "輸入管理員密碼", .en: "Enter admin password"
+        ],
+        "locked_until": [
+            .zh: "尝试次数过多，请 5 分钟后再试。", .zhHant: "嘗試次數過多，請 5 分鐘後再試。", .en: "Too many attempts. Try again in 5 minutes."
+        ],
+        "unlock": [
+            .zh: "解锁", .zhHant: "解鎖", .en: "Unlock"
+        ],
+        "forgot_password": [
+            .zh: "忘记密码？", .zhHant: "忘記密碼？", .en: "Forgot password?"
+        ],
+        "reset_code_shown": [
+            .zh: "重置码：%@（30 分钟内有效，已通过邮件应用发送）", .zhHant: "重置碼：%@（30 分鐘內有效，已透過郵件應用傳送）", .en: "Reset code: %@ (valid for 30 minutes, sent via mail)"
+        ],
+        "copy_reset_code": [
+            .zh: "复制重置码", .zhHant: "複製重置碼", .en: "Copy reset code"
+        ],
+        "reset_code": [
+            .zh: "重置码", .zhHant: "重置碼", .en: "Reset code"
+        ],
+        "new_password": [
+            .zh: "新密码", .zhHant: "新密碼", .en: "New password"
+        ],
+        "reset_password": [
+            .zh: "重置密码", .zhHant: "重置密碼", .en: "Reset password"
+        ],
+        "old_password": [
+            .zh: "当前密码", .zhHant: "目前密碼", .en: "Current password"
+        ],
+        "base_url": [
+            .zh: "Base URL", .zhHant: "Base URL", .en: "Base URL"
+        ],
+        "model": [
+            .zh: "模型", .zhHant: "模型", .en: "Model"
+        ],
+        "api_key": [
+            .zh: "API Key", .zhHant: "API Key", .en: "API Key"
+        ],
+        "copy_key": [
+            .zh: "复制", .zhHant: "複製", .en: "Copy"
+        ],
+        "delete_key": [
+            .zh: "删除该 Key", .zhHant: "刪除該 Key", .en: "Delete key"
+        ],
+        "cc_switch_imported": [
+            .zh: "已自动导入 cc-switch 中的供应商（仅名称与地址，Key 需自行填写）", .zhHant: "已自動匯入 cc-switch 中的供應商（僅名稱與位址，Key 需自行填寫）", .en: "Imported providers from cc-switch (names only; keys stay private)"
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"

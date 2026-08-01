@@ -57,6 +57,8 @@ struct MainPopoverView: View {
     @State private var hoveredAgentID: String?
     @State private var draggedAgentID: String?
     @State private var isDarkAppearance = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+    @State private var manageAgents = false
+    @State private var showAgentPicker = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -125,6 +127,34 @@ struct MainPopoverView: View {
             agentList
 
             Divider()
+            HStack(spacing: 8) {
+                Button {
+                    manageAgents.toggle()
+                } label: {
+                    Text("−")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(manageAgents ? Color.white : Color.primary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 40)
+                        .background(manageAgents ? Color.red.opacity(0.8) : Color.secondary.opacity(0.14), in: RoundedRectangle(cornerRadius: 9))
+                }
+                .buttonStyle(.plain)
+                .help(localization.text("hide_agents_hint"))
+
+                Button {
+                    showAgentPicker = true
+                } label: {
+                    Text("+")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 40)
+                        .background(brandBlue, in: RoundedRectangle(cornerRadius: 9))
+                }
+                .buttonStyle(.plain)
+                .help(localization.text("add_agents_hint"))
+            }
+
             HStack(spacing: 6) {
                 Image(systemName: "globe")
                     .foregroundStyle(.secondary)
@@ -169,6 +199,9 @@ struct MainPopoverView: View {
                 .help(localization.text("quit"))
             }
         }
+        .sheet(isPresented: $showAgentPicker) {
+            AgentPickerView()
+        }
         .padding(10)
         .background(Color(nsColor: .windowBackgroundColor))
     }
@@ -185,7 +218,7 @@ struct MainPopoverView: View {
     private var agentList: some View {
         ScrollView {
             VStack(spacing: 2) {
-                ForEach(agentStore.enabledAgents) { agent in
+                ForEach(manageAgents ? agentStore.agents : agentStore.enabledAgents) { agent in
                     agentRow(agent)
                 }
             }
@@ -194,12 +227,25 @@ struct MainPopoverView: View {
 
     private func agentRow(_ agent: Agent) -> some View {
         let isActive = agentStore.activeID == agent.id
-        return Button {
-            agentStore.select(agent.id)
-            webPool.markRead(agent.id)
-            mode = .chat
-        } label: {
-            HStack(spacing: 8) {
+        return HStack(spacing: 6) {
+            if manageAgents {
+                Button {
+                    agentStore.setEnabled(agent.id, !agent.isEnabled)
+                } label: {
+                    Image(systemName: agent.isEnabled ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 16))
+                        .foregroundStyle(agent.isEnabled ? brandBlue : Color.secondary)
+                        .frame(width: 22, height: 22)
+                }
+                .buttonStyle(.plain)
+            }
+
+            Button {
+                agentStore.select(agent.id)
+                webPool.markRead(agent.id)
+                mode = .chat
+            } label: {
+                HStack(spacing: 8) {
                 avatar(agent)
                 VStack(alignment: .leading, spacing: 1) {
                     Text(localization.agentName(agent.name))
@@ -218,23 +264,24 @@ struct MainPopoverView: View {
                         .overlay(Circle().stroke(.white, lineWidth: 1))
                 }
                 Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .background(
+                    isActive ? brandBlue : hoveredAgentID == agent.id ? brandBlue.opacity(0.10) : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 8)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(hoveredAgentID == agent.id ? brandBlue.opacity(0.45) : Color.clear, lineWidth: 1)
+                )
+                .contentShape(Rectangle())
+                .onHover { hovering in
+                    hoveredAgentID = hovering ? agent.id : nil
+                }
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
-            .background(
-                isActive ? brandBlue : hoveredAgentID == agent.id ? brandBlue.opacity(0.10) : Color.clear,
-                in: RoundedRectangle(cornerRadius: 8)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(hoveredAgentID == agent.id ? brandBlue.opacity(0.45) : Color.clear, lineWidth: 1)
-            )
-            .contentShape(Rectangle())
-            .onHover { hovering in
-                hoveredAgentID = hovering ? agent.id : nil
-            }
+            .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
         .onDrag {
             draggedAgentID = agent.id
             return NSItemProvider(object: agent.id as NSString)
@@ -301,223 +348,440 @@ struct MainPopoverView: View {
 }
 
 struct ManageView: View {
-    @EnvironmentObject private var store: AgentStore
-    @EnvironmentObject private var faviconStore: FaviconStore
+    @EnvironmentObject private var apiKeyStore: APIKeyStore
+    @EnvironmentObject private var adminAuth: AdminAuthStore
     @EnvironmentObject private var localization: LocalizedStore
-    @State private var addFormVisible = false
-    @State private var newName = ""
-    @State private var newURL = ""
-    @State private var editingID: String?
-    @State private var editName = ""
-    @State private var editURL = ""
+    @State private var email = ""
+    @State private var password = ""
+    @State private var confirm = ""
+    @State private var oldPassword = ""
+    @State private var newPassword = ""
+    @State private var resetInput = ""
+    @State private var showChangePassword = false
+    @State private var showResetForm = false
 
     var body: some View {
-        agentContent
+        VStack(spacing: 0) {
+            header
+            if !adminAuth.isConfigured {
+                setupView
+            } else if !adminAuth.isUnlocked {
+                unlockView
+            } else {
+                configListView
+            }
+        }
     }
 
-    private var agentContent: some View {
-        VStack(spacing: 0) {
+    private var header: some View {
+        HStack(spacing: 8) {
+            Label(localization.text("api_settings"), systemImage: "key.fill")
+                .font(.headline)
+            Spacer()
+            if adminAuth.isConfigured && adminAuth.isUnlocked {
+                Text(adminAuth.adminEmail)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Button(localization.text("change_password")) {
+                    showChangePassword.toggle()
+                }
+                .buttonStyle(.plain)
+                Button(localization.text("lock")) {
+                    adminAuth.lock()
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 12)
+        .frame(height: 44)
+        .background(.bar)
+    }
+
+    private var setupView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                Text(localization.text("admin_setup_title"))
+                    .font(.title3.weight(.bold))
+                Text(localization.text("admin_setup_desc"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                TextField(localization.text("admin_email"), text: $email)
+                    .textFieldStyle(.roundedBorder)
+                SecureField(localization.text("admin_password"), text: $password)
+                    .textFieldStyle(.roundedBorder)
+                SecureField(localization.text("admin_confirm"), text: $confirm)
+                    .textFieldStyle(.roundedBorder)
+                Text(localization.text("password_rule"))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                if !adminAuth.message.isEmpty {
+                    Text(adminAuth.message)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+                Button {
+                    guard password == confirm else {
+                        adminAuth.message = localization.text("password_mismatch")
+                        return
+                    }
+                    _ = adminAuth.setup(email: email, password: password)
+                } label: {
+                    Label(localization.text("save"), systemImage: "checkmark")
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .padding(20)
+            .frame(maxWidth: 420)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var unlockView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                Text(localization.text("admin_unlock_title"))
+                    .font(.title3.weight(.bold))
+                if let locked = adminAuth.lockedUntil, locked > Date() {
+                    Text(localization.text("locked_until"))
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                } else {
+                    SecureField(localization.text("admin_password"), text: $password)
+                        .textFieldStyle(.roundedBorder)
+                    if !adminAuth.message.isEmpty {
+                        Text(adminAuth.message)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                    Button(localization.text("unlock")) {
+                        _ = adminAuth.unlock(password: password)
+                        password = ""
+                    }
+                    .buttonStyle(.borderedProminent)
+                    Button(localization.text("forgot_password")) {
+                        _ = adminAuth.requestReset()
+                        showResetForm = true
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                if showResetForm {
+                    Divider()
+                    if let code = adminAuth.resetCode {
+                        Text(localization.format("reset_code_shown", code))
+                            .font(.system(.body, design: .monospaced))
+                        Button(localization.text("copy_reset_code")) {
+                            let pasteboard = NSPasteboard.general
+                            pasteboard.clearContents()
+                            pasteboard.setString(code, forType: .string)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    SecureField(localization.text("reset_code"), text: $resetInput)
+                        .textFieldStyle(.roundedBorder)
+                    SecureField(localization.text("new_password"), text: $newPassword)
+                        .textFieldStyle(.roundedBorder)
+                    Button(localization.text("reset_password")) {
+                        if adminAuth.reset(code: resetInput, newPassword: newPassword) {
+                            showResetForm = false
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+            .padding(20)
+            .frame(maxWidth: 420)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var configListView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 8) {
+                if showChangePassword {
+                    HStack(spacing: 8) {
+                        SecureField(localization.text("old_password"), text: $oldPassword)
+                            .textFieldStyle(.roundedBorder)
+                        SecureField(localization.text("new_password"), text: $newPassword)
+                            .textFieldStyle(.roundedBorder)
+                        Button(localization.text("save")) {
+                            _ = adminAuth.changePassword(old: oldPassword, new: newPassword)
+                            oldPassword = ""
+                            newPassword = ""
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(8)
+                    .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
+                }
+
+                if apiKeyStore.importedFromCCSwitch {
+                    Text(localization.text("cc_switch_imported"))
+                        .font(.caption)
+                        .foregroundStyle(.green)
+                }
+                if !adminAuth.message.isEmpty {
+                    Text(adminAuth.message)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                ForEach(apiKeyStore.configs) { config in
+                    configRow(config)
+                }
+            }
+            .padding(12)
+        }
+    }
+
+    private func configRow(_ config: AgentAPIConfig) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Toggle("", isOn: Binding(
+                    get: { config.isEnabled },
+                    set: { apiKeyStore.updateEnabled(config.id, $0) }
+                ))
+                .toggleStyle(.checkbox)
+                .labelsHidden()
+                Text(config.name)
+                    .font(.system(size: 13, weight: .semibold))
+                Spacer()
+                Button(localization.text("copy_key")) {
+                    let key = apiKeyStore.apiKey(for: config.id)
+                    if !key.isEmpty {
+                        let pasteboard = NSPasteboard.general
+                        pasteboard.clearContents()
+                        pasteboard.setString(key, forType: .string)
+                    }
+                }
+                .buttonStyle(.plain)
+                .disabled(apiKeyStore.apiKey(for: config.id).isEmpty)
+            }
+
+            HStack(spacing: 8) {
+                TextField(localization.text("base_url"), text: Binding(
+                    get: { config.baseURL },
+                    set: { value in
+                        var copy = config
+                        copy.baseURL = value
+                        apiKeyStore.update(config: copy)
+                    }
+                ))
+                .textFieldStyle(.roundedBorder)
+                TextField(localization.text("model"), text: Binding(
+                    get: { config.model },
+                    set: { value in
+                        var copy = config
+                        copy.model = value
+                        apiKeyStore.update(config: copy)
+                    }
+                ))
+                .textFieldStyle(.roundedBorder)
+                .frame(width: 180)
+            }
+
+            HStack(spacing: 8) {
+                SecureField(localization.text("api_key"), text: Binding(
+                    get: { apiKeyStore.apiKey(for: config.id) },
+                    set: { apiKeyStore.save(apiKey: $0, for: config.id) }
+                ))
+                .textFieldStyle(.roundedBorder)
+                Button {
+                    apiKeyStore.save(apiKey: "", for: config.id)
+                } label: {
+                    Image(systemName: "trash")
+                }
+                .buttonStyle(.plain)
+                .help(localization.text("delete_key"))
+            }
+
+            if !config.note.isEmpty {
+                Text(config.note)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .padding(10)
+        .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+struct AgentPickerView: View {
+    @EnvironmentObject private var agentStore: AgentStore
+    @EnvironmentObject private var faviconStore: FaviconStore
+    @EnvironmentObject private var localization: LocalizedStore
+    @Environment(\.dismiss) private var dismiss
+    @State private var showCustomForm = false
+    @State private var customName = ""
+    @State private var customURL = ""
+
+    private var enabled: [Agent] {
+        agentStore.enabledAgents
+    }
+
+    private var hidden: [Agent] {
+        agentStore.agents.filter { !$0.isEnabled }
+    }
+
+    var body: some View {
+        VStack(spacing: 12) {
             HStack {
-                Label(localization.text("manage_title"), systemImage: "gearshape")
+                Text(localization.text("agent_picker_title"))
                     .font(.headline)
                 Spacer()
                 Button {
-                    importAgents()
+                    dismiss()
                 } label: {
-                    Label(localization.text("import_agents"), systemImage: "square.and.arrow.down")
-                }
-                .buttonStyle(.plain)
-                Button {
-                    exportAgents()
-                } label: {
-                    Label(localization.text("export_agents"), systemImage: "square.and.arrow.up")
-                }
-                .buttonStyle(.plain)
-                Button {
-                    addFormVisible.toggle()
-                } label: {
-                    Label(localization.text("add_agent"), systemImage: "plus")
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 12)
-            .frame(height: 42)
-            .background(.bar)
 
-            if addFormVisible {
-                HStack(spacing: 8) {
-                    TextField(localization.text("name"), text: $newName)
-                        .textFieldStyle(.roundedBorder)
-                    TextField(localization.text("web_url"), text: $newURL)
-                        .textFieldStyle(.roundedBorder)
-                    Button(localization.text("save")) {
-                        store.add(name: newName, urlString: newURL)
-                        resetAddForm()
+            VStack(alignment: .leading, spacing: 6) {
+                Text(localization.text("visible_agents"))
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.secondary)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(enabled) { agent in
+                            chip(agent, removable: true)
+                        }
                     }
-                    Button(localization.text("cancel")) {
-                        resetAddForm()
+                }
+                .frame(minHeight: 34)
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(localization.text("all_agents"))
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.secondary)
+                ScrollView {
+                    LazyVStack(spacing: 4) {
+                        ForEach(hidden) { agent in
+                            candidateRow(agent)
+                        }
+                    }
+                }
+                .frame(maxHeight: 260)
+            }
+
+            if showCustomForm {
+                VStack(spacing: 8) {
+                    TextField(localization.text("name"), text: $customName)
+                        .textFieldStyle(.roundedBorder)
+                    TextField(localization.text("web_url"), text: $customURL)
+                        .textFieldStyle(.roundedBorder)
+                    HStack {
+                        Button {
+                            saveCustom()
+                        } label: {
+                            Label(localization.text("save"), systemImage: "checkmark")
+                        }
+                        .buttonStyle(.plain)
+                        Button {
+                            showCustomForm = false
+                            customName = ""
+                            customURL = ""
+                        } label: {
+                            Label(localization.text("cancel"), systemImage: "xmark")
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(10)
-                .background(.quaternary.opacity(0.4))
+                .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
             }
 
-            List {
-                ForEach(store.agents) { agent in
-                    manageRow(agent)
+            HStack {
+                Button {
+                    showCustomForm.toggle()
+                } label: {
+                    Label(localization.text("custom_agent"), systemImage: "plus.circle")
                 }
-                .onMove(perform: store.moveAgents)
-            }
-            .listStyle(.plain)
-            .padding(.vertical, 6)
-        }
-    }
-
-    private func manageRow(_ agent: Agent) -> some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 8) {
-                if let image = faviconStore.images[agent.id] {
-                    Image(nsImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 26, height: 26)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                } else {
-                    Text(agent.letter)
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 26, height: 26)
-                        .background(Color(hex: agent.colorHex), in: RoundedRectangle(cornerRadius: 8))
-                }
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(localization.agentName(agent.name))
-                        .font(.system(size: 12, weight: .semibold))
-                        .lineLimit(1)
-                    Text(agent.urlString)
-                        .font(.system(size: 10))
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                }
+                .buttonStyle(.plain)
                 Spacer()
-
-                pillToggle(
-                    isOn: Binding(
-                        get: { agent.isEnabled },
-                        set: { store.setEnabled(agent.id, $0) }
-                    ),
-                    onLabel: localization.text("show"),
-                    offLabel: localization.text("hide")
-                )
-
-                Button {
-                    store.togglePin(agent.id)
-                } label: {
-                    Image(systemName: "pin.fill")
-                        .foregroundStyle(agent.isPinned ? brandBlue : Color.secondary)
+                Button(localization.text("done")) {
+                    dismiss()
                 }
-                .buttonStyle(.plain)
-                .help(localization.text("pin"))
+                .buttonStyle(.borderedProminent)
+            }
+        }
+        .padding(16)
+        .frame(width: 520, height: 560)
+        .onAppear {
+            faviconStore.ensureLoaded(for: agentStore.agents)
+        }
+    }
 
+    private func chip(_ agent: Agent, removable: Bool) -> some View {
+        HStack(spacing: 6) {
+            pickerAvatar(agent)
+            Text(localization.agentName(agent.name))
+                .font(.system(size: 12, weight: .semibold))
+            if removable {
                 Button {
-                    if editingID == agent.id {
-                        editingID = nil
-                    } else {
-                        editingID = agent.id
-                        editName = agent.name
-                        editURL = agent.urlString
-                    }
+                    agentStore.setEnabled(agent.id, false)
                 } label: {
-                    Image(systemName: "pencil")
+                    Image(systemName: "xmark")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
             }
-            .padding(8)
-
-            if editingID == agent.id {
-                HStack(spacing: 8) {
-                    TextField(localization.text("name"), text: $editName)
-                        .textFieldStyle(.roundedBorder)
-                    TextField(localization.text("web_url"), text: $editURL)
-                        .textFieldStyle(.roundedBorder)
-                    Button(localization.text("save")) {
-                        store.update(agent.id, name: editName, urlString: editURL)
-                        editingID = nil
-                    }
-                    Button(localization.text("cancel")) {
-                        editingID = nil
-                    }
-                }
-                .padding(8)
-                .background(.quaternary.opacity(0.4))
-            }
         }
-        .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 8))
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+        .background(.quaternary.opacity(0.6), in: Capsule())
     }
 
-    private func pillToggle(isOn: Binding<Bool>, onLabel: String, offLabel: String) -> some View {
-        HStack(spacing: 0) {
+    private func candidateRow(_ agent: Agent) -> some View {
+        HStack(spacing: 8) {
+            pickerAvatar(agent)
+            Text(localization.agentName(agent.name))
+                .font(.system(size: 13))
+            Spacer()
             Button {
-                isOn.wrappedValue = true
+                agentStore.setEnabled(agent.id, true)
             } label: {
-                Text(onLabel)
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(isOn.wrappedValue ? Color.white : Color.secondary)
-                    .frame(width: 34, height: 22)
-                    .background(isOn.wrappedValue ? brandBlue : Color.clear, in: Capsule())
-            }
-            .buttonStyle(.plain)
-
-            Button {
-                isOn.wrappedValue = false
-            } label: {
-                Text(offLabel)
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(isOn.wrappedValue ? Color.secondary : Color.white)
-                    .frame(width: 34, height: 22)
-                    .background(isOn.wrappedValue ? Color.clear : Color.secondary.opacity(0.6), in: Capsule())
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(brandBlue)
             }
             .buttonStyle(.plain)
         }
-        .background(.quaternary, in: Capsule())
-        .fixedSize()
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+        .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 7))
     }
 
-    private func resetAddForm() {
-        newName = ""
-        newURL = ""
-        addFormVisible = false
-    }
-
-    private func importAgents() {
-        let panel = NSOpenPanel()
-        panel.allowedContentTypes = [.plainText]
-        panel.allowsMultipleSelection = false
-        guard panel.runModal() == .OK, let url = panel.url,
-              let text = try? String(contentsOf: url, encoding: .utf8) else { return }
-        let result = store.importAgents(from: text)
-        let message: String
-        if result.errors.isEmpty {
-            message = localization.format("import_result_format", result.imported)
-        } else {
-            message = localization.format("import_errors_format", result.imported) + "\n" + result.errors.joined(separator: "\n")
+    private func pickerAvatar(_ agent: Agent) -> some View {
+        if let image = faviconStore.images[agent.id] {
+            return AnyView(
+                Image(nsImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 24, height: 24)
+                    .clipShape(RoundedRectangle(cornerRadius: 7))
+            )
         }
-        showAlert(title: localization.text("import_title"), message: message)
+        return AnyView(
+            Text(agent.letter)
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 24, height: 24)
+                .background(Color(hex: agent.colorHex), in: RoundedRectangle(cornerRadius: 7))
+        )
     }
 
-    private func exportAgents() {
-        let panel = NSSavePanel()
-        panel.allowedContentTypes = [.plainText]
-        panel.nameFieldStringValue = "agents.txt"
-        guard panel.runModal() == .OK, let url = panel.url else { return }
-        try? store.exportAgents().write(to: url, atomically: true, encoding: .utf8)
-    }
-
-    private func showAlert(title: String, message: String) {
-        let alert = NSAlert()
-        alert.messageText = title
-        alert.informativeText = message
-        alert.alertStyle = .warning
-        alert.addButton(withTitle: localization.text("ok"))
-        alert.runModal()
+    private func saveCustom() {
+        let name = customName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let url = customURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { return }
+        agentStore.add(name: name, urlString: url)
+        customName = ""
+        customURL = ""
+        showCustomForm = false
     }
 }

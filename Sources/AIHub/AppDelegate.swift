@@ -10,6 +10,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let webPool = WebViewPool()
     private let localization = LocalizedStore()
     private let faviconStore = FaviconStore()
+    private let apiKeyStore = APIKeyStore()
+    private let adminAuth = AdminAuthStore()
 
     private let defaultSize = NSSize(width: 960, height: 680)
 
@@ -18,6 +20,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let raw = UserDefaults.standard.string(forKey: "aihome.appearance"),
            let appearance = NSAppearance(named: NSAppearance.Name(rawValue: raw)) {
             NSApp.appearance = appearance
+        } else {
+            NSApp.appearance = NSAppearance(named: .darkAqua)
+            UserDefaults.standard.set(NSAppearance.Name.darkAqua.rawValue, forKey: "aihome.appearance")
         }
         faviconStore.ensureLoaded(for: agentStore.agents)
         setupStatusItem()
@@ -84,6 +89,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 .environmentObject(webPool)
                 .environmentObject(localization)
                 .environmentObject(faviconStore)
+                .environmentObject(apiKeyStore)
+                .environmentObject(adminAuth)
             hostingController = NSHostingController(rootView: AnyView(view))
         }
 
