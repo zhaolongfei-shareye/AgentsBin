@@ -475,6 +475,11 @@ struct ManageView: View {
                         .font(.caption)
                         .foregroundStyle(.red)
                 } else {
+                    if adminAuth.isDefaultPassword {
+                        Text(localization.format("initial_password_hint", AdminAuthStore.initialPassword))
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                    }
                     SecureField(localization.text("admin_password"), text: $password)
                         .textFieldStyle(.roundedBorder)
                     if !adminAuth.message.isEmpty {
@@ -527,7 +532,15 @@ struct ManageView: View {
     private var configListView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
-                if showChangePassword {
+                if adminAuth.requireChange {
+                    Text(localization.text("change_required"))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(.orange)
+                        .padding(8)
+                        .background(Color.orange.opacity(0.14), in: RoundedRectangle(cornerRadius: 8))
+                }
+
+                if showChangePassword || adminAuth.requireChange {
                     HStack(spacing: 8) {
                         SecureField(localization.text("old_password"), text: $oldPassword)
                             .textFieldStyle(.roundedBorder)
@@ -544,7 +557,7 @@ struct ManageView: View {
                     .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
                 }
 
-                if showChangeEmail {
+                if showChangeEmail || adminAuth.requireChange {
                     VStack(spacing: 8) {
                         HStack(spacing: 8) {
                             TextField(localization.text("new_email"), text: $newEmail)

@@ -528,6 +528,26 @@ final class LocalizedStore: ObservableObject {
             .fr: "Lancer au démarrage", .de: "Beim Anmelden starten",
             .ru: "Запускать при входе", .pt: "Iniciar no login"
         ],
+        "initial_password_hint": [
+            .zh: "初始密码：%@，登录后请立即修改。", .zhHant: "初始密碼：%@，登入後請立即修改。", .en: "Initial password: %@. Change it after login.",
+            .ja: "初期パスワード：%@。ログイン後すぐに変更してください。",
+            .ko: "초기 비밀번호: %@. 로그인 후 바로 변경하세요.",
+            .es: "Contraseña inicial: %@. Cámbiela tras iniciar sesión.",
+            .fr: "Mot de passe initial : %@. Modifiez-le après connexion.",
+            .de: "Startpasswort: %@. Nach der Anmeldung ändern.",
+            .ru: "Начальный пароль: %@. Смените его после входа.",
+            .pt: "Senha inicial: %@. Altere após o login."
+        ],
+        "change_required": [
+            .zh: "请修改密码并补充管理员邮箱后再使用。", .zhHant: "請修改密碼並補充管理員信箱後再使用。", .en: "Please change the password and add an admin email.",
+            .ja: "パスワードを変更し、管理者メールを設定してください。",
+            .ko: "비밀번호를 변경하고 관리자 이메일을 설정하세요.",
+            .es: "Cambie la contraseña y añada el correo del administrador.",
+            .fr: "Modifiez le mot de passe et ajoutez l'e-mail administrateur.",
+            .de: "Passwort ändern und Admin-E-Mail hinzufügen.",
+            .ru: "Смените пароль и добавьте почту администратора.",
+            .pt: "Altere a senha e adicione o e-mail do administrador."
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"

@@ -153,6 +153,7 @@ final class AdminAuthStore: ObservableObject {
     @Published var lockedUntil: Date?
     @Published var resetCode: String?
     @Published var resetExpiry: Date?
+    @Published var isDefaultPassword = false
 
     private let defaults = UserDefaults.standard
     private let authKey = "agentsbin.admin.auth"
@@ -160,8 +161,13 @@ final class AdminAuthStore: ObservableObject {
     private let lockedKey = "agentsbin.admin.lockedUntil"
     private var unlockTimer: Timer?
 
+    static let initialPassword = "AgentsBin@2026"
+
     init() {
         isConfigured = KeychainService.load(authKey) != nil
+        if !isConfigured {
+            setupDefaultAuth()
+        }
         if let email = defaults.string(forKey: "agentsbin.admin.email") {
             adminEmail = email
         }
@@ -181,6 +187,16 @@ final class AdminAuthStore: ObservableObject {
             return "需包含字母、数字和符号"
         }
         return nil
+    }
+
+    var requireChange: Bool {
+        isDefaultPassword || adminEmail.isEmpty
+    }
+
+    private func setupDefaultAuth() {
+        saveAuth(email: "", password: Self.initialPassword)
+        isConfigured = true
+        isDefaultPassword = true
     }
 
     func setup(email: String, password: String) -> Bool {
@@ -225,6 +241,7 @@ final class AdminAuthStore: ObservableObject {
             return false
         }
         saveAuth(email: adminEmail, password: new)
+        isDefaultPassword = false
         message = "密码已修改"
         return true
     }
