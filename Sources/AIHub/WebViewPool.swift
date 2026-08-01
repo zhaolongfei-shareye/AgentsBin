@@ -5,21 +5,6 @@ import WebKit
 final class WebViewPool: ObservableObject {
     var onAnswerText: ((String, String) -> Void)?
 
-    private static func doubaoDarkModeScript() -> String? {
-        """
-        (function() {
-          const style = document.createElement('style');
-          style.id = 'aihome-doubao-dark';
-          style.textContent = `
-            :root { color-scheme: dark; }
-            html { filter: invert(1) hue-rotate(180deg) !important; background: #111 !important; }
-            img, video, iframe, canvas { filter: invert(1) hue-rotate(180deg) !important; }
-          `;
-          document.documentElement.appendChild(style);
-        })();
-        """
-    }
-
     @Published private(set) var webViews: [String: WKWebView] = [:]
     @Published private(set) var unreadIDs: Set<String> = []
     @Published private(set) var statusByAgent: [String: String] = [:]
@@ -46,15 +31,6 @@ final class WebViewPool: ObservableObject {
         }
         let config = WKWebViewConfiguration()
         config.websiteDataStore = .default()
-        if agent.id == "doubao", let script = Self.doubaoDarkModeScript() {
-            config.userContentController.addUserScript(
-                WKUserScript(
-                    source: script,
-                    injectionTime: .atDocumentStart,
-                    forMainFrameOnly: false
-                )
-            )
-        }
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         webViews[agent.id] = webView

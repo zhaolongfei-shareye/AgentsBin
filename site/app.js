@@ -134,7 +134,7 @@
 
   document.getElementById("wechatCopy").addEventListener("click", function () {
     const btn = this;
-    const label = btn.querySelector("span");
+    const label = btn.querySelector(".contact-text > span");
     const original = label.textContent;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText("shareye").then(function () {
