@@ -114,6 +114,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             panel.isReleasedWhenClosed = false
             panel.minSize = NSSize(width: 640, height: 520)
             panel.delegate = self
+            panel.standardWindowButton(.closeButton)?.isHidden = true
+            panel.standardWindowButton(.miniaturizeButton)?.isHidden = true
+            panel.standardWindowButton(.zoomButton)?.isHidden = true
             panel.contentViewController = hostingController
             panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
             if let raw = UserDefaults.standard.string(forKey: sizeKey) {

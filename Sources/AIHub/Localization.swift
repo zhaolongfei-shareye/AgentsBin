@@ -687,6 +687,24 @@ final class LocalizedStore: ObservableObject {
             .ru: "Ваши отзывы очень важны. Если у вас есть идеи или предложения, напишите нам на почту.",
             .pt: "Valorizamos muito seu feedback. Se tiver sugestões ou ideias, envie-nos um e-mail."
         ],
+        "close_to_menu": [
+            .zh: "关闭到菜单栏", .zhHant: "關閉到選單列", .en: "Close to menu bar",
+            .ja: "メニューバーに戻す", .ko: "메뉴 막대로 닫기", .es: "Cerrar a la barra de menús",
+            .fr: "Fermer dans la barre de menus", .de: "In Menüleiste schließen",
+            .ru: "Свернуть в меню-бар", .pt: "Fechar para a barra de menus"
+        ],
+        "minimize_size": [
+            .zh: "缩到最小尺寸", .zhHant: "縮到最小尺寸", .en: "Minimize size",
+            .ja: "最小サイズにする", .ko: "최소 크기로", .es: "Reducir al mínimo",
+            .fr: "Réduire au minimum", .de: "Auf Minimum verkleinern",
+            .ru: "Уменьшить до минимума", .pt: "Reduzir ao mínimo"
+        ],
+        "maximize_size": [
+            .zh: "放到最大尺寸", .zhHant: "放到最大尺寸", .en: "Maximize size",
+            .ja: "最大サイズにする", .ko: "최대 크기로", .es: "Maximizar",
+            .fr: "Agrandir au maximum", .de: "Maximieren",
+            .ru: "Увеличить до максимума", .pt: "Maximizar"
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"

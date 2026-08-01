@@ -107,21 +107,28 @@ struct MainPopoverView: View {
     }
 
     private var rightFooterBar: some View {
-        HStack(spacing: 10) {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 8) {
+                    Image(systemName: "lightbulb")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                    Text("agentsbin.pages.dev")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                    Text("zhaolongfei@gmail.com")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                }
+                Text(localization.text("footer_contact_text"))
+                    .font(.system(size: 10))
+                    .foregroundStyle(.tertiary)
+                    .lineLimit(1)
+            }
             Spacer()
-            Text("agentsbin.pages.dev")
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(.secondary)
-            Text("zhaolongfei@gmail.com")
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(.secondary)
-            Text(localization.text("footer_contact_text"))
-                .font(.system(size: 10))
-                .foregroundStyle(.tertiary)
-                .lineLimit(1)
         }
         .padding(.horizontal, 12)
-        .frame(height: 26)
+        .padding(.vertical, 5)
         .background(.bar)
     }
 
@@ -146,7 +153,8 @@ struct MainPopoverView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
+            trafficDots
             Text("AgentsBin")
                 .font(.system(size: 22, weight: .heavy))
             Text("V\(appVersion)")
@@ -170,10 +178,82 @@ struct MainPopoverView: View {
             }
             .buttonStyle(.plain)
             .help(localization.text("browser"))
+
+            HStack(spacing: 6) {
+                Image(systemName: "globe")
+                    .foregroundStyle(.secondary)
+                Picker("", selection: $localization.language) {
+                    ForEach(AppLanguage.allCases, id: \.self) { lang in
+                        Text(lang.displayName).tag(lang)
+                    }
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+                .frame(width: 86)
+            }
+
+            Button {
+                mode = .manage
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 22, height: 22)
+            }
+            .buttonStyle(.plain)
+            .help(localization.text("settings"))
+
+            Button {
+                NSApp.terminate(nil)
+            } label: {
+                Image(systemName: "power")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 22, height: 22)
+            }
+            .buttonStyle(.plain)
+            .help(localization.text("quit"))
         }
         .padding(.horizontal, 12)
         .frame(height: 48)
         .background(.bar)
+    }
+
+    private var trafficDots: some View {
+        HStack(spacing: 8) {
+            Button {
+                AppDelegate.mainPanel?.orderOut(nil)
+            } label: {
+                Circle()
+                    .fill(Color(red: 1.0, green: 0.37, blue: 0.34))
+                    .frame(width: 12, height: 12)
+            }
+            .buttonStyle(.plain)
+            .help(localization.text("close_to_menu"))
+
+            Button {
+                let size = AppDelegate.mainPanel?.minSize ?? NSSize(width: 640, height: 520)
+                AppDelegate.mainPanel?.setContentSize(size)
+            } label: {
+                Circle()
+                    .fill(Color(red: 1.0, green: 0.74, blue: 0.18))
+                    .frame(width: 12, height: 12)
+            }
+            .buttonStyle(.plain)
+            .help(localization.text("minimize_size"))
+
+            Button {
+                if let screen = NSScreen.main {
+                    AppDelegate.mainPanel?.setFrame(screen.visibleFrame, display: true)
+                }
+            } label: {
+                Circle()
+                    .fill(Color(red: 0.16, green: 0.78, blue: 0.25))
+                    .frame(width: 12, height: 12)
+            }
+            .buttonStyle(.plain)
+            .help(localization.text("maximize_size"))
+        }
     }
 
     private var appVersion: String {
@@ -219,39 +299,6 @@ struct MainPopoverView: View {
                 }
                 .buttonStyle(.plain)
                 .help(localization.text("add_custom_agent_hint"))
-            }
-
-            HStack(spacing: 6) {
-                Image(systemName: "globe")
-                    .foregroundStyle(.secondary)
-                Picker("", selection: $localization.language) {
-                    ForEach(AppLanguage.allCases, id: \.self) { lang in
-                        Text(lang.displayName).tag(lang)
-                    }
-                }
-                .pickerStyle(.menu)
-                .labelsHidden()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                Button {
-                    mode = .manage
-                } label: {
-                    Image(systemName: "gearshape")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 22, height: 22)
-                }
-                .buttonStyle(.plain)
-                .help(localization.text("settings"))
-                Button {
-                    NSApp.terminate(nil)
-                } label: {
-                    Image(systemName: "power")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 22, height: 22)
-                }
-                .buttonStyle(.plain)
-                .help(localization.text("quit"))
             }
         }
         .sheet(isPresented: $showAgentPicker) {
@@ -1133,7 +1180,7 @@ struct AgentPickerView: View {
             }
         }
         .padding(18)
-        .frame(width: 380)
+        .frame(width: 380, height: 320)
         .onChange(of: customName) { _ in validate() }
         .onChange(of: customURL) { _ in validate() }
     }
