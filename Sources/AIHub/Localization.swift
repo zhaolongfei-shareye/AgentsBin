@@ -675,6 +675,18 @@ final class LocalizedStore: ObservableObject {
             .fr: "Masquer le mot de passe", .de: "Passwort verbergen",
             .ru: "Скрыть пароль", .pt: "Ocultar senha"
         ],
+        "footer_contact_text": [
+            .zh: "我们很重视你的使用体验。如果你对本软件有任何建议或想法，欢迎随时通过邮件告诉我们。",
+            .zhHant: "我們很重視你的使用體驗。如果你對本軟體有任何建議或想法，歡迎隨時透過郵件告訴我們。",
+            .en: "We'd love to hear from you. If you have any suggestions or feedback about AgentsBin, feel free to email us anytime.",
+            .ja: "あなたのフィードバックを大切にしています。ご意見やご提案があれば、いつでもメールでお知らせください。",
+            .ko: "여러분의 피드백을 소중히 생각합니다. 의견이나 제안이 있으시면 언제든 이메일로 보내주세요.",
+            .es: "Valoramos mucho tus comentarios. Si tienes sugerencias o ideas sobre AgentsBin, escríbenos por correo.",
+            .fr: "Vos retours comptent beaucoup. Si vous avez des suggestions ou des idées, écrivez-nous par e-mail.",
+            .de: "Ihr Feedback ist uns wichtig. Bei Anregungen oder Ideen schreiben Sie uns gerne eine E-Mail.",
+            .ru: "Ваши отзывы очень важны. Если у вас есть идеи или предложения, напишите нам на почту.",
+            .pt: "Valorizamos muito seu feedback. Se tiver sugestões ou ideias, envie-nos um e-mail."
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"

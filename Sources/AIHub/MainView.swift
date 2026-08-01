@@ -77,6 +77,7 @@ struct MainPopoverView: View {
                     rightPane
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .background(Color(nsColor: .textBackgroundColor))
+                    rightFooterBar
                 }
             }
         }
@@ -103,6 +104,25 @@ struct MainPopoverView: View {
         .buttonStyle(.plain)
         .help(localization.text("toggle_sidebar"))
         .background(Color(nsColor: .windowBackgroundColor))
+    }
+
+    private var rightFooterBar: some View {
+        HStack(spacing: 10) {
+            Spacer()
+            Text("agentsbin.pages.dev")
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(.secondary)
+            Text("zhaolongfei@gmail.com")
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(.secondary)
+            Text(localization.text("footer_contact_text"))
+                .font(.system(size: 10))
+                .foregroundStyle(.tertiary)
+                .lineLimit(1)
+        }
+        .padding(.horizontal, 12)
+        .frame(height: 26)
+        .background(.bar)
     }
 
     private func toggleSidebar() {
