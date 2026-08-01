@@ -183,7 +183,7 @@ struct MainPopoverView: View {
                 Button {
                     toggleLaunchAtLogin()
                 } label: {
-                    Image(systemName: launchAtLogin ? "power.fill" : "power")
+                    Image(systemName: launchAtLogin ? "bolt.fill" : "bolt")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(launchAtLogin ? Color.green : Color.secondary)
                         .frame(width: 22, height: 22)
