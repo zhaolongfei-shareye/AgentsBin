@@ -128,8 +128,14 @@ struct MainPopoverView: View {
 
     private var header: some View {
         HStack(spacing: 12) {
-            Text("AgentsBin V\(appVersion)")
+            Text("AgentsBin")
                 .font(.system(size: 22, weight: .heavy))
+            Text("V\(appVersion)")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(.quaternary, in: Capsule())
             Text(localization.text("beta_note"))
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
@@ -418,6 +424,9 @@ struct ManageView: View {
     @State private var emailPassword = ""
     @State private var selectedConfigID: String?
     @State private var settingsTab = 0
+    @State private var generalItem = 0
+    @State private var showAddAPIProvider = false
+    @State private var addAPIProviderName = ""
     @State private var launchAtLogin = false
     @State private var darkModeEnabled = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
 
@@ -600,36 +609,64 @@ struct ManageView: View {
                 }
 
                 HStack(alignment: .top, spacing: 10) {
-                    ScrollView {
-                        VStack(spacing: 4) {
-                            ForEach(apiKeyStore.configs) { config in
-                                Button {
-                                    selectedConfigID = config.id
-                                } label: {
-                                    HStack(spacing: 8) {
-                                        Toggle("", isOn: Binding(
-                                            get: { config.isEnabled },
-                                            set: { apiKeyStore.updateEnabled(config.id, $0) }
-                                        ))
-                                        .toggleStyle(.checkbox)
-                                        .labelsHidden()
-                                        Text(config.name)
-                                            .font(.system(size: 12, weight: .semibold))
-                                            .foregroundStyle(selectedConfigID == config.id ? Color.white : Color.primary)
-                                            .lineLimit(1)
-                                        Spacer(minLength: 0)
+                    VStack(spacing: 6) {
+                        ScrollView {
+                            VStack(spacing: 4) {
+                                ForEach(apiKeyStore.configs) { config in
+                                    Button {
+                                        selectedConfigID = config.id
+                                    } label: {
+                                        HStack(spacing: 8) {
+                                            Toggle("", isOn: Binding(
+                                                get: { config.isEnabled },
+                                                set: { apiKeyStore.updateEnabled(config.id, $0) }
+                                            ))
+                                            .toggleStyle(.checkbox)
+                                            .labelsHidden()
+                                            Text(config.name)
+                                                .font(.system(size: 12, weight: .semibold))
+                                                .foregroundStyle(selectedConfigID == config.id ? Color.white : Color.primary)
+                                                .lineLimit(1)
+                                            Spacer(minLength: 0)
+                                        }
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 7)
+                                        .background(
+                                            selectedConfigID == config.id ? brandBlue : Color.clear,
+                                            in: RoundedRectangle(cornerRadius: 7)
+                                        )
+                                        .contentShape(Rectangle())
                                     }
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 7)
-                                    .background(
-                                        selectedConfigID == config.id ? brandBlue : Color.clear,
-                                        in: RoundedRectangle(cornerRadius: 7)
-                                    )
-                                    .contentShape(Rectangle())
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+
+                        if showAddAPIProvider {
+                            HStack(spacing: 6) {
+                                TextField(localization.text("name"), text: $addAPIProviderName)
+                                    .textFieldStyle(.roundedBorder)
+                                Button(localization.text("save")) {
+                                    addCustomProvider()
                                 }
                                 .buttonStyle(.plain)
                             }
                         }
+
+                        Button {
+                            showAddAPIProvider.toggle()
+                            if !showAddAPIProvider {
+                                addAPIProviderName = ""
+                            }
+                        } label: {
+                            Image(systemName: "plus.circle")
+                                .font(.system(size: 16))
+                                .foregroundStyle(brandBlue)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 26)
+                        }
+                        .buttonStyle(.plain)
+                        .help(localization.text("add_custom_agent"))
                     }
                     .frame(width: 230)
 
@@ -663,112 +700,178 @@ struct ManageView: View {
         }
     }
 
+    private func addCustomProvider() {
+        let name = addAPIProviderName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { return }
+        selectedConfigID = apiKeyStore.addCustomProvider(name: name)
+        addAPIProviderName = ""
+        showAddAPIProvider = false
+    }
+
     private var generalSettingsView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                if adminAuth.requireChange {
-                    Text(localization.text("change_required"))
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.orange)
-                        .padding(8)
-                        .background(Color.orange.opacity(0.14), in: RoundedRectangle(cornerRadius: 8))
-                }
+        VStack(spacing: 8) {
+            if adminAuth.requireChange {
+                Text(localization.text("change_required"))
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.orange)
+                    .padding(8)
+                    .background(Color.orange.opacity(0.14), in: RoundedRectangle(cornerRadius: 8))
+            }
 
-                GroupBox(localization.text("change_password")) {
-                    VStack(spacing: 8) {
-                        SecureField(localization.text("old_password"), text: $oldPassword)
-                            .textFieldStyle(.roundedBorder)
-                        SecureField(localization.text("new_password"), text: $newPassword)
-                            .textFieldStyle(.roundedBorder)
-                        HStack {
-                            Spacer()
-                            Button(localization.text("save")) {
-                                _ = adminAuth.changePassword(old: oldPassword, new: newPassword)
-                                oldPassword = ""
-                                newPassword = ""
-                            }
-                            .buttonStyle(.borderedProminent)
+            HStack(alignment: .top, spacing: 10) {
+                VStack(spacing: 4) {
+                    generalItemButton(index: 0, icon: "key.fill", title: localization.text("change_password"))
+                    generalItemButton(index: 1, icon: "envelope.fill", title: localization.text("change_email"))
+                    generalItemButton(index: 2, icon: "bolt.fill", title: localization.text("auto_launch"))
+                    generalItemButton(index: 3, icon: "globe", title: localization.text("language"))
+                    generalItemButton(index: 4, icon: "paintbrush.fill", title: localization.text("appearance"))
+                    Spacer(minLength: 0)
+                }
+                .frame(width: 210)
+
+                Divider()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 10) {
+                        switch generalItem {
+                        case 0: passwordSettings
+                        case 1: emailSettings
+                        case 2: launchSettings
+                        case 3: languageSettings
+                        default: appearanceSettings
+                        }
+                        if !adminAuth.message.isEmpty {
+                            Text(adminAuth.message)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
                     }
                     .padding(8)
-                }
-
-                GroupBox(localization.text("change_email")) {
-                    VStack(spacing: 8) {
-                        TextField(localization.text("new_email"), text: $newEmail)
-                            .textFieldStyle(.roundedBorder)
-                        TextField(localization.text("confirm_email"), text: $confirmEmail)
-                            .textFieldStyle(.roundedBorder)
-                        SecureField(localization.text("admin_password"), text: $emailPassword)
-                            .textFieldStyle(.roundedBorder)
-                        HStack {
-                            Spacer()
-                            Button(localization.text("save")) {
-                                if adminAuth.changeEmail(new: newEmail, confirm: confirmEmail, password: emailPassword) {
-                                    newEmail = ""
-                                    confirmEmail = ""
-                                    emailPassword = ""
-                                }
-                            }
-                            .buttonStyle(.borderedProminent)
-                        }
-                    }
-                    .padding(8)
-                }
-
-                GroupBox(localization.text("auto_launch")) {
-                    Toggle(isOn: $launchAtLogin) {
-                        Text(localization.text("auto_launch"))
-                    }
-                    .padding(8)
-                    .onChange(of: launchAtLogin) { enabled in
-                        do {
-                            if enabled {
-                                try SMAppService.mainApp.register()
-                            } else {
-                                try SMAppService.mainApp.unregister()
-                            }
-                            launchAtLogin = SMAppService.mainApp.status == .enabled
-                        } catch {
-                            launchAtLogin = SMAppService.mainApp.status == .enabled
-                        }
-                    }
-                }
-
-                GroupBox(localization.text("language")) {
-                    Picker(localization.text("language"), selection: $localization.language) {
-                        ForEach(AppLanguage.allCases, id: \.self) { lang in
-                            Text(lang.displayName).tag(lang)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .padding(8)
-                }
-
-                GroupBox(localization.text("appearance")) {
-                    Toggle(isOn: $darkModeEnabled) {
-                        Text(localization.text("dark_mode"))
-                    }
-                    .padding(8)
-                    .onChange(of: darkModeEnabled) { enabled in
-                        NSApp.appearance = enabled ? NSAppearance(named: .darkAqua) : NSAppearance(named: .aqua)
-                        UserDefaults.standard.set(
-                            enabled ? NSAppearance.Name.darkAqua.rawValue : NSAppearance.Name.aqua.rawValue,
-                            forKey: "aihome.appearance"
-                        )
-                    }
-                }
-
-                if !adminAuth.message.isEmpty {
-                    Text(adminAuth.message)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            .padding(12)
-            .frame(maxWidth: 560)
         }
-        .frame(maxWidth: .infinity)
+        .padding(12)
+    }
+
+    private func generalItemButton(index: Int, icon: String, title: String) -> some View {
+        Button {
+            generalItem = index
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 12, weight: .semibold))
+                    .frame(width: 18)
+                Text(title)
+                    .font(.system(size: 12, weight: .semibold))
+                    .lineLimit(1)
+                Spacer(minLength: 0)
+            }
+            .foregroundStyle(generalItem == index ? Color.white : Color.primary)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 8)
+            .background(
+                generalItem == index ? brandBlue : Color.clear,
+                in: RoundedRectangle(cornerRadius: 7)
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var passwordSettings: some View {
+        GroupBox(localization.text("change_password")) {
+            VStack(spacing: 8) {
+                SecureField(localization.text("old_password"), text: $oldPassword)
+                    .textFieldStyle(.roundedBorder)
+                SecureField(localization.text("new_password"), text: $newPassword)
+                    .textFieldStyle(.roundedBorder)
+                HStack {
+                    Spacer()
+                    Button(localization.text("save")) {
+                        _ = adminAuth.changePassword(old: oldPassword, new: newPassword)
+                        oldPassword = ""
+                        newPassword = ""
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+            .padding(8)
+        }
+    }
+
+    private var emailSettings: some View {
+        GroupBox(localization.text("change_email")) {
+            VStack(spacing: 8) {
+                TextField(localization.text("new_email"), text: $newEmail)
+                    .textFieldStyle(.roundedBorder)
+                TextField(localization.text("confirm_email"), text: $confirmEmail)
+                    .textFieldStyle(.roundedBorder)
+                SecureField(localization.text("admin_password"), text: $emailPassword)
+                    .textFieldStyle(.roundedBorder)
+                HStack {
+                    Spacer()
+                    Button(localization.text("save")) {
+                        if adminAuth.changeEmail(new: newEmail, confirm: confirmEmail, password: emailPassword) {
+                            newEmail = ""
+                            confirmEmail = ""
+                            emailPassword = ""
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+            .padding(8)
+        }
+    }
+
+    private var launchSettings: some View {
+        GroupBox(localization.text("auto_launch")) {
+            Toggle(isOn: $launchAtLogin) {
+                Text(localization.text("auto_launch"))
+            }
+            .padding(8)
+            .onChange(of: launchAtLogin) { enabled in
+                do {
+                    if enabled {
+                        try SMAppService.mainApp.register()
+                    } else {
+                        try SMAppService.mainApp.unregister()
+                    }
+                    launchAtLogin = SMAppService.mainApp.status == .enabled
+                } catch {
+                    launchAtLogin = SMAppService.mainApp.status == .enabled
+                }
+            }
+        }
+    }
+
+    private var languageSettings: some View {
+        GroupBox(localization.text("language")) {
+            Picker(localization.text("language"), selection: $localization.language) {
+                ForEach(AppLanguage.allCases, id: \.self) { lang in
+                    Text(lang.displayName).tag(lang)
+                }
+            }
+            .pickerStyle(.menu)
+            .padding(8)
+        }
+    }
+
+    private var appearanceSettings: some View {
+        GroupBox(localization.text("appearance")) {
+            Toggle(isOn: $darkModeEnabled) {
+                Text(localization.text("dark_mode"))
+            }
+            .padding(8)
+            .onChange(of: darkModeEnabled) { enabled in
+                NSApp.appearance = enabled ? NSAppearance(named: .darkAqua) : NSAppearance(named: .aqua)
+                UserDefaults.standard.set(
+                    enabled ? NSAppearance.Name.darkAqua.rawValue : NSAppearance.Name.aqua.rawValue,
+                    forKey: "aihome.appearance"
+                )
+            }
+        }
     }
 
     private func credentialRow(config: AgentAPIConfig, credential: APICredential) -> some View {

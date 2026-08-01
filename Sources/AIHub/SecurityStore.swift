@@ -157,6 +157,19 @@ final class APIKeyStore: ObservableObject {
         persist()
     }
 
+    func addCustomProvider(name: String) -> String {
+        let id = "custom-" + slug(name) + "-" + UUID().uuidString.prefix(6).lowercased()
+        let config = AgentAPIConfig(
+            id: id,
+            name: name,
+            note: "",
+            credentials: [APICredential(label: "Default", baseURL: "", model: "")]
+        )
+        configs.append(config)
+        persist()
+        return id
+    }
+
     func updateCredential(configID: String, credential: APICredential) {
         guard let index = configs.firstIndex(where: { $0.id == configID }),
               let credentialIndex = configs[index].credentials.firstIndex(where: { $0.id == credential.id }) else { return }
