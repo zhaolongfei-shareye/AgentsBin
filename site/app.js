@@ -7,7 +7,7 @@
       hero_title: "All your AI agents, one menu bar away",
       hero_lead: "AgentsBin lives in the menu bar. Click the AB icon, pick an agent, and start chatting instantly — no tabs, no typing URLs, no searching.",
       hero_cta: "Download AgentsBin 1.0.16",
-      hero_badge: "17 AI agents · macOS 13+ · Free Beta",
+      hero_badge: "37 AI agents · macOS 13+ · Free Beta",
       w_agents: "Agents",
       w_notes: "Notes",
       w_status: "Answered",
@@ -24,6 +24,28 @@
       f4t: "No URL hunting",
       f4d: "No typing website addresses or digging through bookmarks.",
       agents_title: "Built-in agents",
+      feature_details_title: "What's inside",
+      d1t: "Encrypted API key vault",
+      d1d: "Save multiple API keys per provider with multi-credential groups, locally encrypted and protected by an admin password.",
+      d2t: "Agent management",
+      d2d: "Drag to reorder, hide with one click, add custom agents, import and export.",
+      d3t: "10 languages",
+      d3d: "Full UI translations, auto-detected or switch anytime.",
+      d4t: "Appearance & launch",
+      d4d: "Dark/light mode and launch-at-login, all in one place.",
+      d5t: "Web chat",
+      d5d: "One agent at a time inside the real site, keep your login.",
+      d6t: "Collapsible sidebar",
+      d6d: "Fold the sidebar and shrink the window to keep your screen clean.",
+      howto_title: "How to use",
+      h1t: "Install & launch",
+      h1d: "Open the DMG, drag AgentsBin to Applications, then click the AB icon in the menu bar.",
+      h2t: "Start chatting",
+      h2d: "Pick an agent from the left side and chat in the embedded web page.",
+      h3t: "Back up API keys",
+      h3d: "Open Settings → API Keys, unlock with the admin password, then add or import providers and save multiple API keys.",
+      h4t: "Customize",
+      h4d: "Add custom agents, drag to reorder, switch language or appearance.",
       agents: ["ChatGPT", "Claude", "Copilot", "DeepSeek", "Doubao", "Gemini", "Grok", "Kimi", "Le Chat", "Mistral", "Perplexity", "Pi", "Poe", "Qwen", "Tongyi", "You.com", "Tencent Yuanbao", "ChatGLM", "Hailuo", "Wenxin", "Xinghuo", "Meta AI", "HuggingChat", "Coze", "Monica", "Cursor", "Character.AI", "Cohere", "Flowith", "DeepAI", "Julius AI", "Tiangong", "Metaso", "Blackbox AI", "Sider", "Phind", "Wenxiaoyan"],
       dl_title: "Download AgentsBin",
       dl_name: "AgentsBin 1.0.16 · Free Beta",
@@ -50,7 +72,7 @@
       hero_title: "所有 AI 智能体，一个菜单栏就够了",
       hero_lead: "AgentsBin 常驻菜单栏，点击 AB 图标瞬间拉起弹窗，选一个智能体立即对话，不用开标签页、不用手输网址、不用到处找。",
       hero_cta: "下载 AgentsBin 1.0.16",
-      hero_badge: "内置 17 个智能体 · macOS 13+ · 免费内测版",
+      hero_badge: "内置 37 个智能体 · macOS 13+ · 免费内测版",
       w_agents: "智能体",
       w_notes: "知识库",
       w_status: "已回复",
@@ -67,6 +89,28 @@
       f4t: "不用找网址",
       f4d: "不用手输网站地址，也不用翻书签。",
       agents_title: "内置智能体",
+      feature_details_title: "功能详解",
+      d1t: "加密的 API Key 保险箱",
+      d1d: "每个智能体可保存多组 API 参数，本地加密，管理员密码保护，支持一键复制。",
+      d2t: "智能体管理",
+      d2d: "拖拽排序、一键隐藏、添加自定义智能体、导入导出。",
+      d3t: "10 种语言",
+      d3d: "完整界面翻译，自动识别或随时手动切换。",
+      d4t: "外观与开机启动",
+      d4d: "深浅模式、开机启动集中在通用设置里。",
+      d5t: "网页内对话",
+      d5d: "一次专注一个智能体，在原站网页内聊天，保留登录态。",
+      d6t: "可折叠侧栏",
+      d6d: "折叠侧栏并缩小窗口，常驻屏幕不遮挡其他应用。",
+      howto_title: "操作说明",
+      h1t: "安装并启动",
+      h1d: "打开 DMG，把 AgentsBin 拖进 Applications，然后点击菜单栏 AB 图标。",
+      h2t: "开始对话",
+      h2d: "在左侧选择一个智能体，在嵌入的网页里直接聊天。",
+      h3t: "备份 API Key",
+      h3d: "进入设置 → API 参数备份，用管理员密码解锁，再添加或导入供应商并保存多组 API Key。",
+      h4t: "个性化",
+      h4d: "添加自定义智能体、拖拽排序、切换语言或界面风格。",
       agents: ["ChatGPT", "Claude", "Copilot", "DeepSeek", "豆包", "Gemini", "Grok", "Kimi", "Le Chat", "Mistral", "Perplexity", "Pi", "Poe", "千问", "通义", "You.com", "腾讯元宝", "智谱清言", "海螺 AI", "文心一言", "讯飞星火", "Meta AI", "HuggingChat", "Coze", "Monica", "Cursor", "Character.AI", "Cohere", "Flowith", "DeepAI", "Julius AI", "天工", "秘塔 AI", "Blackbox AI", "Sider", "Phind", "文小言"],
       dl_title: "下载 AgentsBin",
       dl_name: "AgentsBin 1.0.16 · 免费内测版",
@@ -88,6 +132,16 @@
     }
   };
 
+  const agentHosts = [
+    "chatgpt.com", "claude.ai", "copilot.microsoft.com", "chat.deepseek.com", "doubao.com",
+    "gemini.google.com", "grok.com", "kimi.moonshot.cn", "chat.mistral.ai", "chat.mistral.ai",
+    "perplexity.ai", "pi.ai", "poe.com", "chat.qwen.ai", "tongyi.aliyun.com", "you.com",
+    "yuanbao.tencent.com", "chatglm.cn", "hailuoai.com", "yiyan.baidu.com", "xinghuo.xfyun.cn",
+    "meta.ai", "huggingface.co", "coze.cn", "monica.im", "cursor.com", "character.ai",
+    "cohere.com", "flowith.net", "deepai.org", "julius.ai", "tiangong.cn", "metaso.cn",
+    "blackbox.ai", "sider.ai", "phind.com", "top.aixin.baidu.com"
+  ];
+
   function detectLang() {
     const raw = (navigator.language || "en").toLowerCase();
     return raw.indexOf("zh") === 0 ? "zh" : "en";
@@ -106,6 +160,25 @@
     document.getElementById("agentChips").innerHTML = dict.agents
       .map(function (name) { return '<span class="agent-chip">' + name + '</span>'; })
       .join("");
+    renderAgentCloud(dict.agents);
+  }
+
+  function renderAgentCloud(agents) {
+    const container = document.getElementById("agentCloud");
+    if (!container) return;
+    container.innerHTML = agents.map(function (name, index) {
+      const host = agentHosts[index] || "example.com";
+      const letter = name.charAt(0).toUpperCase();
+      const hue = (index * 37) % 360;
+      return (
+        '<div class="agent-logo" title="' + name + '">' +
+          '<img loading="lazy" src="https://www.google.com/s2/favicons?domain=' + host + '&sz=64" ' +
+            'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';" alt="">' +
+          '<span class="agent-fallback" style="display:none;background:hsl(' + hue + ',60%,45%)">' + letter + '</span>' +
+          '<small>' + name + '</small>' +
+        '</div>'
+      );
+    }).join("");
   }
 
   let lang = localStorage.getItem("agentsbin-lang") || detectLang();
