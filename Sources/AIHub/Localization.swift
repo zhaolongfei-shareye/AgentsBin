@@ -309,112 +309,224 @@ final class LocalizedStore: ObservableObject {
             .ru: "Бесплатная бета", .pt: "Beta grátis"
         ],
         "hide_agents_hint": [
-            .zh: "管理显示", .zhHant: "管理顯示", .en: "Manage visibility"
+            .zh: "管理显示", .zhHant: "管理顯示", .en: "Manage visibility",
+            .ja: "表示管理", .ko: "표시 관리", .es: "Gestionar visibilidad", .fr: "Gérer l'affichage",
+            .de: "Sichtbarkeit verwalten", .ru: "Управление отображением", .pt: "Gerenciar exibição"
         ],
         "add_agents_hint": [
-            .zh: "添加智能体", .zhHant: "新增智能體", .en: "Add agents"
+            .zh: "添加智能体", .zhHant: "新增智能體", .en: "Add agents",
+            .ja: "エージェントを追加", .ko: "에이전트 추가", .es: "Añadir agentes", .fr: "Ajouter des agents",
+            .de: "Agenten hinzufügen", .ru: "Добавить агентов", .pt: "Adicionar agentes"
         ],
         "agent_picker_title": [
-            .zh: "显示智能体", .zhHant: "顯示智能體", .en: "Visible Agents"
+            .zh: "显示智能体", .zhHant: "顯示智能體", .en: "Visible Agents",
+            .ja: "表示エージェント", .ko: "표시 에이전트", .es: "Agentes visibles", .fr: "Agents visibles",
+            .de: "Sichtbare Agenten", .ru: "Видимые агенты", .pt: "Agentes visíveis"
         ],
         "visible_agents": [
-            .zh: "当前显示", .zhHant: "目前顯示", .en: "Currently shown"
+            .zh: "当前显示", .zhHant: "目前顯示", .en: "Currently shown",
+            .ja: "現在表示中", .ko: "현재 표시", .es: "Mostrados ahora", .fr: "Affichés actuellement",
+            .de: "Derzeit angezeigt", .ru: "Сейчас показаны", .pt: "Exibidos agora"
         ],
         "all_agents": [
-            .zh: "全部智能体", .zhHant: "全部智能體", .en: "All agents"
+            .zh: "全部智能体", .zhHant: "全部智能體", .en: "All agents",
+            .ja: "全エージェント", .ko: "전체 에이전트", .es: "Todos los agentes", .fr: "Tous les agents",
+            .de: "Alle Agenten", .ru: "Все агенты", .pt: "Todos os agentes"
         ],
         "custom_agent": [
-            .zh: "自定义", .zhHant: "自訂", .en: "Custom"
+            .zh: "自定义", .zhHant: "自訂", .en: "Custom",
+            .ja: "カスタム", .ko: "사용자 지정", .es: "Personalizado", .fr: "Personnalisé",
+            .de: "Benutzerdefiniert", .ru: "Пользовательский", .pt: "Personalizado"
         ],
         "done": [
-            .zh: "完成", .zhHant: "完成", .en: "Done"
+            .zh: "完成", .zhHant: "完成", .en: "Done",
+            .ja: "完了", .ko: "완료", .es: "Hecho", .fr: "Terminé",
+            .de: "Fertig", .ru: "Готово", .pt: "Concluído"
         ],
         "api_settings": [
-            .zh: "API 设置", .zhHant: "API 設定", .en: "API Settings"
+            .zh: "API 设置", .zhHant: "API 設定", .en: "API Settings",
+            .ja: "API設定", .ko: "API 설정", .es: "Ajustes de API", .fr: "Paramètres API",
+            .de: "API-Einstellungen", .ru: "Настройки API", .pt: "Configurações da API"
         ],
         "change_password": [
-            .zh: "修改密码", .zhHant: "修改密碼", .en: "Change Password"
+            .zh: "修改密码", .zhHant: "修改密碼", .en: "Change Password",
+            .ja: "パスワード変更", .ko: "비밀번호 변경", .es: "Cambiar contraseña", .fr: "Changer le mot de passe",
+            .de: "Passwort ändern", .ru: "Изменить пароль", .pt: "Alterar senha"
         ],
         "lock": [
-            .zh: "锁定", .zhHant: "鎖定", .en: "Lock"
+            .zh: "锁定", .zhHant: "鎖定", .en: "Lock",
+            .ja: "ロック", .ko: "잠금", .es: "Bloquear", .fr: "Verrouiller",
+            .de: "Sperren", .ru: "Заблокировать", .pt: "Bloquear"
         ],
         "admin_setup_title": [
-            .zh: "首次使用设置管理员", .zhHant: "首次使用設定管理員", .en: "Set up administrator"
+            .zh: "首次使用设置管理员", .zhHant: "首次使用設定管理員", .en: "Set up administrator",
+            .ja: "初回：管理者を設定", .ko: "처음: 관리자 설정", .es: "Configurar administrador", .fr: "Configurer l'administrateur",
+            .de: "Administrator einrichten", .ru: "Настройка администратора", .pt: "Configurar administrador"
         ],
         "admin_setup_desc": [
-            .zh: "API Key 只会在验证管理员后显示和复制，并本地加密保存。", .zhHant: "API Key 只會在驗證管理員後顯示和複製，並本地加密儲存。", .en: "API keys are encrypted locally and only visible after admin verification."
+            .zh: "API Key 只会在验证管理员后显示和复制，并本地加密保存。", .zhHant: "API Key 只會在驗證管理員後顯示和複製，並本地加密儲存。", .en: "API keys are encrypted locally and only visible after admin verification.",
+            .ja: "APIキーは管理者認証後にのみ表示・コピーでき、ローカルで暗号化保存されます。",
+            .ko: "API 키는 관리자 인증 후에만 표시·복사되며 로컬 암호화 저장됩니다.",
+            .es: "Las claves API se cifran localmente y solo se muestran tras verificar al administrador.",
+            .fr: "Les clés API sont chiffrées localement et visibles après vérification.",
+            .de: "API-Schlüssel werden lokal verschlüsselt und nur nach Prüfung angezeigt.",
+            .ru: "Ключи API шифруются локально и видны только после проверки.",
+            .pt: "Chaves API criptografadas localmente e visíveis após verificação."
         ],
         "admin_email": [
-            .zh: "管理员邮箱", .zhHant: "管理員信箱", .en: "Admin Email"
+            .zh: "管理员邮箱", .zhHant: "管理員信箱", .en: "Admin Email",
+            .ja: "管理者メール", .ko: "관리자 이메일", .es: "Correo del administrador", .fr: "E-mail administrateur",
+            .de: "Admin-E-Mail", .ru: "Почта администратора", .pt: "E-mail do administrador"
         ],
         "admin_password": [
-            .zh: "管理员密码", .zhHant: "管理員密碼", .en: "Admin Password"
+            .zh: "管理员密码", .zhHant: "管理員密碼", .en: "Admin Password",
+            .ja: "管理者パスワード", .ko: "관리자 비밀번호", .es: "Contraseña de administrador", .fr: "Mot de passe administrateur",
+            .de: "Admin-Passwort", .ru: "Пароль администратора", .pt: "Senha de administrador"
         ],
         "admin_confirm": [
-            .zh: "确认密码", .zhHant: "確認密碼", .en: "Confirm Password"
+            .zh: "确认密码", .zhHant: "確認密碼", .en: "Confirm Password",
+            .ja: "パスワード確認", .ko: "비밀번호 확인", .es: "Confirmar contraseña", .fr: "Confirmer le mot de passe",
+            .de: "Passwort bestätigen", .ru: "Подтверждение пароля", .pt: "Confirmar senha"
         ],
         "password_rule": [
-            .zh: "密码至少 8 位，需包含字母、数字和符号。", .zhHant: "密碼至少 8 位，需包含字母、數字和符號。", .en: "At least 8 characters with letters, numbers and symbols."
+            .zh: "密码至少 8 位，需包含字母、数字和符号。", .zhHant: "密碼至少 8 位，需包含字母、數字和符號。", .en: "At least 8 characters with letters, numbers and symbols.",
+            .ja: "パスワードは8文字以上で、英字・数字・記号を含めてください。",
+            .ko: "비밀번호는 8자 이상, 영문·숫자·기호 포함.",
+            .es: "Mínimo 8 caracteres con letras, números y símbolos.",
+            .fr: "8 caractères minimum avec lettres, chiffres et symboles.",
+            .de: "Mindestens 8 Zeichen mit Buchstaben, Zahlen und Symbolen.",
+            .ru: "Минимум 8 символов: буквы, цифры, символы.",
+            .pt: "Mínimo 8 caracteres com letras, números e símbolos."
         ],
         "password_mismatch": [
-            .zh: "两次密码不一致", .zhHant: "兩次密碼不一致", .en: "Passwords do not match"
+            .zh: "两次密码不一致", .zhHant: "兩次密碼不一致", .en: "Passwords do not match",
+            .ja: "パスワードが一致しません", .ko: "비밀번호가 일치하지 않습니다", .es: "Las contraseñas no coinciden",
+            .fr: "Les mots de passe ne correspondent pas", .de: "Passwörter stimmen nicht überein",
+            .ru: "Пароли не совпадают", .pt: "As senhas não coincidem"
         ],
         "admin_unlock_title": [
-            .zh: "输入管理员密码", .zhHant: "輸入管理員密碼", .en: "Enter admin password"
+            .zh: "输入管理员密码", .zhHant: "輸入管理員密碼", .en: "Enter admin password",
+            .ja: "管理者パスワードを入力", .ko: "관리자 비밀번호 입력", .es: "Introduzca la contraseña",
+            .fr: "Saisissez le mot de passe", .de: "Admin-Passwort eingeben",
+            .ru: "Введите пароль администратора", .pt: "Digite a senha"
         ],
         "locked_until": [
-            .zh: "尝试次数过多，请 5 分钟后再试。", .zhHant: "嘗試次數過多，請 5 分鐘後再試。", .en: "Too many attempts. Try again in 5 minutes."
+            .zh: "尝试次数过多，请 5 分钟后再试。", .zhHant: "嘗試次數過多，請 5 分鐘後再試。", .en: "Too many attempts. Try again in 5 minutes.",
+            .ja: "試行回数が多すぎます。5分後にお試しください。",
+            .ko: "시도 횟수가 너무 많습니다. 5분 후에 다시 시도하세요.",
+            .es: "Demasiados intentos. Intente en 5 minutos.",
+            .fr: "Trop de tentatives. Réessayez dans 5 minutes.",
+            .de: "Zu viele Versuche. Versuchen Sie es in 5 Minuten erneut.",
+            .ru: "Слишком много попыток. Попробуйте через 5 минут.",
+            .pt: "Muitas tentativas. Tente novamente em 5 minutos."
         ],
         "unlock": [
-            .zh: "解锁", .zhHant: "解鎖", .en: "Unlock"
+            .zh: "解锁", .zhHant: "解鎖", .en: "Unlock",
+            .ja: "ロック解除", .ko: "잠금 해제", .es: "Desbloquear", .fr: "Déverrouiller",
+            .de: "Entsperren", .ru: "Разблокировать", .pt: "Desbloquear"
         ],
         "forgot_password": [
-            .zh: "忘记密码？", .zhHant: "忘記密碼？", .en: "Forgot password?"
+            .zh: "忘记密码？", .zhHant: "忘記密碼？", .en: "Forgot password?",
+            .ja: "パスワードを忘れた？", .ko: "비밀번호를 잊으셨나요?", .es: "¿Olvidó su contraseña?",
+            .fr: "Mot de passe oublié ?", .de: "Passwort vergessen?",
+            .ru: "Забыли пароль?", .pt: "Esqueceu a senha?"
         ],
         "reset_code_shown": [
-            .zh: "重置码：%@（30 分钟内有效，已通过邮件应用发送）", .zhHant: "重置碼：%@（30 分鐘內有效，已透過郵件應用傳送）", .en: "Reset code: %@ (valid for 30 minutes, sent via mail)"
+            .zh: "重置码：%@（30 分钟内有效，已通过邮件应用发送）", .zhHant: "重置碼：%@（30 分鐘內有效，已透過郵件應用傳送）", .en: "Reset code: %@ (valid for 30 minutes, sent via mail)",
+            .ja: "リセットコード：%@（30分以内有効、メールで送信済み）",
+            .ko: "재설정 코드: %@ (30분 유효, 메일로 전송됨)",
+            .es: "Código: %@ (válido 30 min, enviado por correo)",
+            .fr: "Code : %@ (valide 30 min, envoyé par e-mail)",
+            .de: "Code: %@ (30 Min gültig, per E-Mail gesendet)",
+            .ru: "Код: %@ (действует 30 мин, отправлен по почте)",
+            .pt: "Código: %@ (válido 30 min, enviado por e-mail)"
         ],
         "copy_reset_code": [
-            .zh: "复制重置码", .zhHant: "複製重置碼", .en: "Copy reset code"
+            .zh: "复制重置码", .zhHant: "複製重置碼", .en: "Copy reset code",
+            .ja: "リセットコードをコピー", .ko: "재설정 코드 복사", .es: "Copiar código de reinicio",
+            .fr: "Copier le code de réinitialisation", .de: "Reset-Code kopieren",
+            .ru: "Скопировать код сброса", .pt: "Copiar código de redefinição"
         ],
         "reset_code": [
-            .zh: "重置码", .zhHant: "重置碼", .en: "Reset code"
+            .zh: "重置码", .zhHant: "重置碼", .en: "Reset code",
+            .ja: "リセットコード", .ko: "재설정 코드", .es: "Código de reinicio",
+            .fr: "Code de réinitialisation", .de: "Reset-Code",
+            .ru: "Код сброса", .pt: "Código de redefinição"
         ],
         "new_password": [
-            .zh: "新密码", .zhHant: "新密碼", .en: "New password"
+            .zh: "新密码", .zhHant: "新密碼", .en: "New password",
+            .ja: "新しいパスワード", .ko: "새 비밀번호", .es: "Nueva contraseña",
+            .fr: "Nouveau mot de passe", .de: "Neues Passwort",
+            .ru: "Новый пароль", .pt: "Nova senha"
         ],
         "reset_password": [
-            .zh: "重置密码", .zhHant: "重置密碼", .en: "Reset password"
+            .zh: "重置密码", .zhHant: "重置密碼", .en: "Reset password",
+            .ja: "パスワードをリセット", .ko: "비밀번호 재설정", .es: "Restablecer contraseña",
+            .fr: "Réinitialiser le mot de passe", .de: "Passwort zurücksetzen",
+            .ru: "Сбросить пароль", .pt: "Redefinir senha"
         ],
         "old_password": [
-            .zh: "当前密码", .zhHant: "目前密碼", .en: "Current password"
+            .zh: "当前密码", .zhHant: "目前密碼", .en: "Current password",
+            .ja: "現在のパスワード", .ko: "현재 비밀번호", .es: "Contraseña actual",
+            .fr: "Mot de passe actuel", .de: "Aktuelles Passwort",
+            .ru: "Текущий пароль", .pt: "Senha atual"
         ],
         "base_url": [
-            .zh: "Base URL", .zhHant: "Base URL", .en: "Base URL"
+            .zh: "Base URL", .zhHant: "Base URL", .en: "Base URL",
+            .ja: "Base URL", .ko: "Base URL", .es: "URL base", .fr: "URL de base",
+            .de: "Basis-URL", .ru: "Базовый URL", .pt: "URL base"
         ],
         "model": [
-            .zh: "模型", .zhHant: "模型", .en: "Model"
+            .zh: "模型", .zhHant: "模型", .en: "Model",
+            .ja: "モデル", .ko: "모델", .es: "Modelo", .fr: "Modèle",
+            .de: "Modell", .ru: "Модель", .pt: "Modelo"
         ],
         "api_key": [
-            .zh: "API Key", .zhHant: "API Key", .en: "API Key"
+            .zh: "API Key", .zhHant: "API Key", .en: "API Key",
+            .ja: "API キー", .ko: "API 키", .es: "Clave API", .fr: "Clé API",
+            .de: "API-Schlüssel", .ru: "API-ключ", .pt: "Chave da API"
         ],
         "copy_key": [
-            .zh: "复制", .zhHant: "複製", .en: "Copy"
+            .zh: "复制", .zhHant: "複製", .en: "Copy",
+            .ja: "コピー", .ko: "복사", .es: "Copiar", .fr: "Copier",
+            .de: "Kopieren", .ru: "Копировать", .pt: "Copiar"
         ],
         "delete_key": [
-            .zh: "删除该 Key", .zhHant: "刪除該 Key", .en: "Delete key"
+            .zh: "删除该 Key", .zhHant: "刪除該 Key", .en: "Delete key",
+            .ja: "キーを削除", .ko: "키 삭제", .es: "Eliminar clave",
+            .fr: "Supprimer la clé", .de: "Schlüssel löschen",
+            .ru: "Удалить ключ", .pt: "Excluir chave"
         ],
         "cc_switch_imported": [
-            .zh: "已自动导入 cc-switch 中的供应商（仅名称与地址，Key 需自行填写）", .zhHant: "已自動匯入 cc-switch 中的供應商（僅名稱與位址，Key 需自行填寫）", .en: "Imported providers from cc-switch (names only; keys stay private)"
+            .zh: "已自动导入 cc-switch 中的供应商（仅名称与地址，Key 需自行填写）", .zhHant: "已自動匯入 cc-switch 中的供應商（僅名稱與位址，Key 需自行填寫）", .en: "Imported providers from cc-switch (names only; keys stay private)",
+            .ja: "cc-switch のプロバイダを自動インポートしました（名称とURLのみ、Keyは手入力）",
+            .ko: "cc-switch 공급자를 자동 가져왔습니다 (이름/주소만, 키는 직접 입력)",
+            .es: "Proveedores importados de cc-switch (solo nombres; claves privadas)",
+            .fr: "Fournisseurs importés de cc-switch (noms uniquement)",
+            .de: "cc-switch-Anbieter importiert (nur Namen)",
+            .ru: "Импортированы провайдеры cc-switch (только имена)",
+            .pt: "Provedores importados do cc-switch (apenas nomes)"
         ],
         "change_email": [
-            .zh: "修改邮箱", .zhHant: "修改信箱", .en: "Change Email"
+            .zh: "修改邮箱", .zhHant: "修改信箱", .en: "Change Email",
+            .ja: "メール変更", .ko: "이메일 변경", .es: "Cambiar correo", .fr: "Changer l'e-mail",
+            .de: "E-Mail ändern", .ru: "Изменить почту", .pt: "Alterar e-mail"
         ],
         "new_email": [
-            .zh: "新邮箱", .zhHant: "新信箱", .en: "New Email"
+            .zh: "新邮箱", .zhHant: "新信箱", .en: "New Email",
+            .ja: "新しいメール", .ko: "새 이메일", .es: "Nuevo correo", .fr: "Nouvel e-mail",
+            .de: "Neue E-Mail", .ru: "Новая почта", .pt: "Novo e-mail"
         ],
         "confirm_email": [
-            .zh: "确认邮箱", .zhHant: "確認信箱", .en: "Confirm Email"
+            .zh: "确认邮箱", .zhHant: "確認信箱", .en: "Confirm Email",
+            .ja: "メール確認", .ko: "이메일 확인", .es: "Confirmar correo", .fr: "Confirmer l'e-mail",
+            .de: "E-Mail bestätigen", .ru: "Подтвердить почту", .pt: "Confirmar e-mail"
+        ],
+        "auto_launch": [
+            .zh: "开机启动", .zhHant: "開機啟動", .en: "Launch at login",
+            .ja: "ログイン時に起動", .ko: "로그인 시 시작", .es: "Iniciar al inicio",
+            .fr: "Lancer au démarrage", .de: "Beim Anmelden starten",
+            .ru: "Запускать при входе", .pt: "Iniciar no login"
         ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",

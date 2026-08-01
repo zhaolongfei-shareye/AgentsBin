@@ -1,4 +1,5 @@
 import AppKit
+import ServiceManagement
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -59,6 +60,7 @@ struct MainPopoverView: View {
     @State private var isDarkAppearance = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
     @State private var manageAgents = false
     @State private var showAgentPicker = false
+    @State private var launchAtLogin = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -80,6 +82,7 @@ struct MainPopoverView: View {
         .frame(minWidth: 900, minHeight: 640)
         .onAppear {
             faviconStore.ensureLoaded(for: agentStore.agents)
+            launchAtLogin = SMAppService.mainApp.status == .enabled
         }
         .onChange(of: agentStore.agents) { _ in
             faviconStore.ensureLoaded(for: agentStore.agents)
@@ -101,6 +104,22 @@ struct MainPopoverView: View {
             Text(localization.agentName(agentStore.activeAgent.name))
                 .font(.system(size: 20, weight: .heavy))
                 .lineLimit(1)
+            Toggle("", isOn: $launchAtLogin)
+                .toggleStyle(.switch)
+                .tint(brandBlue)
+                .labelsHidden()
+                .help(localization.text("auto_launch"))
+                .onChange(of: launchAtLogin) { enabled in
+                    do {
+                        if enabled {
+                            try SMAppService.mainApp.register()
+                        } else {
+                            try SMAppService.mainApp.unregister()
+                        }
+                    } catch {
+                        launchAtLogin = SMAppService.mainApp.status == .enabled
+                    }
+                }
         }
         .padding(.horizontal, 12)
         .frame(height: 48)
