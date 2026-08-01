@@ -222,12 +222,14 @@ final class AdminAuthStore: ObservableObject {
     private let authKey = "agentsbin.admin.auth"
     private let lockKey = "agentsbin.admin.failures"
     private let lockedKey = "agentsbin.admin.lockedUntil"
+    private let defaultPasswordKey = "agentsbin.admin.isDefaultPassword"
     private var unlockTimer: Timer?
 
     static let initialPassword = "AgentsBin@2026"
 
     init() {
         isConfigured = KeychainService.load(authKey) != nil
+        isDefaultPassword = defaults.bool(forKey: defaultPasswordKey)
         if !isConfigured {
             setupDefaultAuth()
         }
@@ -260,6 +262,7 @@ final class AdminAuthStore: ObservableObject {
         saveAuth(email: "", password: Self.initialPassword)
         isConfigured = true
         isDefaultPassword = true
+        defaults.set(true, forKey: defaultPasswordKey)
     }
 
     func setup(email: String, password: String) -> Bool {
@@ -309,6 +312,7 @@ final class AdminAuthStore: ObservableObject {
         clearFailures()
         setupDefaultAuth()
         isUnlocked = false
+        defaults.set(true, forKey: defaultPasswordKey)
         message = "已重置为初始密码"
     }
 
@@ -323,6 +327,7 @@ final class AdminAuthStore: ObservableObject {
         }
         saveAuth(email: adminEmail, password: new)
         isDefaultPassword = false
+        defaults.set(false, forKey: defaultPasswordKey)
         message = "密码已修改"
         return true
     }
