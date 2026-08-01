@@ -32,26 +32,3 @@ struct Agent: Codable, Identifiable, Hashable {
         ]
     }
 }
-
-struct Note: Codable, Identifiable, Hashable {
-    var id = UUID()
-    var title: String
-    var summary: String
-    var excerpt: String
-    var tags: [String]
-    var source: String
-    var question: String
-    var createdAt = Date()
-}
-
-enum ChatRole: String, Codable {
-    case user
-    case assistant
-}
-
-struct ChatMessage: Identifiable, Hashable {
-    let id = UUID()
-    var role: ChatRole
-    var text: String
-    var date = Date()
-}

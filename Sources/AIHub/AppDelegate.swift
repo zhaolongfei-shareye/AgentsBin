@@ -7,13 +7,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var hostingController: NSHostingController<AnyView>?
 
     private let agentStore = AgentStore()
-    private let noteStore = NoteStore()
     private let webPool = WebViewPool()
-    private let conversationStore = ConversationStore()
     private let localization = LocalizedStore()
     private let faviconStore = FaviconStore()
-    private let knowledgeStore = KnowledgeStore()
-    private let aiSummary = AISummaryStore()
 
     private let defaultSize = NSSize(width: 960, height: 680)
 
@@ -22,14 +18,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let raw = UserDefaults.standard.string(forKey: "aihome.appearance"),
            let appearance = NSAppearance(named: NSAppearance.Name(rawValue: raw)) {
             NSApp.appearance = appearance
-        }
-        webPool.onAnswerText = { [weak conversationStore] agentID, text in
-            guard let store = conversationStore else { return }
-            if store.messages(for: agentID).last?.role == .assistant {
-                store.updateLastAssistant(agentID: agentID, text: text)
-            } else {
-                store.addAssistant(agentID: agentID, text: text)
-            }
         }
         faviconStore.ensureLoaded(for: agentStore.agents)
         setupStatusItem()
@@ -93,13 +81,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if hostingController == nil {
             let view = MainPopoverView()
                 .environmentObject(agentStore)
-                .environmentObject(noteStore)
                 .environmentObject(webPool)
-                .environmentObject(conversationStore)
                 .environmentObject(localization)
                 .environmentObject(faviconStore)
-                .environmentObject(knowledgeStore)
-                .environmentObject(aiSummary)
             hostingController = NSHostingController(rootView: AnyView(view))
         }
 

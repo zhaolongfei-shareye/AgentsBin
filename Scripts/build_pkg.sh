@@ -7,7 +7,7 @@ cd "$ROOT"
 ./Scripts/build_app.sh release
 
 VERSION="1.0.0"
-APP="$ROOT/dist/build/AgentsBin.app"
+APP="$ROOT/dist/build-new/AgentsBin.app"
 COMPONENT="$ROOT/dist/AgentsBin-component.pkg"
 FINAL="$ROOT/dist/AgentsBin-$VERSION.pkg"
 RES="$(mktemp -d)"

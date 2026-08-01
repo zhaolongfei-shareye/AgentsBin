@@ -7,7 +7,7 @@ cd "$ROOT"
 CONFIG="${1:-release}"
 swift build -c "$CONFIG"
 
-APP="$ROOT/dist/build/AgentsBin.app"
+APP="$ROOT/dist/build-new/AgentsBin.app"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 

@@ -16,4 +16,4 @@ python3 -m http.server 8000
 3. 构建命令留空，输出目录填 `site`。
 4. 部署后，把自定义域名 CNAME 指向生成的 `*.pages.dev` 地址。
 
-下载文件位于 `site/downloads/AgentsBin-1.0.0.pkg`。
+下载文件位于 `site/downloads/AgentsBin-1.0.0.dmg`。

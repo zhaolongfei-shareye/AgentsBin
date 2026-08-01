@@ -8,7 +8,7 @@ cd "$ROOT"
 
 VERSION="1.0.0"
 DMG_DIR="$ROOT/dist/dmg"
-APP="$ROOT/dist/AgentsBin.app"
+APP="$ROOT/dist/build-new/AgentsBin.app"
 DMG="$ROOT/dist/AgentsBin-$VERSION.dmg"
 
 rm -rf "$DMG_DIR" "$DMG"
