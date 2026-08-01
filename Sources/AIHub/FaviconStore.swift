@@ -24,6 +24,13 @@ final class FaviconStore: ObservableObject {
             guard !loadedIDs.contains(agent.id) else { continue }
             loadedIDs.insert(agent.id)
             let file = directory.appendingPathComponent(agent.id + ".png")
+            if let builtinURL = Bundle.main.url(forResource: agent.id, withExtension: "png", subdirectory: "BuiltinFavicons"),
+               let builtinData = try? Data(contentsOf: builtinURL),
+               let builtinImage = NSImage(data: builtinData) {
+                images[agent.id] = builtinImage
+                try? builtinData.write(to: file, options: .atomic)
+                continue
+            }
             if let data = try? Data(contentsOf: file), let image = NSImage(data: data) {
                 images[agent.id] = image
                 continue

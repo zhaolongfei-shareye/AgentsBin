@@ -29,6 +29,10 @@ fi
 if [ -f "$ROOT/Assets/MenuBarIcon.png" ]; then
   cp "$ROOT/Assets/MenuBarIcon.png" "$APP/Contents/Resources/MenuBarIcon.png"
 fi
+if [ -d "$ROOT/Assets/AgentIcons" ]; then
+  mkdir -p "$APP/Contents/Resources/BuiltinFavicons"
+  cp "$ROOT"/Assets/AgentIcons/*.png "$APP/Contents/Resources/BuiltinFavicons/"
+fi
 
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
