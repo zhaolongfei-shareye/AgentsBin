@@ -409,10 +409,24 @@ a {
 }
 
 .agent-cloud {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
-  gap: 10px;
+  overflow: hidden;
   margin-top: 18px;
+}
+
+.agent-marquee {
+  display: flex;
+  gap: 10px;
+  width: max-content;
+  animation: agent-marquee 48s linear infinite;
+}
+
+.agent-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes agent-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 .agent-logo {
@@ -420,10 +434,8 @@ a {
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  padding: 12px 6px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface);
+  padding: 10px 6px;
+  min-width: 92px;
 }
 
 .agent-logo img,
@@ -465,6 +477,33 @@ a {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
+}
+
+.shots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.shots figure {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.shots img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.shots figcaption {
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--muted);
 }
 
 .detail-card {
@@ -626,7 +665,8 @@ footer {
   }
 
   .detail-grid,
-  .howto-grid {
+  .howto-grid,
+  .shots {
     grid-template-columns: 1fr;
   }
 

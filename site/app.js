@@ -25,6 +25,8 @@
       f4d: "No typing website addresses or digging through bookmarks.",
       agents_title: "Built-in agents",
       feature_details_title: "What's inside",
+      shot_default: "Default chat screen",
+      shot_api: "API key backup screen",
       d1t: "Encrypted API key vault",
       d1d: "Save multiple API keys per provider with multi-credential groups, locally encrypted and protected by an admin password.",
       d2t: "Agent management",
@@ -90,6 +92,8 @@
       f4d: "不用手输网站地址，也不用翻书签。",
       agents_title: "内置智能体",
       feature_details_title: "功能详解",
+      shot_default: "默认对话界面",
+      shot_api: "API Key 备份界面",
       d1t: "加密的 API Key 保险箱",
       d1d: "每个智能体可保存多组 API 参数，本地加密，管理员密码保护，支持一键复制。",
       d2t: "智能体管理",
@@ -166,7 +170,7 @@
   function renderAgentCloud(agents) {
     const container = document.getElementById("agentCloud");
     if (!container) return;
-    container.innerHTML = agents.map(function (name, index) {
+    const items = agents.map(function (name, index) {
       const host = agentHosts[index] || "example.com";
       const letter = name.charAt(0).toUpperCase();
       const hue = (index * 37) % 360;
@@ -179,6 +183,7 @@
         '</div>'
       );
     }).join("");
+    container.innerHTML = '<div class="agent-marquee">' + items + items + '</div>';
   }
 
   let lang = localStorage.getItem("agentsbin-lang") || detectLang();
