@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     static weak var mainPanel: NSPanel?
 
     private var statusItem: NSStatusItem?
@@ -16,6 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let adminAuth = AdminAuthStore()
 
     private let defaultSize = NSSize(width: 960, height: 680)
+    private let sizeKey = "agentsbin.windowSize"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -112,17 +113,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             panel.titlebarAppearsTransparent = true
             panel.isReleasedWhenClosed = false
             panel.minSize = NSSize(width: 640, height: 520)
+            panel.delegate = self
             panel.contentViewController = hostingController
             panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+            if let raw = UserDefaults.standard.string(forKey: sizeKey) {
+                let size = NSSizeFromString(raw)
+                if size.width >= 640, size.height >= 520 {
+                    panel.setContentSize(size)
+                } else {
+                    panel.setContentSize(defaultSize)
+                }
+            } else {
+                panel.setContentSize(defaultSize)
+            }
             self.panel = panel
             Self.mainPanel = panel
         }
 
-        panel?.setContentSize(defaultSize)
         positionPanel()
         NSApp.activate(ignoringOtherApps: true)
         panel?.orderFrontRegardless()
         panel?.makeKey()
+    }
+
+    func windowDidResize(_ notification: Notification) {
+        guard let panel = notification.object as? NSPanel else { return }
+        let size = panel.frame.size
+        guard size.width >= 640, size.height >= 520 else { return }
+        UserDefaults.standard.set(NSStringFromSize(size), forKey: sizeKey)
     }
 
     private func positionPanel() {
