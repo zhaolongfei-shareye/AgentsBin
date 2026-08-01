@@ -295,9 +295,9 @@ final class LocalizedStore: ObservableObject {
             .es: "Aceptar", .fr: "OK", .de: "OK", .ru: "ОК", .pt: "OK"
         ],
         "open_app": [
-            .zh: "打开 AgentBin", .zhHant: "開啟 AgentBin", .en: "Open AgentBin", .ja: "AgentBin を開く",
-            .ko: "AgentBin 열기", .es: "Abrir AgentBin", .fr: "Ouvrir AgentBin", .de: "AgentBin öffnen",
-            .ru: "Открыть AgentBin", .pt: "Abrir AgentBin"
+            .zh: "打开 AgentsBin", .zhHant: "開啟 AgentsBin", .en: "Open AgentsBin", .ja: "AgentsBin を開く",
+            .ko: "AgentsBin 열기", .es: "Abrir AgentsBin", .fr: "Ouvrir AgentsBin", .de: "AgentsBin öffnen",
+            .ru: "Открыть AgentsBin", .pt: "Abrir AgentsBin"
         ],
         "quit": [
             .zh: "退出", .zhHant: "退出", .en: "Quit", .ja: "終了", .ko: "종료",

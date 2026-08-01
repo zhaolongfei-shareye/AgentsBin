@@ -60,6 +60,27 @@ a {
   border-radius: 8px;
 }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lang-toggle {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.lang-toggle:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -358,6 +379,111 @@ a {
   margin-top: 12px;
 }
 
+.agents {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 20px 72px;
+}
+
+.agents h2 {
+  font-size: 28px;
+  margin: 0 0 18px;
+}
+
+.agent-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.agent-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.contact {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 20px 72px;
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+
+.author-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--blue);
+  flex: none;
+}
+
+.author-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+}
+
+.author-main strong {
+  font-size: 18px;
+}
+
+.author-main span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.contact-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.contact-link:hover {
+  border-color: var(--blue);
+  background: var(--surface-2);
+}
+
+.contact-link svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
 footer {
   border-top: 1px solid var(--border);
   padding: 24px 20px;
@@ -383,5 +509,14 @@ footer {
   .download-card {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .contact-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .contact-links {
+    margin-left: 0;
   }
 }

@@ -50,7 +50,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             button.image = icon
             button.action = #selector(statusItemClicked)
             button.target = self
-            button.toolTip = "AgentBin"
+            button.toolTip = "AgentsBin"
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
         statusItem = item

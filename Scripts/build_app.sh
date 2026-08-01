@@ -7,7 +7,7 @@ cd "$ROOT"
 CONFIG="${1:-release}"
 swift build -c "$CONFIG"
 
-APP="$ROOT/dist/build/AgentBin.app"
+APP="$ROOT/dist/build/AgentsBin.app"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
@@ -28,11 +28,11 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
   <key>CFBundleExecutable</key>
   <string>AIHub</string>
   <key>CFBundleIdentifier</key>
-  <string>com.agentbin.app</string>
+  <string>com.agentsbin.app</string>
   <key>CFBundleName</key>
-  <string>AgentBin</string>
+  <string>AgentsBin</string>
   <key>CFBundleDisplayName</key>
-  <string>AgentBin</string>
+  <string>AgentsBin</string>
   <key>CFBundleIconFile</key>
   <string>AppIcon</string>
   <key>CFBundlePackageType</key>

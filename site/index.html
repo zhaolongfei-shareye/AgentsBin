@@ -1,43 +1,46 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AgentBin · macOS 菜单栏 AI 智能体聚合</title>
-  <meta name="description" content="AgentBin 是一个 macOS 菜单栏 AI 智能体聚合工具，支持网页对话、知识库收藏与本地 AI 总结。">
-  <link rel="stylesheet" href="/styles.css">
+  <title id="pageTitle">AgentsBin · Menu bar AI agent hub for macOS</title>
+  <meta name="description" id="pageDesc" content="AgentsBin is a macOS menu bar hub for AI agents with embedded web chat, a local knowledge base, and local AI summaries.">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="nav">
     <div class="nav-inner">
-      <a class="brand" href="/">
-        <img src="/assets/appicon.png" alt="AgentBin logo" width="28" height="28">
-        <span>AgentBin</span>
+      <a class="brand" href="#">
+        <img src="assets/appicon.png" alt="AgentsBin logo" width="28" height="28">
+        <span>AgentsBin</span>
       </a>
-      <a class="button button-small" href="#download">下载</a>
+      <div class="nav-actions">
+        <button class="lang-toggle" id="langToggle" type="button">中文</button>
+        <a class="button button-small" href="#download" data-i18n="nav_download">Download</a>
+      </div>
     </div>
   </header>
 
   <main>
     <section class="hero">
       <div class="hero-copy">
-        <h1>一个菜单栏，装下所有 AI 智能体</h1>
-        <p class="lead">在网页端直接对话，把重要回答收藏进本地知识库，再用本地 Ollama 自动总结。</p>
+        <h1 data-i18n="hero_title">All your AI agents, one menu bar away</h1>
+        <p class="lead" data-i18n="hero_lead">AgentsBin lives in the menu bar. Click the AB icon, pick an agent, and start chatting instantly — no tabs, no typing URLs, no searching.</p>
         <div class="hero-actions">
-          <a class="button" href="/downloads/AgentBin-1.0.0.pkg" download>下载 AgentBin 1.0.0</a>
-          <span class="muted">macOS 13+ · 免费</span>
+          <a class="button" href="downloads/AgentsBin-1.0.0.pkg" download data-i18n="hero_cta">Download AgentsBin 1.0.0</a>
+          <span class="muted" data-i18n="hero_badge">17 AI agents · macOS 13+ · Free</span>
         </div>
       </div>
-      <div class="app-window" aria-label="AgentBin 应用界面示意">
+      <div class="app-window" aria-label="AgentsBin app preview">
         <div class="window-bar">
           <span class="traffic traffic-close"></span>
           <span class="traffic traffic-min"></span>
           <span class="traffic traffic-full"></span>
-          <span class="window-title">AgentBin</span>
+          <span class="window-title">AgentsBin</span>
         </div>
         <div class="window-body">
           <aside class="window-side">
-            <div class="side-tabs"><span class="active">智能体</span><span>知识库</span></div>
+            <div class="side-tabs"><span class="active" data-i18n="w_agents">Agents</span><span data-i18n="w_notes">Notes</span></div>
             <div class="side-item active"><span class="dot blue"></span>ChatGPT</div>
             <div class="side-item"><span class="dot teal"></span>Claude</div>
             <div class="side-item"><span class="dot green"></span>DeepSeek</div>
@@ -48,17 +51,15 @@
             <div class="chat-head">
               <span class="avatar">C</span>
               <strong>ChatGPT</strong>
-              <span class="status">已回复</span>
+              <span class="status" data-i18n="w_status">Answered</span>
             </div>
             <div class="chat-body">
-              <div class="bubble user">请用三点解释什么是 RAG</div>
-              <div class="bubble bot">
-                RAG 通过检索外部资料增强生成回答，核心是检索、融合与生成，可减少幻觉并提供来源引用。
-              </div>
+              <div class="bubble user" data-i18n="w_user">Explain RAG in three points</div>
+              <div class="bubble bot" data-i18n="w_bot">RAG retrieves external knowledge, fuses it with generation, and cites sources to reduce hallucinations.</div>
             </div>
             <div class="chat-composer">
-              <span class="composer-text">输入问题…</span>
-              <span class="composer-send">发送</span>
+              <span class="composer-text" data-i18n="w_placeholder">Type a question…</span>
+              <span class="composer-send" data-i18n="w_send">Send</span>
             </div>
           </div>
         </div>
@@ -67,39 +68,77 @@
 
     <section class="features">
       <div class="feature">
-        <h3>网页内对话</h3>
-        <p>打开就是原站网页，登录态保留，一次专注一个智能体。</p>
+        <h3 data-i18n="f1t">Lives in the menu bar</h3>
+        <p data-i18n="f1d">Always one click away, always on top.</p>
       </div>
       <div class="feature">
-        <h3>收藏知识库</h3>
-        <p>把最新回复手动存入本地知识库，按时间倒序整理。</p>
+        <h3 data-i18n="f2t">Instant popup</h3>
+        <p data-i18n="f2d">Click the menu bar icon and start chatting in seconds.</p>
       </div>
       <div class="feature">
-        <h3>本地 AI 总结</h3>
-        <p>默认调用 Ollama 提取核心要点，数据留在本机。</p>
+        <h3 data-i18n="f3t">17 AI agents built in</h3>
+        <p data-i18n="f3d">ChatGPT, Claude, Gemini, DeepSeek, Doubao, and more are ready to use.</p>
       </div>
       <div class="feature">
-        <h3>多语言界面</h3>
-        <p>支持 10 种语言，智能体管理与导入导出开箱即用。</p>
+        <h3 data-i18n="f4t">No URL hunting</h3>
+        <p data-i18n="f4d">No typing website addresses or digging through bookmarks.</p>
       </div>
     </section>
 
+    <section class="agents">
+      <h2 data-i18n="agents_title">Built-in agents</h2>
+      <div class="agent-chips" id="agentChips"></div>
+    </section>
+
     <section class="download" id="download">
-      <h2>下载 AgentBin</h2>
+      <h2 data-i18n="dl_title">Download AgentsBin</h2>
       <div class="download-card">
         <div>
-          <strong>AgentBin 1.0.0</strong>
-          <p class="muted">macOS 13 及以上 · 约 511 KB</p>
-          <p class="hash">SHA-256<br>fdc17618d404c480d82c7134055a2b31ecd9821e14b1dfbbb8d9a9cb22a95e6f</p>
+          <strong data-i18n="dl_name">AgentsBin 1.0.0</strong>
+          <p class="muted" data-i18n="dl_meta">macOS 13+ · ~511 KB</p>
+          <p class="hash">SHA-256<br>9438e2127f1def75bd2b8f395c7dde35ecbbfc2b68fdd641e137bd800d55d02b</p>
         </div>
-        <a class="button" href="/downloads/AgentBin-1.0.0.pkg" download>下载 .pkg 安装包</a>
+        <a class="button" href="downloads/AgentsBin-1.0.0.pkg" download data-i18n="dl_btn">Download .pkg Installer</a>
       </div>
-      <p class="note">当前为未签名版本，首次打开如被拦截，右键选择“打开”即可。</p>
+      <p class="note" data-i18n="dl_note">Currently unsigned. If blocked, right-click and choose Open.</p>
+    </section>
+
+    <section class="contact">
+      <div class="contact-card">
+        <img id="authorAvatar" class="author-avatar" alt="Jacky Zhao">
+        <div class="author-main">
+          <strong data-i18n="author_name">Jacky Zhao</strong>
+          <span data-i18n="author_role">Indie developer · macOS tools</span>
+        </div>
+        <div class="contact-links">
+          <a class="contact-link" href="mailto:zhaolongfei@gmail.com">
+            <svg viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><path d="m3 6 9 7 9-7"/></svg>
+            <span data-i18n="c_email">Email</span>
+          </a>
+          <button class="contact-link" id="wechatCopy" type="button">
+            <svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.6 1.3 4.9 3.4 6.4-.1.8-.4 2-.9 2.9 0 0 2.2-.3 4-1.4 1.1.3 2.3.5 3.5.5 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg>
+            <span data-i18n="c_wechat">WeChat</span>
+          </button>
+          <a class="contact-link" href="https://www.facebook.com/zhaolongfei@gmail.com" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24"><path d="M14 8h3V5h-3c-2.2 0-4 1.8-4 4v2H7v3h3v7h3v-7h3l1-3h-4V9c0-.6.4-1 1-1z"/></svg>
+            <span data-i18n="c_facebook">Facebook</span>
+          </a>
+          <a class="contact-link" href="https://x.com/longfei_shareye" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24"><path d="M4 4l7.2 9.3L4.4 20h2.4l5.4-5.4L16.8 20H20l-7.5-9.7L19.2 4h-2.4l-4.9 5L8.2 4H4z"/></svg>
+            <span data-i18n="c_x">X</span>
+          </a>
+          <a class="contact-link" href="https://github.com/zhaolongfei-shareye" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7 0-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg>
+            <span data-i18n="c_github">GitHub</span>
+          </a>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer>
-    <p>AgentBin · 菜单栏 AI 智能体聚合工具</p>
+    <p data-i18n="footer">AgentsBin · Menu bar AI agent hub for macOS</p>
   </footer>
+  <script src="app.js"></script>
 </body>
 </html>

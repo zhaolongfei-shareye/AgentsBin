@@ -1,4 +1,4 @@
-# AgentBin
+# AgentsBin
 
 菜单栏常驻的 AI 智能体快速入口：嵌入网页端、同问对比、本地知识库、智能体管理。
 
@@ -10,7 +10,7 @@ App 图标是单色字母 A logo，源图在 `Assets/AppIcon.png`，菜单栏模
 
 ```bash
 ./Scripts/build_app.sh
-open dist/AgentBin.app
+open dist/AgentsBin.app
 ```
 
 ## 生成 DMG 安装包
@@ -19,7 +19,7 @@ open dist/AgentBin.app
 ./Scripts/build_dmg.sh
 ```
 
-产物在 `dist/AgentBin-1.0.0.dmg`。正式分发前还需要 Developer ID 签名和公证。
+产物在 `dist/AgentsBin-1.0.0.pkg`。正式分发前还需要 Developer ID 签名和公证。
 
 ## 当前状态
 

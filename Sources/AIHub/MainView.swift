@@ -149,7 +149,7 @@ struct MainPopoverView: View {
 
     private var header: some View {
         HStack(spacing: 12) {
-            Text("AgentBin")
+            Text("AgentsBin")
                 .font(.system(size: 22, weight: .heavy))
             Spacer()
             avatar(agentStore.activeAgent)
