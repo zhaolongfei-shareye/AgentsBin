@@ -359,6 +359,10 @@ struct ManageView: View {
     @State private var resetInput = ""
     @State private var showChangePassword = false
     @State private var showResetForm = false
+    @State private var showChangeEmail = false
+    @State private var newEmail = ""
+    @State private var confirmEmail = ""
+    @State private var emailPassword = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -382,8 +386,14 @@ struct ManageView: View {
                 Text(adminAuth.adminEmail)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                Button(localization.text("change_email")) {
+                    showChangeEmail.toggle()
+                    showChangePassword = false
+                }
+                .buttonStyle(.plain)
                 Button(localization.text("change_password")) {
                     showChangePassword.toggle()
+                    showChangeEmail = false
                 }
                 .buttonStyle(.plain)
                 Button(localization.text("lock")) {
@@ -510,6 +520,36 @@ struct ManageView: View {
                             newPassword = ""
                         }
                         .buttonStyle(.plain)
+                    }
+                    .padding(8)
+                    .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
+                }
+
+                if showChangeEmail {
+                    VStack(spacing: 8) {
+                        HStack(spacing: 8) {
+                            TextField(localization.text("new_email"), text: $newEmail)
+                                .textFieldStyle(.roundedBorder)
+                            TextField(localization.text("confirm_email"), text: $confirmEmail)
+                                .textFieldStyle(.roundedBorder)
+                        }
+                        HStack(spacing: 8) {
+                            SecureField(localization.text("admin_password"), text: $emailPassword)
+                                .textFieldStyle(.roundedBorder)
+                            Button(localization.text("save")) {
+                                if adminAuth.changeEmail(new: newEmail, confirm: confirmEmail, password: emailPassword) {
+                                    newEmail = ""
+                                    confirmEmail = ""
+                                    emailPassword = ""
+                                    showChangeEmail = false
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            Button(localization.text("cancel")) {
+                                showChangeEmail = false
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
                     .padding(8)
                     .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))

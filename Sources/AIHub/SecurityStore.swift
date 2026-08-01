@@ -229,6 +229,36 @@ final class AdminAuthStore: ObservableObject {
         return true
     }
 
+    func changeEmail(new: String, confirm: String, password: String) -> Bool {
+        guard new == confirm else {
+            message = "两次邮箱不一致"
+            return false
+        }
+        guard new.contains("@"), new.contains(".") else {
+            message = "邮箱格式不正确"
+            return false
+        }
+        guard verify(password) else {
+            message = "管理员密码错误"
+            return false
+        }
+        guard let json = KeychainService.load(authKey),
+              let data = json.data(using: .utf8),
+              var payload = (try? JSONSerialization.jsonObject(with: data) as? [String: String]) ?? nil else {
+            message = "读取凭据失败"
+            return false
+        }
+        payload["email"] = new
+        if let newData = try? JSONSerialization.data(withJSONObject: payload),
+           let newJSON = String(data: newData, encoding: .utf8) {
+            KeychainService.save(newJSON, forKey: authKey)
+        }
+        adminEmail = new
+        defaults.set(new, forKey: "agentsbin.admin.email")
+        message = "邮箱已修改"
+        return true
+    }
+
     func requestReset() -> String? {
         guard isConfigured else { return nil }
         let code = String(format: "%06d", Int.random(in: 100000...999999))

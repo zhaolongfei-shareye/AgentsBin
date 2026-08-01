@@ -407,6 +407,15 @@ final class LocalizedStore: ObservableObject {
         "cc_switch_imported": [
             .zh: "已自动导入 cc-switch 中的供应商（仅名称与地址，Key 需自行填写）", .zhHant: "已自動匯入 cc-switch 中的供應商（僅名稱與位址，Key 需自行填寫）", .en: "Imported providers from cc-switch (names only; keys stay private)"
         ],
+        "change_email": [
+            .zh: "修改邮箱", .zhHant: "修改信箱", .en: "Change Email"
+        ],
+        "new_email": [
+            .zh: "新邮箱", .zhHant: "新信箱", .en: "New Email"
+        ],
+        "confirm_email": [
+            .zh: "确认邮箱", .zhHant: "確認信箱", .en: "Confirm Email"
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"
