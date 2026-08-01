@@ -620,7 +620,9 @@ struct AgentPickerView: View {
     }
 
     private var hidden: [Agent] {
-        agentStore.agents.filter { !$0.isEnabled }
+        agentStore.agents
+            .filter { !$0.isEnabled }
+            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
 
     var body: some View {
@@ -643,14 +645,14 @@ struct AgentPickerView: View {
                 Text(localization.text("visible_agents"))
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.secondary)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
+                ScrollView(.vertical, showsIndicators: true) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 8)], spacing: 8) {
                         ForEach(enabled) { agent in
-                            chip(agent, removable: true)
+                            chip(agent)
                         }
                     }
                 }
-                .frame(minHeight: 34)
+                .frame(height: 92)
             }
 
             VStack(alignment: .leading, spacing: 6) {
@@ -658,13 +660,13 @@ struct AgentPickerView: View {
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.secondary)
                 ScrollView {
-                    LazyVStack(spacing: 4) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 170), spacing: 8)], spacing: 8) {
                         ForEach(hidden) { agent in
                             candidateRow(agent)
                         }
                     }
                 }
-                .frame(maxHeight: 260)
+                .frame(maxHeight: 320)
             }
 
             if showCustomForm {
@@ -715,44 +717,43 @@ struct AgentPickerView: View {
         }
     }
 
-    private func chip(_ agent: Agent, removable: Bool) -> some View {
+    private func chip(_ agent: Agent) -> some View {
         HStack(spacing: 6) {
             pickerAvatar(agent)
             Text(localization.agentName(agent.name))
                 .font(.system(size: 12, weight: .semibold))
-            if removable {
-                Button {
-                    agentStore.setEnabled(agent.id, false)
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
+            Button {
+                agentStore.setEnabled(agent.id, false)
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.secondary)
             }
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, 8)
-        .padding(.vertical, 5)
+        .padding(.vertical, 6)
         .background(.quaternary.opacity(0.6), in: Capsule())
     }
 
     private func candidateRow(_ agent: Agent) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 7) {
             pickerAvatar(agent)
             Text(localization.agentName(agent.name))
                 .font(.system(size: 13))
+                .lineLimit(1)
             Spacer()
             Button {
                 agentStore.setEnabled(agent.id, true)
             } label: {
                 Image(systemName: "plus.circle.fill")
-                    .font(.system(size: 18))
+                    .font(.system(size: 16))
                     .foregroundStyle(brandBlue)
             }
             .buttonStyle(.plain)
         }
         .padding(.horizontal, 8)
-        .padding(.vertical, 5)
+        .padding(.vertical, 6)
         .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 7))
     }
 

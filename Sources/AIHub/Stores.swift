@@ -18,15 +18,20 @@ final class AgentStore: ObservableObject {
     private let activeKey = "aihub.active"
 
     init() {
+        var loadedAgents: [Agent]
         if let data = defaults.data(forKey: agentsKey),
            let saved = try? JSONDecoder().decode([Agent].self, from: data),
            !saved.isEmpty {
-            agents = saved
+            loadedAgents = saved
+            for agent in Agent.defaults() where !loadedAgents.contains(where: { $0.id == agent.id }) {
+                loadedAgents.append(agent)
+            }
         } else {
-            agents = Agent.defaults().sorted {
+            loadedAgents = Agent.defaults().sorted {
                 $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
             }
         }
+        agents = loadedAgents
         if let data = defaults.data(forKey: selectedKey),
            let saved = try? JSONDecoder().decode([String].self, from: data) {
             selectedIDs = Set(saved)
@@ -108,7 +113,14 @@ final class AgentStore: ObservableObject {
 
     func setEnabled(_ id: String, _ enabled: Bool) {
         guard let index = agents.firstIndex(where: { $0.id == id }) else { return }
-        agents[index].isEnabled = enabled
+        if enabled {
+            var agent = agents[index]
+            agent.isEnabled = true
+            agents.remove(at: index)
+            agents.append(agent)
+        } else {
+            agents[index].isEnabled = false
+        }
         if !enabled {
             selectedIDs.remove(id)
             if activeID == id {
