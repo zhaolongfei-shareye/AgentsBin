@@ -462,20 +462,12 @@ a {
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 8px 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
+  padding: 6px 10px;
   text-decoration: none;
   color: inherit;
   font-size: 13px;
   font-weight: 600;
-  cursor: pointer;
-}
-
-.contact-link:hover {
-  border-color: var(--blue);
-  background: var(--surface-2);
+  cursor: default;
 }
 
 .contact-link svg {

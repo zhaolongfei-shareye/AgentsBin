@@ -41,6 +41,8 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
   <string>1.0.0</string>
   <key>CFBundleVersion</key>
   <string>1</string>
+  <key>CFBundleGetInfoString</key>
+  <string>1.0.0 (免费内测版)</string>
   <key>LSMinimumSystemVersion</key>
   <string>13.0</string>
   <key>LSUIElement</key>

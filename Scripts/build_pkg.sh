@@ -25,7 +25,7 @@ cat > "$RES/welcome.html" <<'HTML'
 HTML
 
 cat > "$RES/readme.txt" <<'TXT'
-AgentsBin 1.0.0
+AgentsBin 1.0.0（免费内测版）
 
 安装后：
 1. 点击菜单栏右上角 “AB” 图标打开主窗口。

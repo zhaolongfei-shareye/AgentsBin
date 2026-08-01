@@ -7,7 +7,7 @@
       hero_title: "All your AI agents, one menu bar away",
       hero_lead: "AgentsBin lives in the menu bar. Click the AB icon, pick an agent, and start chatting instantly — no tabs, no typing URLs, no searching.",
       hero_cta: "Download AgentsBin 1.0.0",
-      hero_badge: "17 AI agents · macOS 13+ · Free",
+      hero_badge: "17 AI agents · macOS 13+ · Free Beta",
       w_agents: "Agents",
       w_notes: "Notes",
       w_status: "Answered",
@@ -26,7 +26,7 @@
       agents_title: "Built-in agents",
       agents: ["ChatGPT", "Claude", "Copilot", "DeepSeek", "Doubao", "Gemini", "Grok", "Kimi", "Le Chat", "Mistral", "Perplexity", "Pi", "Poe", "Qwen", "Tongyi", "You.com", "Tencent Yuanbao"],
       dl_title: "Download AgentsBin",
-      dl_name: "AgentsBin 1.0.0",
+      dl_name: "AgentsBin 1.0.0 · Free Beta",
       dl_meta: "macOS 13+ · ~511 KB",
       dl_btn: "Download .pkg Installer",
       dl_note: "Currently unsigned. If blocked, right-click and choose Open.",
@@ -50,7 +50,7 @@
       hero_title: "所有 AI 智能体，一个菜单栏就够了",
       hero_lead: "AgentsBin 常驻菜单栏，点击 AB 图标瞬间拉起弹窗，选一个智能体立即对话，不用开标签页、不用手输网址、不用到处找。",
       hero_cta: "下载 AgentsBin 1.0.0",
-      hero_badge: "内置 17 个智能体 · macOS 13+ · 免费",
+      hero_badge: "内置 17 个智能体 · macOS 13+ · 免费内测版",
       w_agents: "智能体",
       w_notes: "知识库",
       w_status: "已回复",
@@ -69,7 +69,7 @@
       agents_title: "内置智能体",
       agents: ["ChatGPT", "Claude", "Copilot", "DeepSeek", "豆包", "Gemini", "Grok", "Kimi", "Le Chat", "Mistral", "Perplexity", "Pi", "Poe", "千问", "通义", "You.com", "腾讯元宝"],
       dl_title: "下载 AgentsBin",
-      dl_name: "AgentsBin 1.0.0",
+      dl_name: "AgentsBin 1.0.0 · 免费内测版",
       dl_meta: "macOS 13 及以上 · 约 511 KB",
       dl_btn: "下载 .pkg 安装包",
       dl_note: "当前为未签名版本，如被拦截请右键选择“打开”。",
@@ -103,7 +103,6 @@
       if (dict[key]) el.textContent = dict[key];
     });
     document.getElementById("langToggle").textContent = dict.toggle_label;
-    document.getElementById("wechatCopy").setAttribute("data-copied", dict.copied);
     document.getElementById("agentChips").innerHTML = dict.agents
       .map(function (name) { return '<span class="agent-chip">' + name + '</span>'; })
       .join("");
@@ -132,15 +131,4 @@
   avatar.onerror = loadAvatar;
   loadAvatar();
 
-  document.getElementById("wechatCopy").addEventListener("click", function () {
-    const btn = this;
-    const label = btn.querySelector(".contact-text > span");
-    const original = label.textContent;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText("shareye").then(function () {
-        label.textContent = btn.getAttribute("data-copied");
-        setTimeout(function () { label.textContent = original; }, 1200);
-      });
-    }
-  });
 })();

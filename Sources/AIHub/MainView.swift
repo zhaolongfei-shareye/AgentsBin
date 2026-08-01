@@ -151,6 +151,12 @@ struct MainPopoverView: View {
         HStack(spacing: 12) {
             Text("AgentsBin")
                 .font(.system(size: 22, weight: .heavy))
+            Text(localization.text("beta_note"))
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(.quaternary, in: Capsule())
             Spacer()
             avatar(agentStore.activeAgent)
             Text(localization.agentName(agentStore.activeAgent.name))

@@ -303,6 +303,11 @@ final class LocalizedStore: ObservableObject {
             .zh: "退出", .zhHant: "退出", .en: "Quit", .ja: "終了", .ko: "종료",
             .es: "Salir", .fr: "Quitter", .de: "Beenden", .ru: "Выйти", .pt: "Sair"
         ],
+        "beta_note": [
+            .zh: "免费内测版", .zhHant: "免費內測版", .en: "Free Beta", .ja: "無料ベータ",
+            .ko: "무료 베타", .es: "Beta gratis", .fr: "Bêta gratuite", .de: "Kostenlose Beta",
+            .ru: "Бесплатная бета", .pt: "Beta grátis"
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"
