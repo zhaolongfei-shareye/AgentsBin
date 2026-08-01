@@ -104,22 +104,6 @@ struct MainPopoverView: View {
             Text(localization.agentName(agentStore.activeAgent.name))
                 .font(.system(size: 20, weight: .heavy))
                 .lineLimit(1)
-            Toggle("", isOn: $launchAtLogin)
-                .toggleStyle(.switch)
-                .tint(brandBlue)
-                .labelsHidden()
-                .help(localization.text("auto_launch"))
-                .onChange(of: launchAtLogin) { enabled in
-                    do {
-                        if enabled {
-                            try SMAppService.mainApp.register()
-                        } else {
-                            try SMAppService.mainApp.unregister()
-                        }
-                    } catch {
-                        launchAtLogin = SMAppService.mainApp.status == .enabled
-                    }
-                }
         }
         .padding(.horizontal, 12)
         .frame(height: 48)
@@ -151,10 +135,10 @@ struct MainPopoverView: View {
                     manageAgents.toggle()
                 } label: {
                     Text("−")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: 18, weight: .bold))
                         .foregroundStyle(manageAgents ? Color.white : Color.primary)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 40)
+                        .frame(height: 26)
                         .background(manageAgents ? Color.red.opacity(0.8) : Color.secondary.opacity(0.14), in: RoundedRectangle(cornerRadius: 9))
                 }
                 .buttonStyle(.plain)
@@ -164,10 +148,10 @@ struct MainPopoverView: View {
                     showAgentPicker = true
                 } label: {
                     Text("+")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: 18, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 40)
+                        .frame(height: 26)
                         .background(brandBlue, in: RoundedRectangle(cornerRadius: 9))
                 }
                 .buttonStyle(.plain)
@@ -195,6 +179,17 @@ struct MainPopoverView: View {
                 }
                 .buttonStyle(.plain)
                 .help(isDarkAppearance ? localization.text("light_mode") : localization.text("dark_mode"))
+
+                Button {
+                    toggleLaunchAtLogin()
+                } label: {
+                    Image(systemName: launchAtLogin ? "power.fill" : "power")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(launchAtLogin ? Color.green : Color.secondary)
+                        .frame(width: 22, height: 22)
+                }
+                .buttonStyle(.plain)
+                .help(localization.text("auto_launch"))
 
                 Button {
                     mode = .manage
@@ -231,6 +226,19 @@ struct MainPopoverView: View {
         isDarkAppearance = !dark
         if let name = NSApp.appearance?.name.rawValue {
             UserDefaults.standard.set(name, forKey: "aihome.appearance")
+        }
+    }
+
+    private func toggleLaunchAtLogin() {
+        do {
+            if launchAtLogin {
+                try SMAppService.mainApp.unregister()
+            } else {
+                try SMAppService.mainApp.register()
+            }
+            launchAtLogin = SMAppService.mainApp.status == .enabled
+        } catch {
+            launchAtLogin = SMAppService.mainApp.status == .enabled
         }
     }
 
@@ -382,6 +390,7 @@ struct ManageView: View {
     @State private var newEmail = ""
     @State private var confirmEmail = ""
     @State private var emailPassword = ""
+    @State private var selectedConfigID: String?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -525,6 +534,11 @@ struct ManageView: View {
             }
             .padding(20)
             .frame(maxWidth: 420)
+            .onAppear {
+                if adminAuth.isDefaultPassword && password.isEmpty {
+                    password = AdminAuthStore.initialPassword
+                }
+            }
         }
         .frame(maxWidth: .infinity)
     }
@@ -598,28 +612,86 @@ struct ManageView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                ForEach(apiKeyStore.configs) { config in
-                    configRow(config)
+                HStack(alignment: .top, spacing: 10) {
+                    ScrollView {
+                        VStack(spacing: 4) {
+                            ForEach(apiKeyStore.configs) { config in
+                                Button {
+                                    selectedConfigID = config.id
+                                } label: {
+                                    HStack(spacing: 8) {
+                                        Toggle("", isOn: Binding(
+                                            get: { config.isEnabled },
+                                            set: { apiKeyStore.updateEnabled(config.id, $0) }
+                                        ))
+                                        .toggleStyle(.checkbox)
+                                        .labelsHidden()
+                                        Text(config.name)
+                                            .font(.system(size: 12, weight: .semibold))
+                                            .foregroundStyle(selectedConfigID == config.id ? Color.white : Color.primary)
+                                            .lineLimit(1)
+                                        Spacer(minLength: 0)
+                                    }
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 7)
+                                    .background(
+                                        selectedConfigID == config.id ? brandBlue : Color.clear,
+                                        in: RoundedRectangle(cornerRadius: 7)
+                                    )
+                                    .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                    .frame(width: 230)
+
+                    Divider()
+
+                    if let selected = apiKeyStore.configs.first(where: { $0.id == selectedConfigID }) {
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 10) {
+                                ForEach(selected.credentials) { credential in
+                                    credentialRow(config: selected, credential: credential)
+                                }
+                                Button {
+                                    apiKeyStore.addCredential(to: selected.id)
+                                } label: {
+                                    Label(localization.text("add_group"), systemImage: "plus.circle")
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            .padding(8)
+                        }
+                        .frame(maxWidth: .infinity)
+                    } else {
+                        Text(localization.text("select_agent_first"))
+                            .font(.system(size: 13))
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
                 }
             }
             .padding(12)
         }
     }
 
-    private func configRow(_ config: AgentAPIConfig) -> some View {
+    private func credentialRow(config: AgentAPIConfig, credential: APICredential) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
-                Toggle("", isOn: Binding(
-                    get: { config.isEnabled },
-                    set: { apiKeyStore.updateEnabled(config.id, $0) }
+                TextField(localization.text("group_label"), text: Binding(
+                    get: { credential.label },
+                    set: { value in
+                        var copy = credential
+                        copy.label = value
+                        apiKeyStore.updateCredential(configID: config.id, credential: copy)
+                    }
                 ))
-                .toggleStyle(.checkbox)
-                .labelsHidden()
-                Text(config.name)
-                    .font(.system(size: 13, weight: .semibold))
+                .textFieldStyle(.roundedBorder)
+                .frame(width: 140)
                 Spacer()
                 Button(localization.text("copy_key")) {
-                    let key = apiKeyStore.apiKey(for: config.id)
+                    let key = apiKeyStore.apiKey(for: credential.id)
                     if !key.isEmpty {
                         let pasteboard = NSPasteboard.general
                         pasteboard.clearContents()
@@ -627,25 +699,25 @@ struct ManageView: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .disabled(apiKeyStore.apiKey(for: config.id).isEmpty)
+                .disabled(apiKeyStore.apiKey(for: credential.id).isEmpty)
             }
 
             HStack(spacing: 8) {
                 TextField(localization.text("base_url"), text: Binding(
-                    get: { config.baseURL },
+                    get: { credential.baseURL },
                     set: { value in
-                        var copy = config
+                        var copy = credential
                         copy.baseURL = value
-                        apiKeyStore.update(config: copy)
+                        apiKeyStore.updateCredential(configID: config.id, credential: copy)
                     }
                 ))
                 .textFieldStyle(.roundedBorder)
                 TextField(localization.text("model"), text: Binding(
-                    get: { config.model },
+                    get: { credential.model },
                     set: { value in
-                        var copy = config
+                        var copy = credential
                         copy.model = value
-                        apiKeyStore.update(config: copy)
+                        apiKeyStore.updateCredential(configID: config.id, credential: copy)
                     }
                 ))
                 .textFieldStyle(.roundedBorder)
@@ -654,23 +726,18 @@ struct ManageView: View {
 
             HStack(spacing: 8) {
                 SecureField(localization.text("api_key"), text: Binding(
-                    get: { apiKeyStore.apiKey(for: config.id) },
-                    set: { apiKeyStore.save(apiKey: $0, for: config.id) }
+                    get: { apiKeyStore.apiKey(for: credential.id) },
+                    set: { apiKeyStore.save(apiKey: $0, for: credential.id) }
                 ))
                 .textFieldStyle(.roundedBorder)
                 Button {
-                    apiKeyStore.save(apiKey: "", for: config.id)
+                    apiKeyStore.deleteCredential(configID: config.id, credentialID: credential.id)
                 } label: {
-                    Image(systemName: "trash")
+                    Label(localization.text("delete"), systemImage: "trash")
+                        .font(.system(size: 11))
                 }
                 .buttonStyle(.plain)
                 .help(localization.text("delete_key"))
-            }
-
-            if !config.note.isEmpty {
-                Text(config.note)
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
             }
         }
         .padding(10)

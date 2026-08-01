@@ -39,13 +39,55 @@ enum KeychainService {
     }
 }
 
+struct APICredential: Codable, Identifiable, Hashable {
+    var id = UUID()
+    var label: String
+    var baseURL: String
+    var model: String
+}
+
 struct AgentAPIConfig: Codable, Identifiable, Hashable {
     var id: String
     var name: String
-    var baseURL: String
-    var model: String
-    var isEnabled: Bool
     var note: String
+    var isEnabled: Bool
+    var credentials: [APICredential]
+
+    init(id: String, name: String, note: String, isEnabled: Bool = false, credentials: [APICredential] = []) {
+        self.id = id
+        self.name = name
+        self.note = note
+        self.isEnabled = isEnabled
+        self.credentials = credentials
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, name, note, isEnabled, credentials, baseURL, model
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        note = try container.decodeIfPresent(String.self, forKey: .note) ?? ""
+        isEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? false
+        if let saved = try container.decodeIfPresent([APICredential].self, forKey: .credentials), !saved.isEmpty {
+            credentials = saved
+        } else {
+            let baseURL = try container.decodeIfPresent(String.self, forKey: .baseURL) ?? ""
+            let model = try container.decodeIfPresent(String.self, forKey: .model) ?? ""
+            credentials = [APICredential(label: "Default", baseURL: baseURL, model: model)]
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(note, forKey: .note)
+        try container.encode(isEnabled, forKey: .isEnabled)
+        try container.encode(credentials, forKey: .credentials)
+    }
 }
 
 final class APIKeyStore: ObservableObject {
@@ -70,25 +112,25 @@ final class APIKeyStore: ObservableObject {
 
     static func defaultConfigs() -> [AgentAPIConfig] {
         [
-            AgentAPIConfig(id: "openai", name: "OpenAI", baseURL: "https://api.openai.com/v1", model: "gpt-4o-mini", isEnabled: false, note: "OpenAI 兼容标准"),
-            AgentAPIConfig(id: "anthropic", name: "Anthropic Claude", baseURL: "https://api.anthropic.com", model: "claude-3-5-sonnet", isEnabled: false, note: "Anthropic Messages API"),
-            AgentAPIConfig(id: "google", name: "Google Gemini", baseURL: "https://generativelanguage.googleapis.com/v1beta/openai", model: "gemini-2.0-flash", isEnabled: false, note: "OpenAI 兼容端点"),
-            AgentAPIConfig(id: "deepseek", name: "DeepSeek", baseURL: "https://api.deepseek.com/v1", model: "deepseek-chat", isEnabled: false, note: "OpenAI 兼容标准"),
-            AgentAPIConfig(id: "kimi", name: "Kimi (Moonshot)", baseURL: "https://api.moonshot.cn/v1", model: "moonshot-v1-8k", isEnabled: false, note: "OpenAI 兼容标准"),
-            AgentAPIConfig(id: "qwen", name: "Qwen (DashScope)", baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1", model: "qwen-plus", isEnabled: false, note: "OpenAI 兼容标准"),
-            AgentAPIConfig(id: "grok", name: "Grok (xAI)", baseURL: "https://api.x.ai/v1", model: "grok-2-latest", isEnabled: false, note: "OpenAI 兼容标准")
+            AgentAPIConfig(id: "openai", name: "OpenAI", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.openai.com/v1", model: "gpt-4o-mini")]),
+            AgentAPIConfig(id: "anthropic", name: "Anthropic Claude", note: "Anthropic Messages API", credentials: [APICredential(label: "Default", baseURL: "https://api.anthropic.com", model: "claude-3-5-sonnet")]),
+            AgentAPIConfig(id: "google", name: "Google Gemini", note: "OpenAI 兼容端点", credentials: [APICredential(label: "Default", baseURL: "https://generativelanguage.googleapis.com/v1beta/openai", model: "gemini-2.0-flash")]),
+            AgentAPIConfig(id: "deepseek", name: "DeepSeek", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.deepseek.com/v1", model: "deepseek-chat")]),
+            AgentAPIConfig(id: "kimi", name: "Kimi (Moonshot)", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.moonshot.cn/v1", model: "moonshot-v1-8k")]),
+            AgentAPIConfig(id: "qwen", name: "Qwen (DashScope)", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1", model: "qwen-plus")]),
+            AgentAPIConfig(id: "grok", name: "Grok (xAI)", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.x.ai/v1", model: "grok-2-latest")])
         ]
     }
 
-    func keyStorageKey(_ id: String) -> String {
-        "agentsbin.apikey." + id
+    func keyStorageKey(_ id: UUID) -> String {
+        "agentsbin.apikey." + id.uuidString
     }
 
-    func apiKey(for id: String) -> String {
+    func apiKey(for id: UUID) -> String {
         KeychainService.load(keyStorageKey(id)) ?? ""
     }
 
-    func save(apiKey: String, for id: String) {
+    func save(apiKey: String, for id: UUID) {
         if apiKey.isEmpty {
             KeychainService.delete(keyStorageKey(id))
         } else {
@@ -108,6 +150,27 @@ final class APIKeyStore: ObservableObject {
         persist()
     }
 
+    func addCredential(to configID: String) {
+        guard let index = configs.firstIndex(where: { $0.id == configID }) else { return }
+        let number = configs[index].credentials.count + 1
+        configs[index].credentials.append(APICredential(label: "Group \(number)", baseURL: "", model: ""))
+        persist()
+    }
+
+    func updateCredential(configID: String, credential: APICredential) {
+        guard let index = configs.firstIndex(where: { $0.id == configID }),
+              let credentialIndex = configs[index].credentials.firstIndex(where: { $0.id == credential.id }) else { return }
+        configs[index].credentials[credentialIndex] = credential
+        persist()
+    }
+
+    func deleteCredential(configID: String, credentialID: UUID) {
+        guard let index = configs.firstIndex(where: { $0.id == configID }) else { return }
+        configs[index].credentials.removeAll { $0.id == credentialID }
+        KeychainService.delete("agentsbin.apikey." + credentialID.uuidString)
+        persist()
+    }
+
     private func importCCSwitch() {
         let path = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent(".cc-switch/cc-switch.db")
@@ -123,7 +186,7 @@ final class APIKeyStore: ObservableObject {
             guard !name.isEmpty else { continue }
             let id = slug(name)
             if !configs.contains(where: { $0.id == id }) {
-                configs.append(AgentAPIConfig(id: id, name: name, baseURL: "", model: "", isEnabled: false, note: website))
+                configs.append(AgentAPIConfig(id: id, name: name, note: website))
             }
         }
         defaults.set(true, forKey: importedKey)

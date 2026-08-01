@@ -548,6 +548,22 @@ final class LocalizedStore: ObservableObject {
             .ru: "Смените пароль и добавьте почту администратора.",
             .pt: "Altere a senha e adicione o e-mail do administrador."
         ],
+        "group_label": [
+            .zh: "组名", .zhHant: "組名", .en: "Group name",
+            .ja: "グループ名", .ko: "그룹 이름", .es: "Nombre del grupo", .fr: "Nom du groupe",
+            .de: "Gruppenname", .ru: "Название группы", .pt: "Nome do grupo"
+        ],
+        "add_group": [
+            .zh: "添加参数组", .zhHant: "新增參數組", .en: "Add group",
+            .ja: "グループ追加", .ko: "그룹 추가", .es: "Añadir grupo", .fr: "Ajouter un groupe",
+            .de: "Gruppe hinzufügen", .ru: "Добавить группу", .pt: "Adicionar grupo"
+        ],
+        "select_agent_first": [
+            .zh: "请先选择左侧智能体", .zhHant: "請先選擇左側智能體", .en: "Select an agent first",
+            .ja: "左のエージェントを選択", .ko: "왼쪽 에이전트를 선택하세요", .es: "Seleccione un agente primero",
+            .fr: "Sélectionnez d'abord un agent", .de: "Zuerst Agent wählen",
+            .ru: "Сначала выберите агента", .pt: "Selecione um agente primeiro"
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"
