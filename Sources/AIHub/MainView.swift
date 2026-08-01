@@ -461,6 +461,10 @@ struct ManageView: View {
         HStack(spacing: 8) {
             Label(localization.text("settings"), systemImage: "gearshape")
                 .font(.headline)
+            Text("· " + settingsTitle)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
             Spacer()
             if adminAuth.isConfigured && adminAuth.isUnlocked {
                 Text(adminAuth.adminEmail)
@@ -475,6 +479,23 @@ struct ManageView: View {
         .padding(.horizontal, 12)
         .frame(height: 44)
         .background(.bar)
+    }
+
+    private var settingsTitle: String {
+        if settingsTab == 0 {
+            return localization.text("general_settings") + " · " + currentGeneralItemTitle
+        }
+        return localization.text("api_backup")
+    }
+
+    private var currentGeneralItemTitle: String {
+        switch generalItem {
+        case 0: return localization.text("change_password")
+        case 1: return localization.text("change_email")
+        case 2: return localization.text("auto_launch")
+        case 3: return localization.text("language")
+        default: return localization.text("appearance")
+        }
     }
 
     private var setupView: some View {
@@ -908,14 +929,25 @@ struct ManageView: View {
     private var appearanceSettings: some View {
         VStack(spacing: 6) {
             radioRow(title: localization.text("dark_mode"), selected: darkModeEnabled) {
-                darkModeEnabled = true
+                setAppearance(true)
             }
             radioRow(title: localization.text("light_mode"), selected: !darkModeEnabled) {
-                darkModeEnabled = false
+                setAppearance(false)
             }
         }
         .padding(8)
         .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
+    }
+
+    private func setAppearance(_ enabled: Bool) {
+        darkModeEnabled = enabled
+        let appearance = enabled ? NSAppearance(named: .darkAqua) : NSAppearance(named: .aqua)
+        NSApp.appearance = appearance
+        AppDelegate.mainPanel?.appearance = appearance
+        UserDefaults.standard.set(
+            enabled ? NSAppearance.Name.darkAqua.rawValue : NSAppearance.Name.aqua.rawValue,
+            forKey: "aihome.appearance"
+        )
     }
 
     private func radioRow(title: String, selected: Bool, action: @escaping () -> Void) -> some View {

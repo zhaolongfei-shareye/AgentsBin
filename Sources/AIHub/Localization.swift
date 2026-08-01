@@ -246,12 +246,12 @@ final class LocalizedStore: ObservableObject {
             .es: "Sin contenido", .fr: "Aucun contenu", .de: "Kein Inhalt", .ru: "Нет содержимого", .pt: "Sem conteúdo"
         ],
         "light_mode": [
-            .zh: "切换到浅色模式", .zhHant: "切換到淺色模式", .en: "Switch to light mode", .ja: "ライトモードに切り替え", .ko: "라이트 모드로 전환",
-            .es: "Cambiar a modo claro", .fr: "Passer en mode clair", .de: "Zum hellen Modus wechseln", .ru: "Переключить на светлый режим", .pt: "Mudar para modo claro"
+            .zh: "浅色模式", .zhHant: "淺色模式", .en: "Light mode", .ja: "ライトモード", .ko: "라이트 모드",
+            .es: "Modo claro", .fr: "Mode clair", .de: "Heller Modus", .ru: "Светлый режим", .pt: "Modo claro"
         ],
         "dark_mode": [
-            .zh: "切换到深色模式", .zhHant: "切換到深色模式", .en: "Switch to dark mode", .ja: "ダークモードに切り替え", .ko: "다크 모드로 전환",
-            .es: "Cambiar a modo oscuro", .fr: "Passer en mode sombre", .de: "Zum dunklen Modus wechseln", .ru: "Переключить на тёмный режим", .pt: "Mudar para modo escuro"
+            .zh: "深色模式", .zhHant: "深色模式", .en: "Dark mode", .ja: "ダークモード", .ko: "다크 모드",
+            .es: "Modo oscuro", .fr: "Mode sombre", .de: "Dunkler Modus", .ru: "Тёмный режим", .pt: "Modo escuro"
         ],
         "add_knowledge": [
             .zh: "收藏", .zhHant: "收藏", .en: "Save",
