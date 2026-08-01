@@ -111,7 +111,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             panel.titleVisibility = .hidden
             panel.titlebarAppearsTransparent = true
             panel.isReleasedWhenClosed = false
-            panel.minSize = NSSize(width: 720, height: 520)
+            panel.minSize = NSSize(width: 640, height: 520)
             panel.contentViewController = hostingController
             panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
             self.panel = panel

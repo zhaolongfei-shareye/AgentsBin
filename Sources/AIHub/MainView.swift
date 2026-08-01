@@ -80,7 +80,7 @@ struct MainPopoverView: View {
                 }
             }
         }
-        .frame(minWidth: 900, minHeight: 640)
+        .frame(minWidth: sidebarCollapsed ? 680 : 900, minHeight: 640)
         .onAppear {
             faviconStore.ensureLoaded(for: agentStore.agents)
             launchAtLogin = SMAppService.mainApp.status == .enabled
@@ -115,12 +115,12 @@ struct MainPopoverView: View {
         let current = panel.frame.size
         let height = current.height
         if sidebarCollapsed {
-            let width = max(720, previousSidebarWidth)
+            let width = max(640, previousSidebarWidth)
             panel.setContentSize(NSSize(width: width, height: height))
             sidebarCollapsed = false
         } else {
             previousSidebarWidth = current.width
-            let width = max(720, current.width - 224)
+            let width = max(640, current.width - 224)
             panel.setContentSize(NSSize(width: width, height: height))
             sidebarCollapsed = true
         }
