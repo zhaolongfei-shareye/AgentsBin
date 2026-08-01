@@ -627,6 +627,12 @@ final class LocalizedStore: ObservableObject {
             .ja: "外観", .ko: "외관", .es: "Apariencia", .fr: "Apparence",
             .de: "Darstellung", .ru: "Оформление", .pt: "Aparência"
         ],
+        "toggle_sidebar": [
+            .zh: "折叠/展开侧栏", .zhHant: "摺疊/展開側欄", .en: "Toggle sidebar",
+            .ja: "サイドバー切替", .ko: "사이드바 토글", .es: "Alternar barra lateral",
+            .fr: "Basculer la barre latérale", .de: "Seitenleiste umschalten",
+            .ru: "Свернуть/развернуть панель", .pt: "Alternar barra lateral"
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"

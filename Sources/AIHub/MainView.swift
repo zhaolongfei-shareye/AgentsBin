@@ -61,14 +61,18 @@ struct MainPopoverView: View {
     @State private var manageAgents = false
     @State private var showAgentPicker = false
     @State private var launchAtLogin = false
+    @State private var sidebarCollapsed = false
 
     var body: some View {
         VStack(spacing: 0) {
             header
             HStack(spacing: 0) {
-                sidebar
-                    .frame(width: 224)
-                Divider()
+                if !sidebarCollapsed {
+                    sidebar
+                        .frame(width: 224)
+                    Divider()
+                }
+                sidebarToggleBar
                 VStack(spacing: 0) {
                     rightPane
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -87,6 +91,23 @@ struct MainPopoverView: View {
         .onChange(of: agentStore.agents) { _ in
             faviconStore.ensureLoaded(for: agentStore.agents)
         }
+    }
+
+    private var sidebarToggleBar: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.16)) {
+                sidebarCollapsed.toggle()
+            }
+        } label: {
+            Image(systemName: sidebarCollapsed ? "chevron.right" : "chevron.left")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(.secondary)
+                .frame(width: 22, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(localization.text("toggle_sidebar"))
+        .background(Color(nsColor: .windowBackgroundColor))
     }
 
     private var header: some View {
