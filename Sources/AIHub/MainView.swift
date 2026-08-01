@@ -134,28 +134,36 @@ struct MainPopoverView: View {
                 Button {
                     manageAgents.toggle()
                 } label: {
-                    Text("−")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(manageAgents ? Color.white : Color.primary)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 26)
-                        .background(manageAgents ? Color.red.opacity(0.8) : Color.secondary.opacity(0.14), in: RoundedRectangle(cornerRadius: 9))
+                    HStack(spacing: 5) {
+                        Image(systemName: "wrench.adjustable")
+                            .font(.system(size: 13, weight: .semibold))
+                        Text(localization.text("edit_agents"))
+                            .font(.system(size: 12, weight: .semibold))
+                    }
+                    .foregroundStyle(manageAgents ? Color.white : Color.primary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 26)
+                    .background(manageAgents ? brandBlue : Color.secondary.opacity(0.14), in: RoundedRectangle(cornerRadius: 9))
                 }
                 .buttonStyle(.plain)
-                .help(localization.text("hide_agents_hint"))
+                .help(localization.text("edit_agents_hint"))
 
                 Button {
                     showAgentPicker = true
                 } label: {
-                    Text("+")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 26)
+                    HStack(spacing: 5) {
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 13, weight: .semibold))
+                        Text(localization.text("add_custom_agent"))
+                            .font(.system(size: 12, weight: .semibold))
+                    }
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 26)
                         .background(brandBlue, in: RoundedRectangle(cornerRadius: 9))
                 }
                 .buttonStyle(.plain)
-                .help(localization.text("add_agents_hint"))
+                .help(localization.text("add_custom_agent_hint"))
             }
 
             HStack(spacing: 6) {
@@ -179,17 +187,6 @@ struct MainPopoverView: View {
                 }
                 .buttonStyle(.plain)
                 .help(isDarkAppearance ? localization.text("light_mode") : localization.text("dark_mode"))
-
-                Button {
-                    toggleLaunchAtLogin()
-                } label: {
-                    Image(systemName: launchAtLogin ? "bolt.fill" : "bolt")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(launchAtLogin ? Color.green : Color.secondary)
-                        .frame(width: 22, height: 22)
-                }
-                .buttonStyle(.plain)
-                .help(localization.text("auto_launch"))
 
                 Button {
                     mode = .manage
@@ -391,6 +388,9 @@ struct ManageView: View {
     @State private var confirmEmail = ""
     @State private var emailPassword = ""
     @State private var selectedConfigID: String?
+    @State private var settingsTab = 0
+    @State private var launchAtLogin = false
+    @State private var darkModeEnabled = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
 
     var body: some View {
         VStack(spacing: 0) {
@@ -400,30 +400,34 @@ struct ManageView: View {
             } else if !adminAuth.isUnlocked {
                 unlockView
             } else {
-                configListView
+                Picker("", selection: $settingsTab) {
+                    Text(localization.text("api_backup")).tag(0)
+                    Text(localization.text("general_settings")).tag(1)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .padding(10)
+                if settingsTab == 0 {
+                    configListView
+                } else {
+                    generalSettingsView
+                }
             }
+        }
+        .onAppear {
+            launchAtLogin = SMAppService.mainApp.status == .enabled
         }
     }
 
     private var header: some View {
         HStack(spacing: 8) {
-            Label(localization.text("api_settings"), systemImage: "key.fill")
+            Label(localization.text("settings"), systemImage: "gearshape")
                 .font(.headline)
             Spacer()
             if adminAuth.isConfigured && adminAuth.isUnlocked {
                 Text(adminAuth.adminEmail)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Button(localization.text("change_email")) {
-                    showChangeEmail.toggle()
-                    showChangePassword = false
-                }
-                .buttonStyle(.plain)
-                Button(localization.text("change_password")) {
-                    showChangePassword.toggle()
-                    showChangeEmail = false
-                }
-                .buttonStyle(.plain)
                 Button(localization.text("lock")) {
                     adminAuth.lock()
                 }
@@ -551,61 +555,6 @@ struct ManageView: View {
     private var configListView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
-                if adminAuth.requireChange {
-                    Text(localization.text("change_required"))
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.orange)
-                        .padding(8)
-                        .background(Color.orange.opacity(0.14), in: RoundedRectangle(cornerRadius: 8))
-                }
-
-                if showChangePassword || adminAuth.requireChange {
-                    HStack(spacing: 8) {
-                        SecureField(localization.text("old_password"), text: $oldPassword)
-                            .textFieldStyle(.roundedBorder)
-                        SecureField(localization.text("new_password"), text: $newPassword)
-                            .textFieldStyle(.roundedBorder)
-                        Button(localization.text("save")) {
-                            _ = adminAuth.changePassword(old: oldPassword, new: newPassword)
-                            oldPassword = ""
-                            newPassword = ""
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .padding(8)
-                    .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
-                }
-
-                if showChangeEmail || adminAuth.requireChange {
-                    VStack(spacing: 8) {
-                        HStack(spacing: 8) {
-                            TextField(localization.text("new_email"), text: $newEmail)
-                                .textFieldStyle(.roundedBorder)
-                            TextField(localization.text("confirm_email"), text: $confirmEmail)
-                                .textFieldStyle(.roundedBorder)
-                        }
-                        HStack(spacing: 8) {
-                            SecureField(localization.text("admin_password"), text: $emailPassword)
-                                .textFieldStyle(.roundedBorder)
-                            Button(localization.text("save")) {
-                                if adminAuth.changeEmail(new: newEmail, confirm: confirmEmail, password: emailPassword) {
-                                    newEmail = ""
-                                    confirmEmail = ""
-                                    emailPassword = ""
-                                    showChangeEmail = false
-                                }
-                            }
-                            .buttonStyle(.plain)
-                            Button(localization.text("cancel")) {
-                                showChangeEmail = false
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                    .padding(8)
-                    .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
-                }
-
                 if apiKeyStore.importedFromCCSwitch {
                     Text(localization.text("cc_switch_imported"))
                         .font(.caption)
@@ -681,6 +630,114 @@ struct ManageView: View {
         }
     }
 
+    private var generalSettingsView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                if adminAuth.requireChange {
+                    Text(localization.text("change_required"))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(.orange)
+                        .padding(8)
+                        .background(Color.orange.opacity(0.14), in: RoundedRectangle(cornerRadius: 8))
+                }
+
+                GroupBox(localization.text("change_password")) {
+                    VStack(spacing: 8) {
+                        SecureField(localization.text("old_password"), text: $oldPassword)
+                            .textFieldStyle(.roundedBorder)
+                        SecureField(localization.text("new_password"), text: $newPassword)
+                            .textFieldStyle(.roundedBorder)
+                        HStack {
+                            Spacer()
+                            Button(localization.text("save")) {
+                                _ = adminAuth.changePassword(old: oldPassword, new: newPassword)
+                                oldPassword = ""
+                                newPassword = ""
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
+                    }
+                    .padding(8)
+                }
+
+                GroupBox(localization.text("change_email")) {
+                    VStack(spacing: 8) {
+                        TextField(localization.text("new_email"), text: $newEmail)
+                            .textFieldStyle(.roundedBorder)
+                        TextField(localization.text("confirm_email"), text: $confirmEmail)
+                            .textFieldStyle(.roundedBorder)
+                        SecureField(localization.text("admin_password"), text: $emailPassword)
+                            .textFieldStyle(.roundedBorder)
+                        HStack {
+                            Spacer()
+                            Button(localization.text("save")) {
+                                if adminAuth.changeEmail(new: newEmail, confirm: confirmEmail, password: emailPassword) {
+                                    newEmail = ""
+                                    confirmEmail = ""
+                                    emailPassword = ""
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
+                    }
+                    .padding(8)
+                }
+
+                GroupBox(localization.text("auto_launch")) {
+                    Toggle(isOn: $launchAtLogin) {
+                        Text(localization.text("auto_launch"))
+                    }
+                    .padding(8)
+                    .onChange(of: launchAtLogin) { enabled in
+                        do {
+                            if enabled {
+                                try SMAppService.mainApp.register()
+                            } else {
+                                try SMAppService.mainApp.unregister()
+                            }
+                            launchAtLogin = SMAppService.mainApp.status == .enabled
+                        } catch {
+                            launchAtLogin = SMAppService.mainApp.status == .enabled
+                        }
+                    }
+                }
+
+                GroupBox(localization.text("language")) {
+                    Picker(localization.text("language"), selection: $localization.language) {
+                        ForEach(AppLanguage.allCases, id: \.self) { lang in
+                            Text(lang.displayName).tag(lang)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .padding(8)
+                }
+
+                GroupBox(localization.text("appearance")) {
+                    Toggle(isOn: $darkModeEnabled) {
+                        Text(localization.text("dark_mode"))
+                    }
+                    .padding(8)
+                    .onChange(of: darkModeEnabled) { enabled in
+                        NSApp.appearance = enabled ? NSAppearance(named: .darkAqua) : NSAppearance(named: .aqua)
+                        UserDefaults.standard.set(
+                            enabled ? NSAppearance.Name.darkAqua.rawValue : NSAppearance.Name.aqua.rawValue,
+                            forKey: "aihome.appearance"
+                        )
+                    }
+                }
+
+                if !adminAuth.message.isEmpty {
+                    Text(adminAuth.message)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(12)
+            .frame(maxWidth: 560)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
     private func credentialRow(config: AgentAPIConfig, credential: APICredential) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
@@ -752,27 +809,16 @@ struct ManageView: View {
 
 struct AgentPickerView: View {
     @EnvironmentObject private var agentStore: AgentStore
-    @EnvironmentObject private var faviconStore: FaviconStore
     @EnvironmentObject private var localization: LocalizedStore
     @Environment(\.dismiss) private var dismiss
-    @State private var showCustomForm = false
     @State private var customName = ""
     @State private var customURL = ""
-
-    private var enabled: [Agent] {
-        agentStore.enabledAgents
-    }
-
-    private var hidden: [Agent] {
-        agentStore.agents
-            .filter { !$0.isEnabled }
-            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
-    }
+    @State private var errorMessage = ""
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 14) {
             HStack {
-                Text(localization.text("agent_picker_title"))
+                Text(localization.text("add_custom_agent"))
                     .font(.headline)
                 Spacer()
                 Button {
@@ -786,147 +832,55 @@ struct AgentPickerView: View {
             }
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(localization.text("visible_agents"))
+                Text(localization.text("name"))
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.secondary)
-                ScrollView(.vertical, showsIndicators: true) {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 8)], spacing: 8) {
-                        ForEach(enabled) { agent in
-                            chip(agent)
-                        }
-                    }
-                }
-                .frame(height: 92)
+                TextField(localization.text("name"), text: $customName)
+                    .textFieldStyle(.roundedBorder)
             }
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(localization.text("all_agents"))
+                Text(localization.text("web_url"))
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.secondary)
-                ScrollView {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 170), spacing: 8)], spacing: 8) {
-                        ForEach(hidden) { agent in
-                            candidateRow(agent)
-                        }
-                    }
-                }
-                .frame(maxHeight: 320)
+                TextField(localization.text("web_url"), text: $customURL)
+                    .textFieldStyle(.roundedBorder)
             }
 
-            if showCustomForm {
-                VStack(spacing: 8) {
-                    TextField(localization.text("name"), text: $customName)
-                        .textFieldStyle(.roundedBorder)
-                    TextField(localization.text("web_url"), text: $customURL)
-                        .textFieldStyle(.roundedBorder)
-                    HStack {
-                        Button {
-                            saveCustom()
-                        } label: {
-                            Label(localization.text("save"), systemImage: "checkmark")
-                        }
-                        .buttonStyle(.plain)
-                        Button {
-                            showCustomForm = false
-                            customName = ""
-                            customURL = ""
-                        } label: {
-                            Label(localization.text("cancel"), systemImage: "xmark")
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-                .padding(10)
-                .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
+            Text(localization.text("custom_agent_hint"))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+
+            if !errorMessage.isEmpty {
+                Text(errorMessage)
+                    .font(.caption)
+                    .foregroundStyle(.red)
             }
 
             HStack {
-                Button {
-                    showCustomForm.toggle()
-                } label: {
-                    Label(localization.text("custom_agent"), systemImage: "plus.circle")
+                Spacer()
+                Button(localization.text("cancel")) {
+                    dismiss()
                 }
                 .buttonStyle(.plain)
-                Spacer()
-                Button(localization.text("done")) {
-                    dismiss()
+                Button(localization.text("save")) {
+                    saveCustom()
                 }
                 .buttonStyle(.borderedProminent)
             }
         }
-        .padding(16)
-        .frame(width: 520, height: 560)
-        .onAppear {
-            faviconStore.ensureLoaded(for: agentStore.agents)
-        }
-    }
-
-    private func chip(_ agent: Agent) -> some View {
-        HStack(spacing: 6) {
-            pickerAvatar(agent)
-            Text(localization.agentName(agent.name))
-                .font(.system(size: 12, weight: .semibold))
-            Button {
-                agentStore.setEnabled(agent.id, false)
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .background(.quaternary.opacity(0.6), in: Capsule())
-    }
-
-    private func candidateRow(_ agent: Agent) -> some View {
-        HStack(spacing: 7) {
-            pickerAvatar(agent)
-            Text(localization.agentName(agent.name))
-                .font(.system(size: 13))
-                .lineLimit(1)
-            Spacer()
-            Button {
-                agentStore.setEnabled(agent.id, true)
-            } label: {
-                Image(systemName: "plus.circle.fill")
-                    .font(.system(size: 16))
-                    .foregroundStyle(brandBlue)
-            }
-            .buttonStyle(.plain)
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 7))
-    }
-
-    private func pickerAvatar(_ agent: Agent) -> some View {
-        if let image = faviconStore.images[agent.id] {
-            return AnyView(
-                Image(nsImage: image)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 24, height: 24)
-                    .clipShape(RoundedRectangle(cornerRadius: 7))
-            )
-        }
-        return AnyView(
-            Text(agent.letter)
-                .font(.system(size: 11, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 24, height: 24)
-                .background(Color(hex: agent.colorHex), in: RoundedRectangle(cornerRadius: 7))
-        )
+        .padding(18)
+        .frame(width: 380)
     }
 
     private func saveCustom() {
         let name = customName.trimmingCharacters(in: .whitespacesAndNewlines)
         let url = customURL.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !name.isEmpty else { return }
+        guard !name.isEmpty else {
+            errorMessage = localization.text("name_required")
+            return
+        }
         agentStore.add(name: name, urlString: url)
-        customName = ""
-        customURL = ""
-        showCustomForm = false
+        dismiss()
     }
 }

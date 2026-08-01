@@ -570,6 +570,63 @@ final class LocalizedStore: ObservableObject {
             .fr: "Réinitialiser le mot de passe initial", .de: "Startpasswort zurücksetzen",
             .ru: "Сбросить к начальному паролю", .pt: "Redefinir senha inicial"
         ],
+        "edit_agents": [
+            .zh: "编辑", .zhHant: "編輯", .en: "Edit",
+            .ja: "編集", .ko: "편집", .es: "Editar", .fr: "Modifier",
+            .de: "Bearbeiten", .ru: "Правка", .pt: "Editar"
+        ],
+        "edit_agents_hint": [
+            .zh: "管理显示", .zhHant: "管理顯示", .en: "Manage visibility",
+            .ja: "表示管理", .ko: "표시 관리", .es: "Gestionar visibilidad", .fr: "Gérer l'affichage",
+            .de: "Sichtbarkeit verwalten", .ru: "Управление отображением", .pt: "Gerenciar exibição"
+        ],
+        "add_custom_agent": [
+            .zh: "新增", .zhHant: "新增", .en: "Add",
+            .ja: "追加", .ko: "추가", .es: "Añadir", .fr: "Ajouter",
+            .de: "Hinzufügen", .ru: "Добавить", .pt: "Adicionar"
+        ],
+        "add_custom_agent_hint": [
+            .zh: "新增自定义智能体", .zhHant: "新增自訂智能體", .en: "Add custom agent",
+            .ja: "カスタムエージェント追加", .ko: "사용자 에이전트 추가", .es: "Añadir agente personalizado",
+            .fr: "Ajouter un agent personnalisé", .de: "Benutzerdefinierten Agent hinzufügen",
+            .ru: "Добавить своего агента", .pt: "Adicionar agente personalizado"
+        ],
+        "custom_agent_hint": [
+            .zh: "LOGO 取域名首字母，同字母自动配色。", .zhHant: "LOGO 取網域首字母，同字母自動配色。", .en: "Logo uses domain initial with auto colors.",
+            .ja: "ロゴはドメインの頭文字、同文字は自動配色。",
+            .ko: "로고는 도메인 첫 글자, 같은 글자는 자동 색상.",
+            .es: "El logo usa la inicial del dominio con colores automáticos.",
+            .fr: "Logo avec initiale du domaine et couleurs automatiques.",
+            .de: "Logo nutzt Domain-Initiale mit automatischen Farben.",
+            .ru: "Логотип — первая буква домена, цвета автоматически.",
+            .pt: "O logo usa a inicial do domínio com cores automáticas."
+        ],
+        "name_required": [
+            .zh: "请输入名称", .zhHant: "請輸入名稱", .en: "Name is required",
+            .ja: "名前を入力してください", .ko: "이름을 입력하세요", .es: "Se requiere un nombre",
+            .fr: "Le nom est requis", .de: "Name erforderlich",
+            .ru: "Введите название", .pt: "O nome é obrigatório"
+        ],
+        "api_backup": [
+            .zh: "API 参数备份", .zhHant: "API 參數備份", .en: "API Keys",
+            .ja: "API キー", .ko: "API 키", .es: "Claves API", .fr: "Clés API",
+            .de: "API-Schlüssel", .ru: "API-ключи", .pt: "Chaves API"
+        ],
+        "general_settings": [
+            .zh: "通用设置", .zhHant: "通用設定", .en: "General",
+            .ja: "一般設定", .ko: "일반 설정", .es: "General", .fr: "Général",
+            .de: "Allgemein", .ru: "Общие", .pt: "Geral"
+        ],
+        "language": [
+            .zh: "语言", .zhHant: "語言", .en: "Language",
+            .ja: "言語", .ko: "언어", .es: "Idioma", .fr: "Langue",
+            .de: "Sprache", .ru: "Язык", .pt: "Idioma"
+        ],
+        "appearance": [
+            .zh: "界面风格", .zhHant: "介面風格", .en: "Appearance",
+            .ja: "外観", .ko: "외관", .es: "Apariencia", .fr: "Apparence",
+            .de: "Darstellung", .ru: "Оформление", .pt: "Aparência"
+        ],
         "share_system": [
             .zh: "分享", .zhHant: "分享", .en: "Share", .ja: "共有", .ko: "공유",
             .es: "Compartir", .fr: "Partager", .de: "Teilen", .ru: "Поделиться", .pt: "Compartilhar"
