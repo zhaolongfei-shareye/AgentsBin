@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgentBin · macOS 菜单栏 AI 智能体聚合</title>
+  <meta name="description" content="AgentBin 是一个 macOS 菜单栏 AI 智能体聚合工具，支持网页对话、知识库收藏与本地 AI 总结。">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/">
+        <img src="/assets/appicon.png" alt="AgentBin logo" width="28" height="28">
+        <span>AgentBin</span>
+      </a>
+      <a class="button button-small" href="#download">下载</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>一个菜单栏，装下所有 AI 智能体</h1>
+        <p class="lead">在网页端直接对话，把重要回答收藏进本地知识库，再用本地 Ollama 自动总结。</p>
+        <div class="hero-actions">
+          <a class="button" href="/downloads/AgentBin-1.0.0.pkg" download>下载 AgentBin 1.0.0</a>
+          <span class="muted">macOS 13+ · 免费</span>
+        </div>
+      </div>
+      <div class="app-window" aria-label="AgentBin 应用界面示意">
+        <div class="window-bar">
+          <span class="traffic traffic-close"></span>
+          <span class="traffic traffic-min"></span>
+          <span class="traffic traffic-full"></span>
+          <span class="window-title">AgentBin</span>
+        </div>
+        <div class="window-body">
+          <aside class="window-side">
+            <div class="side-tabs"><span class="active">智能体</span><span>知识库</span></div>
+            <div class="side-item active"><span class="dot blue"></span>ChatGPT</div>
+            <div class="side-item"><span class="dot teal"></span>Claude</div>
+            <div class="side-item"><span class="dot green"></span>DeepSeek</div>
+            <div class="side-item"><span class="dot orange"></span>豆包</div>
+            <div class="side-item"><span class="dot purple"></span>千问</div>
+          </aside>
+          <div class="window-main">
+            <div class="chat-head">
+              <span class="avatar">C</span>
+              <strong>ChatGPT</strong>
+              <span class="status">已回复</span>
+            </div>
+            <div class="chat-body">
+              <div class="bubble user">请用三点解释什么是 RAG</div>
+              <div class="bubble bot">
+                RAG 通过检索外部资料增强生成回答，核心是检索、融合与生成，可减少幻觉并提供来源引用。
+              </div>
+            </div>
+            <div class="chat-composer">
+              <span class="composer-text">输入问题…</span>
+              <span class="composer-send">发送</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <h3>网页内对话</h3>
+        <p>打开就是原站网页，登录态保留，一次专注一个智能体。</p>
+      </div>
+      <div class="feature">
+        <h3>收藏知识库</h3>
+        <p>把最新回复手动存入本地知识库，按时间倒序整理。</p>
+      </div>
+      <div class="feature">
+        <h3>本地 AI 总结</h3>
+        <p>默认调用 Ollama 提取核心要点，数据留在本机。</p>
+      </div>
+      <div class="feature">
+        <h3>多语言界面</h3>
+        <p>支持 10 种语言，智能体管理与导入导出开箱即用。</p>
+      </div>
+    </section>
+
+    <section class="download" id="download">
+      <h2>下载 AgentBin</h2>
+      <div class="download-card">
+        <div>
+          <strong>AgentBin 1.0.0</strong>
+          <p class="muted">macOS 13 及以上 · 约 511 KB</p>
+          <p class="hash">SHA-256<br>fdc17618d404c480d82c7134055a2b31ecd9821e14b1dfbbb8d9a9cb22a95e6f</p>
+        </div>
+        <a class="button" href="/downloads/AgentBin-1.0.0.pkg" download>下载 .pkg 安装包</a>
+      </div>
+      <p class="note">当前为未签名版本，首次打开如被拦截，右键选择“打开”即可。</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>AgentBin · 菜单栏 AI 智能体聚合工具</p>
+  </footer>
+</body>
+</html>
