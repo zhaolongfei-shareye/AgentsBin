@@ -73,14 +73,12 @@ struct MainPopoverView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            header
             HStack(spacing: 0) {
                 if !sidebarCollapsed {
                     sidebar
                         .frame(width: 224)
                     Divider()
                 }
-                sidebarToggleBar
                 VStack(spacing: 0) {
                     rightPane
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -89,7 +87,10 @@ struct MainPopoverView: View {
                 }
             }
         }
-        .frame(minWidth: sidebarCollapsed ? 640 : 900, minHeight: 640)
+        .frame(minWidth: sidebarCollapsed ? 520 : 860, minHeight: 400)
+        .overlay(alignment: .leading) {
+            collapseButton
+        }
         .onAppear {
             faviconStore.ensureLoaded(for: agentStore.agents)
             launchAtLogin = SMAppService.mainApp.status == .enabled
@@ -99,19 +100,25 @@ struct MainPopoverView: View {
         }
     }
 
-    private var sidebarToggleBar: some View {
+    private var collapseButton: some View {
         Button {
             toggleSidebar()
         } label: {
             Image(systemName: sidebarCollapsed ? "chevron.right" : "chevron.left")
-                .font(.system(size: 11, weight: .bold))
+                .font(.system(size: 10, weight: .bold))
                 .foregroundStyle(.secondary)
-                .frame(width: 22, height: 44)
-                .contentShape(Rectangle())
+                .frame(width: 22, height: 22)
+                .background(
+                    Circle()
+                        .fill(Color(nsColor: .windowBackgroundColor))
+                        .shadow(color: .black.opacity(0.25), radius: 3, y: 1)
+                )
+                .contentShape(Circle())
         }
         .buttonStyle(.plain)
+        .padding(.leading, sidebarCollapsed ? 6 : 210)
+        .padding(.vertical, 6)
         .help(localization.text("toggle_sidebar"))
-        .background(Color(nsColor: .windowBackgroundColor))
     }
 
     private var rightFooterBar: some View {
@@ -174,29 +181,6 @@ struct MainPopoverView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
             panel.setContentSize(NSSize(width: width, height: height))
         }
-    }
-
-    private var header: some View {
-        HStack(spacing: 10) {
-            Spacer(minLength: 0)
-            avatar(agentStore.activeAgent)
-            Text(localization.agentName(agentStore.activeAgent.name))
-                .font(.system(size: 20, weight: .heavy))
-                .lineLimit(1)
-            Button {
-                openExternal(agentStore.activeAgent.urlString)
-            } label: {
-                Image(systemName: "safari")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 26, height: 26)
-            }
-            .buttonStyle(.plain)
-            .help(localization.text("browser"))
-        }
-        .padding(.horizontal, 12)
-        .frame(height: 48)
-        .background(.bar)
     }
 
     private var appVersion: String {
@@ -424,15 +408,32 @@ struct MainPopoverView: View {
 
     private var chatPane: some View {
         VStack(spacing: 0) {
-            Picker("", selection: $chatTab) {
-                Text(localization.text("web_mode")).tag(ChatTab.web)
-                Text(localization.text("client_mode")).tag(ChatTab.api)
+            HStack(spacing: 10) {
+                Picker("", selection: $chatTab) {
+                    Text(localization.text("web_mode")).tag(ChatTab.web)
+                    Text(localization.text("client_mode")).tag(ChatTab.api)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .frame(width: 240)
+                Spacer(minLength: 0)
+                avatar(agentStore.activeAgent)
+                Text(localization.agentName(agentStore.activeAgent.name))
+                    .font(.system(size: 20, weight: .heavy))
+                    .lineLimit(1)
+                Button {
+                    openExternal(agentStore.activeAgent.urlString)
+                } label: {
+                    Image(systemName: "safari")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 26, height: 26)
+                }
+                .buttonStyle(.plain)
+                .help(localization.text("browser"))
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .frame(width: 240)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 12)
+            .frame(height: 46)
             .background(.bar)
             Divider()
             switch chatTab {
