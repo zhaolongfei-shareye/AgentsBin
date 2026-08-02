@@ -86,11 +86,16 @@ a {
   border-radius: 8px;
 }
 
+.nav-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .products-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-left: 14px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
   color: var(--text);
@@ -1091,10 +1096,6 @@ footer {
   .nav-inner {
     flex-wrap: wrap;
     gap: 10px;
-  }
-
-  .products-btn {
-    margin-left: 0;
   }
 
   .products-panel {

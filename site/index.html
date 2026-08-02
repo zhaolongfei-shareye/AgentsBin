@@ -50,14 +50,16 @@
 <body>
   <header class="nav">
     <div class="nav-inner">
-      <a class="brand" href="#">
-        <img src="assets/appicon.png" alt="AgentsBin logo" width="28" height="28">
-        <span>AgentsBin</span>
-      </a>
-      <button class="products-btn" id="productsBtn" type="button" aria-haspopup="dialog">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-        <span data-i18n="nav_products">Products</span>
-      </button>
+      <div class="nav-group">
+        <a class="brand" href="#">
+          <img src="assets/appicon.png" alt="AgentsBin logo" width="28" height="28">
+          <span>AgentsBin</span>
+        </a>
+        <button class="products-btn" id="productsBtn" type="button" aria-haspopup="dialog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span data-i18n="nav_products">Products</span>
+        </button>
+      </div>
       <div class="nav-actions">
         <select class="lang-toggle" id="langSelect" aria-label="Language">
           <option value="en">English</option>
