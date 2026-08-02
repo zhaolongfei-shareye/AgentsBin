@@ -48,10 +48,16 @@ struct ClientChatView: View {
                 .foregroundStyle(.yellow)
             Text(localization.text("api_not_configured"))
                 .font(.headline)
+            Text(localization.text("api_not_configured_hint"))
+                .font(.system(size: 12))
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 300)
+                .padding(.horizontal, 18)
             Button {
                 onOpenSettings()
             } label: {
-                Label(localization.text("go_configure"), systemImage: "gearshape")
+                Label(localization.text("go_configure"), systemImage: "arrow.right")
             }
             .buttonStyle(.borderedProminent)
         }

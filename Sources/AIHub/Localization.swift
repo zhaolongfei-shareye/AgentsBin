@@ -247,9 +247,20 @@ final class LocalizedStore: ObservableObject {
             .ru: "API-ключ не настроен", .pt: "Sem chave API"
         ],
         "go_configure": [
-            .zh: "前往 API 配置", .zhHant: "前往 API 設定", .en: "Configure API", .ja: "APIを設定",
-            .ko: "API 설정", .es: "Configurar API", .fr: "Configurer l'API", .de: "API konfigurieren",
-            .ru: "Настроить API", .pt: "Configurar API"
+            .zh: "下一步", .zhHant: "下一步", .en: "Next", .ja: "次へ", .ko: "다음",
+            .es: "Siguiente", .fr: "Suivant", .de: "Weiter", .ru: "Далее", .pt: "Avançar"
+        ],
+        "api_not_configured_hint": [
+            .zh: "客户端模式，需要你按智能体要求添加相关API配置，我们会用加密方式保存相关配置到你本地，不会上传到云端。点击下一步开始填写。",
+            .zhHant: "客戶端模式，需要你按智能體要求新增相關 API 設定，我們會用加密方式儲存在你本機，不會上傳到雲端。點擊下一步開始填寫。",
+            .en: "Client mode needs an API configuration for this agent. Keys are encrypted and stored locally only, never uploaded. Click Next to continue.",
+            .ja: "クライアントモードではこのエージェント用のAPI設定が必要です。キーは暗号化してローカルに保存し、クラウドにはアップロードしません。次へ進んでください。",
+            .ko: "클라이언트 모드에는 이 에이전트의 API 설정이 필요합니다. 키는 암호화되어 로컬에만 저장되며 클라우드로 업로드되지 않습니다. 다음을 눌러 진행하세요.",
+            .es: "El modo cliente necesita una configuración API para este agente. Las claves se guardan cifradas solo en tu equipo y nunca se suben. Toca Siguiente.",
+            .fr: "Le mode client nécessite une configuration API pour cet agent. Les clés sont chiffrées et stockées uniquement en local. Touchez Suivant.",
+            .de: "Der Client-Modus benötigt eine API-Konfiguration für diesen Agenten. Schlüssel werden nur lokal verschlüsselt gespeichert. Klicken Sie auf Weiter.",
+            .ru: "Клиентский режим требует API-конфигурацию для этого агента. Ключи шифруются и хранятся только локально. Нажмите «Далее».",
+            .pt: "O modo cliente precisa de uma configuração de API para este agente. As chaves ficam criptografadas apenas no seu dispositivo. Toque em Avançar."
         ],
         "verifying_api": [
             .zh: "正在验证 API...", .zhHant: "正在驗證 API...", .en: "Verifying API...", .ja: "APIを確認中...",
