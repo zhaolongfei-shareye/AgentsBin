@@ -251,16 +251,16 @@ final class LocalizedStore: ObservableObject {
             .es: "Siguiente", .fr: "Suivant", .de: "Weiter", .ru: "Далее", .pt: "Avançar"
         ],
         "api_not_configured_hint": [
-            .zh: "客户端模式，需要你按智能体要求添加相关API配置，我们会用加密方式保存相关配置到你本地，不会上传到云端。点击下一步开始填写。",
-            .zhHant: "客戶端模式，需要你按智能體要求新增相關 API 設定，我們會用加密方式儲存在你本機，不會上傳到雲端。點擊下一步開始填寫。",
-            .en: "Client mode needs an API configuration for this agent. Keys are encrypted and stored locally only, never uploaded. Click Next to continue.",
-            .ja: "クライアントモードではこのエージェント用のAPI設定が必要です。キーは暗号化してローカルに保存し、クラウドにはアップロードしません。次へ進んでください。",
-            .ko: "클라이언트 모드에는 이 에이전트의 API 설정이 필요합니다. 키는 암호화되어 로컬에만 저장되며 클라우드로 업로드되지 않습니다. 다음을 눌러 진행하세요.",
-            .es: "El modo cliente necesita una configuración API para este agente. Las claves se guardan cifradas solo en tu equipo y nunca se suben. Toca Siguiente.",
-            .fr: "Le mode client nécessite une configuration API pour cet agent. Les clés sont chiffrées et stockées uniquement en local. Touchez Suivant.",
-            .de: "Der Client-Modus benötigt eine API-Konfiguration für diesen Agenten. Schlüssel werden nur lokal verschlüsselt gespeichert. Klicken Sie auf Weiter.",
-            .ru: "Клиентский режим требует API-конфигурацию для этого агента. Ключи шифруются и хранятся только локально. Нажмите «Далее».",
-            .pt: "O modo cliente precisa de uma configuração de API para este agente. As chaves ficam criptografadas apenas no seu dispositivo. Toque em Avançar."
+            .zh: "配置 API Key 即可开始客户端对话。密钥只存本机且加密，不会上传云端。",
+            .zhHant: "設定 API Key 即可開始客戶端對話。密鑰只存本機且加密，不會上傳雲端。",
+            .en: "Add an API key to start client chat. Keys are encrypted and stay on your Mac.",
+            .ja: "APIキーを設定するとクライアントチャットを開始できます。キーは暗号化され、この Mac にのみ保存されます。",
+            .ko: "API 키를 설정하면 클라이언트 채팅을 시작할 수 있습니다. 키는 암호화되어 이 Mac에만 저장됩니다.",
+            .es: "Añade una clave API para iniciar el chat. Las claves se cifran y quedan en tu Mac.",
+            .fr: "Ajoutez une clé API pour démarrer le chat. Les clés sont chiffrées et restent sur votre Mac.",
+            .de: "API-Schlüssel hinzufügen, um den Chat zu starten. Schlüssel bleiben verschlüsselt auf Ihrem Mac.",
+            .ru: "Добавьте API-ключ, чтобы начать чат. Ключи шифруются и остаются только на вашем Mac.",
+            .pt: "Adicione uma chave API para iniciar o chat. As chaves ficam criptografadas no seu Mac."
         ],
         "verifying_api": [
             .zh: "正在验证 API...", .zhHant: "正在驗證 API...", .en: "Verifying API...", .ja: "APIを確認中...",
