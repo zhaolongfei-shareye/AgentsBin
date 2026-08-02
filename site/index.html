@@ -54,6 +54,10 @@
         <img src="assets/appicon.png" alt="AgentsBin logo" width="28" height="28">
         <span>AgentsBin</span>
       </a>
+      <button class="products-btn" id="productsBtn" type="button" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span data-i18n="nav_products">Products</span>
+      </button>
       <div class="nav-actions">
         <select class="lang-toggle" id="langSelect" aria-label="Language">
           <option value="en">English</option>
@@ -71,6 +75,63 @@
       </div>
     </div>
   </header>
+
+  <div class="products-overlay" id="productsOverlay" hidden>
+    <div class="products-panel" role="dialog" aria-modal="true" aria-label="AgentsBin products">
+      <div class="panel-head">
+        <span class="panel-title" data-i18n="pm_title">Explore products</span>
+        <div class="panel-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="productSearch" type="search" data-i18n-ph="pm_search" placeholder="Search products">
+        </div>
+        <div class="panel-filter" id="productFilter">
+          <button class="on" data-filter="all" data-i18n="pm_all">All</button>
+          <button data-filter="released" data-i18n="pm_released">Released</button>
+          <button data-filter="soon" data-i18n="pm_soon">Coming Soon</button>
+        </div>
+      </div>
+      <div class="panel-cats" id="productCats">
+        <button class="on" data-cat="all" data-i18n="pm_cat_all">All</button>
+        <button data-cat="assistants" data-i18n="pm_cat_assistants">AI Assistants</button>
+        <button data-cat="audio" data-i18n="pm_cat_audio">Audio</button>
+        <button data-cat="media" data-i18n="pm_cat_media">Media Tools</button>
+      </div>
+      <div class="panel-grid" id="productGrid">
+        <a class="product-card" href="#download" data-search="AgentsBin macOS menu bar" data-cat="assistants" data-state="released">
+          <span class="pc-icon pc-icon-main">AB</span>
+          <span class="pc-name" data-i18n="p1n">AgentsBin</span>
+          <span class="pc-sub" data-i18n="p1s">macOS · Menu Bar</span>
+          <span class="pc-desc" data-i18n="p1d">37 AI agents in one menu bar, with encrypted API key backup and 10 languages.</span>
+          <span class="pc-foot"><span class="pc-status live" data-i18n="pm_live">Released</span><span class="pc-arrow">→</span></span>
+        </a>
+        <div class="product-card soon" data-search="AgentsBin Audio audio transcription podcast" data-cat="audio" data-state="soon">
+          <span class="pc-icon pc-icon-audio">♪</span>
+          <span class="pc-name" data-i18n="p2n">AgentsBin Audio</span>
+          <span class="pc-sub" data-i18n="p2s">macOS · Audio AI</span>
+          <span class="pc-desc" data-i18n="p2d">Audio transcription, summaries and smart editing. In development.</span>
+          <span class="pc-foot"><span class="pc-status soon" data-i18n="pm_soon_s">Coming Soon</span></span>
+        </div>
+        <div class="product-card soon" data-search="AgentsBin Watermark image video batch" data-cat="media" data-state="soon">
+          <span class="pc-icon pc-icon-media">◈</span>
+          <span class="pc-name" data-i18n="p3n">AgentsBin Watermark</span>
+          <span class="pc-sub" data-i18n="p3s">macOS · Media Tools</span>
+          <span class="pc-desc" data-i18n="p3d">Batch watermark and copyright protection for images and video. In development.</span>
+          <span class="pc-foot"><span class="pc-status soon" data-i18n="pm_soon_s">Coming Soon</span></span>
+        </div>
+        <div class="product-card soon" data-search="more products coming soon" data-cat="all" data-state="soon">
+          <span class="pc-icon pc-icon-more">+</span>
+          <span class="pc-name" data-i18n="p4n">More products</span>
+          <span class="pc-sub" data-i18n="pm_soon_s">Coming Soon</span>
+          <span class="pc-desc" data-i18n="p4d">More AgentsBin products are being planned.</span>
+          <span class="pc-foot"><span class="pc-status soon" data-i18n="pm_soon_s">Coming Soon</span></span>
+        </div>
+      </div>
+      <div class="panel-foot">
+        <span data-i18n="pm_foot">More products coming soon</span>
+        <a href="#" data-i18n="pm_view_all">View all products</a>
+      </div>
+    </div>
+  </div>
 
   <main>
     <section class="hero">

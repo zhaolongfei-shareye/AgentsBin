@@ -3,6 +3,31 @@
     page_title: "AgentsBin · Menu bar AI agent hub for macOS",
     page_desc: "AgentsBin is a macOS menu bar hub for AI agents with embedded web chat, agent management and encrypted API key backup.",
     nav_download: "Download",
+    nav_products: "Products",
+    pm_title: "Explore products",
+    pm_search: "Search products",
+    pm_all: "All",
+    pm_released: "Released",
+    pm_soon: "Coming Soon",
+    pm_cat_all: "All",
+    pm_cat_assistants: "AI Assistants",
+    pm_cat_audio: "Audio",
+    pm_cat_media: "Media Tools",
+    p1n: "AgentsBin",
+    p1s: "macOS · Menu Bar",
+    p1d: "37 AI agents in one menu bar, with encrypted API key backup and 10 languages.",
+    p2n: "AgentsBin Audio",
+    p2s: "macOS · Audio AI",
+    p2d: "Audio transcription, summaries and smart editing. In development.",
+    p3n: "AgentsBin Watermark",
+    p3s: "macOS · Media Tools",
+    p3d: "Batch watermark and copyright protection for images and video. In development.",
+    p4n: "More products",
+    p4d: "More AgentsBin products are being planned.",
+    pm_live: "Released",
+    pm_soon_s: "Coming Soon",
+    pm_foot: "More products coming soon",
+    pm_view_all: "View all products",
     hero_title: "All your AI agents, one menu bar away",
     hero_lead: "AgentsBin lives in the menu bar. Click the AB icon, pick an agent, and start chatting instantly — no tabs, no typing URLs, no searching.",
     hero_cta: "Download AgentsBin 1.0.16",
@@ -78,6 +103,31 @@
     page_title: "AgentsBin · macOS 菜单栏 AI 智能体聚合",
     page_desc: "AgentsBin 是一个 macOS 菜单栏 AI 智能体聚合工具，支持网页对话、智能体管理与加密的 API Key 备份。",
     nav_download: "下载",
+    nav_products: "产品",
+    pm_title: "产品中心",
+    pm_search: "搜索产品",
+    pm_all: "全部",
+    pm_released: "已发布",
+    pm_soon: "即将上线",
+    pm_cat_all: "全部",
+    pm_cat_assistants: "AI 助手",
+    pm_cat_audio: "音频",
+    pm_cat_media: "媒体工具",
+    p1n: "AgentsBin",
+    p1s: "macOS · 菜单栏",
+    p1d: "一个菜单栏聚合 37 个 AI 智能体，支持加密 API Key 备份与 10 种语言。",
+    p2n: "AgentsBin Audio",
+    p2s: "macOS · 音频 AI",
+    p2d: "语音转写、摘要与智能剪辑，开发中。",
+    p3n: "AgentsBin Watermark",
+    p3s: "macOS · 媒体工具",
+    p3d: "图片与视频批量水印、版权保护，开发中。",
+    p4n: "更多产品",
+    p4d: "更多 AgentsBin 产品正在规划中。",
+    pm_live: "已发布",
+    pm_soon_s: "即将上线",
+    pm_foot: "更多产品即将上线",
+    pm_view_all: "查看全部产品",
     hero_title: "所有 AI 智能体，一个菜单栏就够了",
     hero_lead: "AgentsBin 常驻菜单栏，点击 AB 图标瞬间拉起弹窗，选一个智能体立即对话，不用开标签页、不用手输网址。",
     hero_cta: "下载 AgentsBin 1.0.16",
@@ -152,6 +202,31 @@
     page_title: "AgentsBin · macOS 選單列 AI 智能體聚合",
     page_desc: "AgentsBin 是一個 macOS 選單列 AI 智能體聚合工具，支援網頁對話、智能體管理與加密的 API Key 備份。",
     nav_download: "下載",
+    nav_products: "產品",
+    pm_title: "產品中心",
+    pm_search: "搜尋產品",
+    pm_all: "全部",
+    pm_released: "已發布",
+    pm_soon: "即將上線",
+    pm_cat_all: "全部",
+    pm_cat_assistants: "AI 助手",
+    pm_cat_audio: "音訊",
+    pm_cat_media: "媒體工具",
+    p1n: "AgentsBin",
+    p1s: "macOS · 選單列",
+    p1d: "一個選單列聚合 37 個 AI 智能體，支援加密 API Key 備份與 10 種語言。",
+    p2n: "AgentsBin Audio",
+    p2s: "macOS · 音訊 AI",
+    p2d: "語音轉寫、摘要與智慧剪輯，開發中。",
+    p3n: "AgentsBin Watermark",
+    p3s: "macOS · 媒體工具",
+    p3d: "圖片與影片批次浮水印、版權保護，開發中。",
+    p4n: "更多產品",
+    p4d: "更多 AgentsBin 產品正在規劃中。",
+    pm_live: "已發布",
+    pm_soon_s: "即將上線",
+    pm_foot: "更多產品即將上線",
+    pm_view_all: "查看全部產品",
     hero_title: "所有 AI 智能體，一個選單列就夠了",
     hero_lead: "AgentsBin 常駐選單列，點擊 AB 圖示瞬間拉起彈窗，選一個智能體立即對話。",
     hero_cta: "下載 AgentsBin 1.0.16",
@@ -222,6 +297,31 @@
   const jaOverrides = {
     page_title: "AgentsBin · macOS メニューバー AI エージェント",
     nav_download: "ダウンロード",
+    nav_products: "製品",
+    pm_title: "製品一覧",
+    pm_search: "製品を検索",
+    pm_all: "すべて",
+    pm_released: "公開中",
+    pm_soon: "近日公開",
+    pm_cat_all: "すべて",
+    pm_cat_assistants: "AI アシスタント",
+    pm_cat_audio: "音声",
+    pm_cat_media: "メディア",
+    p1n: "AgentsBin",
+    p1s: "macOS · メニューバー",
+    p1d: "37 の AI エージェントをメニューバーに集約、API キー暗号化バックアップと 10 言語対応。",
+    p2n: "AgentsBin Audio",
+    p2s: "macOS · 音声 AI",
+    p2d: "文字起こし、要約、スマート編集。開発中。",
+    p3n: "AgentsBin Watermark",
+    p3s: "macOS · メディア",
+    p3d: "画像・動画の一括透かしと著作権保護。開発中。",
+    p4n: "その他の製品",
+    p4d: "その他の AgentsBin 製品を準備中。",
+    pm_live: "公開中",
+    pm_soon_s: "近日公開",
+    pm_foot: "その他の製品も近日公開",
+    pm_view_all: "すべて見る",
     hero_title: "すべての AI エージェントをメニューバーに",
     hero_lead: "メニューバーから AB アイコンをクリックして、すぐにチャットを開始。URL 入力は不要です。",
     hero_cta: "AgentsBin 1.0.16 をダウンロード",
@@ -289,6 +389,31 @@
   const koOverrides = {
     page_title: "AgentsBin · macOS 메뉴바 AI 에이전트",
     nav_download: "다운로드",
+    nav_products: "제품",
+    pm_title: "제품 탐색",
+    pm_search: "제품 검색",
+    pm_all: "전체",
+    pm_released: "출시됨",
+    pm_soon: "출시 예정",
+    pm_cat_all: "전체",
+    pm_cat_assistants: "AI 어시스턴트",
+    pm_cat_audio: "오디오",
+    pm_cat_media: "미디어 도구",
+    p1n: "AgentsBin",
+    p1s: "macOS · 메뉴바",
+    p1d: "메뉴바 하나로 37개 AI 에이전트, 암호화 API 키 백업과 10개 언어 지원.",
+    p2n: "AgentsBin Audio",
+    p2s: "macOS · 오디오 AI",
+    p2d: "음성 전사, 요약, 스마트 편집. 개발 중.",
+    p3n: "AgentsBin Watermark",
+    p3s: "macOS · 미디어 도구",
+    p3d: "이미지·영상 일괄 워터마크와 저작권 보호. 개발 중.",
+    p4n: "더 많은 제품",
+    p4d: "더 많은 AgentsBin 제품을 준비 중입니다.",
+    pm_live: "출시됨",
+    pm_soon_s: "출시 예정",
+    pm_foot: "더 많은 제품이 출시 예정입니다",
+    pm_view_all: "모든 제품 보기",
     hero_title: "모든 AI 에이전트를 메뉴바 하나로",
     hero_lead: "메뉴바 AB 아이콘을 클릭하면 즉시 채팅을 시작합니다. URL 입력이 필요 없습니다.",
     hero_cta: "AgentsBin 1.0.16 다운로드",
@@ -356,6 +481,31 @@
   const esOverrides = {
     page_title: "AgentsBin · Hub de agentes AI para macOS",
     nav_download: "Descargar",
+    nav_products: "Productos",
+    pm_title: "Explorar productos",
+    pm_search: "Buscar productos",
+    pm_all: "Todos",
+    pm_released: "Publicados",
+    pm_soon: "Próximamente",
+    pm_cat_all: "Todos",
+    pm_cat_assistants: "Asistentes AI",
+    pm_cat_audio: "Audio",
+    pm_cat_media: "Herramientas",
+    p1n: "AgentsBin",
+    p1s: "macOS · Barra de menús",
+    p1d: "37 agentes AI en la barra de menús, respaldo cifrado de claves API y 10 idiomas.",
+    p2n: "AgentsBin Audio",
+    p2s: "macOS · Audio AI",
+    p2d: "Transcripción, resúmenes y edición inteligente. En desarrollo.",
+    p3n: "AgentsBin Watermark",
+    p3s: "macOS · Herramientas",
+    p3d: "Marcas de agua por lotes y protección de derechos. En desarrollo.",
+    p4n: "Más productos",
+    p4d: "Más productos AgentsBin en camino.",
+    pm_live: "Publicado",
+    pm_soon_s: "Próximamente",
+    pm_foot: "Más productos próximamente",
+    pm_view_all: "Ver todos",
     hero_title: "Todos tus agentes AI, a un clic de la barra de menús",
     hero_lead: "AgentsBin vive en la barra de menús. Haz clic en AB y empieza a chatear al instante.",
     hero_cta: "Descargar AgentsBin 1.0.16",
@@ -423,6 +573,31 @@
   const frOverrides = {
     page_title: "AgentsBin · Hub d'agents IA pour macOS",
     nav_download: "Télécharger",
+    nav_products: "Produits",
+    pm_title: "Explorer les produits",
+    pm_search: "Rechercher",
+    pm_all: "Tous",
+    pm_released: "Disponibles",
+    pm_soon: "Bientôt",
+    pm_cat_all: "Tous",
+    pm_cat_assistants: "Assistants IA",
+    pm_cat_audio: "Audio",
+    pm_cat_media: "Outils",
+    p1n: "AgentsBin",
+    p1s: "macOS · Barre de menus",
+    p1d: "37 agents IA dans la barre de menus, sauvegarde chiffrée des clés API et 10 langues.",
+    p2n: "AgentsBin Audio",
+    p2s: "macOS · Audio IA",
+    p2d: "Transcription, résumés et édition intelligente. En développement.",
+    p3n: "AgentsBin Watermark",
+    p3s: "macOS · Outils",
+    p3d: "Filigranes par lots et protection des droits. En développement.",
+    p4n: "Plus de produits",
+    p4d: "D'autres produits AgentsBin arrivent.",
+    pm_live: "Disponible",
+    pm_soon_s: "Bientôt",
+    pm_foot: "Plus de produits bientôt",
+    pm_view_all: "Tout voir",
     hero_title: "Tous vos agents IA, à un clic de la barre de menus",
     hero_lead: "AgentsBin vit dans la barre de menus. Cliquez sur AB et discutez instantanément.",
     hero_cta: "Télécharger AgentsBin 1.0.16",
@@ -490,6 +665,31 @@
   const deOverrides = {
     page_title: "AgentsBin · KI-Agenten-Hub für die macOS-Menüleiste",
     nav_download: "Download",
+    nav_products: "Produkte",
+    pm_title: "Produkte entdecken",
+    pm_search: "Produkte suchen",
+    pm_all: "Alle",
+    pm_released: "Verfügbar",
+    pm_soon: "Bald",
+    pm_cat_all: "Alle",
+    pm_cat_assistants: "KI-Assistenten",
+    pm_cat_audio: "Audio",
+    pm_cat_media: "Medien",
+    p1n: "AgentsBin",
+    p1s: "macOS · Menüleiste",
+    p1d: "37 KI-Agenten in der Menüleiste, verschlüsseltes API-Key-Backup und 10 Sprachen.",
+    p2n: "AgentsBin Audio",
+    p2s: "macOS · Audio-KI",
+    p2d: "Transkription, Zusammenfassung und intelligente Bearbeitung. In Entwicklung.",
+    p3n: "AgentsBin Watermark",
+    p3s: "macOS · Medien",
+    p3d: "Batch-Wasserzeichen und Urheberschutz für Bilder und Videos. In Entwicklung.",
+    p4n: "Weitere Produkte",
+    p4d: "Weitere AgentsBin-Produkte sind geplant.",
+    pm_live: "Verfügbar",
+    pm_soon_s: "Bald",
+    pm_foot: "Weitere Produkte folgen",
+    pm_view_all: "Alle ansehen",
     hero_title: "Alle KI-Agenten in einer Menüleiste",
     hero_lead: "AgentsBin lebt in der Menüleiste. Klicken Sie auf AB und chatten Sie sofort.",
     hero_cta: "AgentsBin 1.0.16 herunterladen",
@@ -557,6 +757,31 @@
   const ruOverrides = {
     page_title: "AgentsBin · AI-агенты в строке меню macOS",
     nav_download: "Скачать",
+    nav_products: "Продукты",
+    pm_title: "Каталог продуктов",
+    pm_search: "Найти продукт",
+    pm_all: "Все",
+    pm_released: "Доступно",
+    pm_soon: "Скоро",
+    pm_cat_all: "Все",
+    pm_cat_assistants: "AI-ассистенты",
+    pm_cat_audio: "Аудио",
+    pm_cat_media: "Медиа",
+    p1n: "AgentsBin",
+    p1s: "macOS · Строка меню",
+    p1d: "37 AI-агентов в строке меню, шифрованное резервное копирование API-ключей и 10 языков.",
+    p2n: "AgentsBin Audio",
+    p2s: "macOS · Аудио AI",
+    p2d: "Транскрибация, резюме и умный монтаж. В разработке.",
+    p3n: "AgentsBin Watermark",
+    p3s: "macOS · Медиа",
+    p3d: "Пакетные водяные знаки и защита авторских прав. В разработке.",
+    p4n: "Другие продукты",
+    p4d: "Другие продукты AgentsBin в планах.",
+    pm_live: "Доступно",
+    pm_soon_s: "Скоро",
+    pm_foot: "Скоро появятся другие продукты",
+    pm_view_all: "Смотреть все",
     hero_title: "Все AI-агенты в одной строке меню",
     hero_lead: "AgentsBin живёт в строке меню. Нажмите AB и сразу начните чат.",
     hero_cta: "Скачать AgentsBin 1.0.16",
@@ -624,6 +849,31 @@
   const ptOverrides = {
     page_title: "AgentsBin · Hub de agentes de IA para macOS",
     nav_download: "Baixar",
+    nav_products: "Produtos",
+    pm_title: "Explorar produtos",
+    pm_search: "Buscar produtos",
+    pm_all: "Todos",
+    pm_released: "Disponíveis",
+    pm_soon: "Em breve",
+    pm_cat_all: "Todos",
+    pm_cat_assistants: "Assistentes IA",
+    pm_cat_audio: "Áudio",
+    pm_cat_media: "Mídia",
+    p1n: "AgentsBin",
+    p1s: "macOS · Barra de menus",
+    p1d: "37 agentes de IA na barra de menus, backup criptografado de chaves API e 10 idiomas.",
+    p2n: "AgentsBin Audio",
+    p2s: "macOS · Áudio IA",
+    p2d: "Transcrição, resumos e edição inteligente. Em desenvolvimento.",
+    p3n: "AgentsBin Watermark",
+    p3s: "macOS · Mídia",
+    p3d: "Marcas d'água em lote e proteção de direitos autorais. Em desenvolvimento.",
+    p4n: "Mais produtos",
+    p4d: "Mais produtos AgentsBin estão planejados.",
+    pm_live: "Disponível",
+    pm_soon_s: "Em breve",
+    pm_foot: "Mais produtos em breve",
+    pm_view_all: "Ver todos",
     hero_title: "Todos os seus agentes de IA na barra de menus",
     hero_lead: "AgentsBin vive na barra de menus. Clique em AB e comece a conversar na hora.",
     hero_cta: "Baixar AgentsBin 1.0.16",
@@ -732,6 +982,10 @@
       const key = el.getAttribute("data-i18n");
       if (dict[key]) el.textContent = dict[key];
     });
+    document.querySelectorAll("[data-i18n-ph]").forEach(function (el) {
+      const key = el.getAttribute("data-i18n-ph");
+      if (dict[key]) el.setAttribute("placeholder", dict[key]);
+    });
     document.getElementById("langSelect").value = lang;
     document.getElementById("agentChips").innerHTML = dict.agents
       .map(function (name) { return '<span class="agent-chip">' + name + '</span>'; })
@@ -757,6 +1011,51 @@
     }).join("");
     container.innerHTML = '<div class="agent-marquee">' + items + items + '</div>';
   }
+
+  const productsBtn = document.getElementById("productsBtn");
+  const productsOverlay = document.getElementById("productsOverlay");
+  const productGrid = document.getElementById("productGrid");
+  const productSearch = document.getElementById("productSearch");
+
+  function applyProductFilters() {
+    const filter = document.querySelector("#productFilter button.on").getAttribute("data-filter");
+    const cat = document.querySelector("#productCats button.on").getAttribute("data-cat");
+    const query = productSearch.value.trim().toLowerCase();
+    productGrid.querySelectorAll(".product-card").forEach(function (card) {
+      const matchFilter = filter === "all" || card.getAttribute("data-state") === filter;
+      const matchCat = cat === "all" || card.getAttribute("data-cat") === cat;
+      const matchQuery = !query || card.getAttribute("data-search").toLowerCase().indexOf(query) !== -1;
+      card.style.display = matchFilter && matchCat && matchQuery ? "" : "none";
+    });
+  }
+
+  productsBtn.addEventListener("click", function () {
+    productsOverlay.hidden = !productsOverlay.hidden;
+    if (!productsOverlay.hidden) productSearch.focus();
+  });
+  productsOverlay.addEventListener("click", function (event) {
+    if (event.target === productsOverlay) productsOverlay.hidden = true;
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") productsOverlay.hidden = true;
+  });
+  productSearch.addEventListener("input", applyProductFilters);
+  document.querySelectorAll("#productFilter button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll("#productFilter button").forEach(function (b) {
+        b.classList.toggle("on", b === btn);
+      });
+      applyProductFilters();
+    });
+  });
+  document.querySelectorAll("#productCats button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll("#productCats button").forEach(function (b) {
+        b.classList.toggle("on", b === btn);
+      });
+      applyProductFilters();
+    });
+  });
 
   let lang = localStorage.getItem("agentsbin-lang") || "en";
   apply(lang);
