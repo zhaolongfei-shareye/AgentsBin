@@ -78,11 +78,12 @@ export async function getSessionEmail(request, env) {
   if (!match) return null;
   const token = match.slice("agentsbin_admin=".length);
   const parts = token.split(".");
-  if (parts.length !== 3) return null;
-  const email = parts[0];
-  const exp = Number(parts[1]);
+  if (parts.length < 3) return null;
+  const sig = parts.pop();
+  const exp = Number(parts.pop());
+  const email = parts.join(".");
   if (!email || !exp || exp < Date.now() / 1000) return null;
-  if (!(await verifyValue(email + "." + exp, parts[2], env))) return null;
+  if (!(await verifyValue(email + "." + exp, sig, env))) return null;
   return email;
 }
 
