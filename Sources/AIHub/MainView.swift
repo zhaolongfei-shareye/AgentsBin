@@ -13,6 +13,45 @@ enum ChatTab {
     case api
 }
 
+struct FlowLayout: Layout {
+    var spacing: CGFloat = 10
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let maxWidth = proposal.width ?? .infinity
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        for sub in subviews {
+            let size = sub.sizeThatFits(.unspecified)
+            if x + size.width > maxWidth, x > 0 {
+                x = 0
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+        }
+        return CGSize(width: maxWidth, height: y + rowHeight)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        var x = bounds.minX
+        var y = bounds.minY
+        var rowHeight: CGFloat = 0
+        for sub in subviews {
+            let size = sub.sizeThatFits(.unspecified)
+            if x + size.width > bounds.maxX, x > bounds.minX {
+                x = bounds.minX
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            sub.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+        }
+    }
+}
+
 struct ToolbarTextButton: View {
     let icon: String
     let title: String
@@ -101,7 +140,7 @@ struct MainPopoverView: View {
                 .padding(.top, 8)
 
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 86), spacing: 8)], spacing: 8) {
+                FlowLayout(spacing: 10) {
                     ForEach(agentStore.agents) { agent in
                         setupChip(agent)
                     }
@@ -110,6 +149,7 @@ struct MainPopoverView: View {
                 .padding(.top, 28)
             }
             .frame(maxWidth: 560)
+            .frame(maxHeight: 190)
 
             Button {
                 finishSetup()
@@ -197,15 +237,29 @@ struct MainPopoverView: View {
             floatingPanel
         }
         .overlay(alignment: .leading) {
-            Rectangle()
-                .fill(Color.clear)
-                .frame(width: 10)
-                .contentShape(Rectangle())
-                .onHover { hovering in
-                    if !manageAgents && !showAgentPicker && mode != .manage {
-                        sidebarHovered = hovering
+            Group {
+                if !showPanel {
+                    Button {
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 30, height: 56)
+                            .background(Color(nsColor: .windowBackgroundColor), in: RoundedRectangle(cornerRadius: 15))
+                            .overlay(RoundedRectangle(cornerRadius: 15).stroke(Color.primary.opacity(0.12), lineWidth: 1))
+                            .shadow(color: .black.opacity(0.25), radius: 6, y: 3)
                     }
+                    .buttonStyle(.plain)
+                    .padding(.leading, 10)
+                    .frame(maxHeight: .infinity, alignment: .center)
+                    .onHover { hovering in
+                        if !manageAgents && !showAgentPicker && mode != .manage {
+                            sidebarHovered = hovering
+                        }
+                    }
+                    .transition(.opacity)
                 }
+            }
         }
     }
 
@@ -257,7 +311,7 @@ struct MainPopoverView: View {
                     .padding(8)
                 }
                 .frame(width: 230)
-                .background(Color(nsColor: .windowBackgroundColor))
+                .background(Color(nsColor: .windowBackgroundColor), in: RoundedRectangle(cornerRadius: 14))
                 .shadow(color: .black.opacity(0.28), radius: 14, y: 5)
                 .padding(.leading, 8)
                 .padding(.top, 8)
@@ -265,7 +319,7 @@ struct MainPopoverView: View {
                 .onHover { hovering in
                     sidebarHovered = hovering
                 }
-                .transition(.move(edge: .leading).combined(with: .opacity))
+                .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
         .animation(.easeInOut(duration: 0.16), value: showPanel)

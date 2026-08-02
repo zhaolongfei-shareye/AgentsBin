@@ -38,7 +38,7 @@ final class LocalizedStore: ObservableObject {
 
     init() {
         let raw = UserDefaults.standard.string(forKey: "aihome.language")
-        language = raw.flatMap(AppLanguage.init(rawValue:)) ?? .zh
+        language = raw.flatMap(AppLanguage.init(rawValue:)) ?? .en
     }
 
     func text(_ key: String) -> String {
