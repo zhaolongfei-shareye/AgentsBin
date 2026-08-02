@@ -11,13 +11,18 @@ final class AgentStore: ObservableObject {
     @Published var activeID: String {
         didSet { persist() }
     }
+    @Published private(set) var recentIDs: [String] {
+        didSet { persist() }
+    }
 
     private let defaults = UserDefaults.standard
     private let agentsKey = "aihub.agents"
     private let selectedKey = "aihub.selected"
     private let activeKey = "aihub.active"
+    private let recentKey = "aihub.recent"
 
     init() {
+        recentIDs = []
         var loadedAgents: [Agent]
         if let data = defaults.data(forKey: agentsKey),
            let saved = try? JSONDecoder().decode([Agent].self, from: data),
@@ -46,6 +51,16 @@ final class AgentStore: ObservableObject {
         } else if !agents.isEmpty {
             activeID = agents.first(where: { $0.isEnabled })?.id ?? agents[0].id
         }
+        if let data = defaults.data(forKey: recentKey),
+           let saved = try? JSONDecoder().decode([String].self, from: data) {
+            recentIDs = Array(saved.prefix(5))
+        } else {
+            recentIDs = []
+        }
+    }
+
+    var recentAgents: [Agent] {
+        recentIDs.compactMap { id in agents.first(where: { $0.id == id && $0.id != activeID }) }
     }
 
     var enabledAgents: [Agent] {
@@ -61,6 +76,11 @@ final class AgentStore: ObservableObject {
     func select(_ id: String) {
         guard agents.contains(where: { $0.id == id && $0.isEnabled }) else { return }
         activeID = id
+        recentIDs.removeAll { $0 == id }
+        recentIDs.insert(id, at: 0)
+        if recentIDs.count > 5 {
+            recentIDs = Array(recentIDs.prefix(5))
+        }
     }
 
     func toggleSelection(_ id: String) {
@@ -214,5 +234,8 @@ final class AgentStore: ObservableObject {
             defaults.set(data, forKey: selectedKey)
         }
         defaults.set(activeID, forKey: activeKey)
+        if let data = try? JSONEncoder().encode(recentIDs) {
+            defaults.set(data, forKey: recentKey)
+        }
     }
 }

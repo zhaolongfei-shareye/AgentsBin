@@ -14,7 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let faviconStore = FaviconStore()
     private let apiKeyStore = APIKeyStore()
 
-    private let defaultSize = NSSize(width: 960, height: 680)
+    private let defaultSize = NSSize(width: 960, height: 560)
     private let sizeKey = "agentsbin.windowSize"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -116,7 +116,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             panel.titleVisibility = .hidden
             panel.titlebarAppearsTransparent = true
             panel.isReleasedWhenClosed = false
-            panel.minSize = NSSize(width: 720, height: 460)
+            panel.minSize = NSSize(width: 720, height: 420)
             panel.delegate = self
             panel.contentViewController = hostingController
             panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
@@ -143,7 +143,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func windowDidResize(_ notification: Notification) {
         guard let panel = notification.object as? NSPanel else { return }
         let size = panel.frame.size
-        guard size.width >= 640, size.height >= 520 else { return }
+        guard size.width >= 720, size.height >= 420 else { return }
         UserDefaults.standard.set(NSStringFromSize(size), forKey: sizeKey)
     }
 

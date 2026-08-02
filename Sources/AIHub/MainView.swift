@@ -158,7 +158,7 @@ struct MainPopoverView: View {
                 mainContent
             }
         }
-        .frame(minWidth: 720, minHeight: 460)
+        .frame(minWidth: 720, minHeight: 420)
         .onAppear {
             let currentVersion = appVersion
             let lastVersion = UserDefaults.standard.string(forKey: "agentsbin.lastVersion")
@@ -196,6 +196,7 @@ struct MainPopoverView: View {
             }
             .frame(maxWidth: 560)
             .frame(maxHeight: 190)
+            .scrollIndicators(.hidden)
 
             Button {
                 finishSetup()
@@ -283,37 +284,6 @@ struct MainPopoverView: View {
             }
             floatingPanel
         }
-        .overlay(alignment: .leading) {
-            HoverSensorView { hovering in
-                if !manageAgents && !showAgentPicker && mode != .manage {
-                    sidebarHovered = hovering
-                }
-            }
-            .frame(width: 14)
-        }
-        .overlay(alignment: .leading) {
-            if !showPanel {
-                Button {
-                } label: {
-                    Image(systemName: "line.3.horizontal")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 30, height: 56)
-                        .background(Color(nsColor: .windowBackgroundColor), in: RoundedRectangle(cornerRadius: 15))
-                        .overlay(RoundedRectangle(cornerRadius: 15).stroke(Color.primary.opacity(0.12), lineWidth: 1))
-                        .shadow(color: .black.opacity(0.25), radius: 6, y: 3)
-                }
-                .buttonStyle(.plain)
-                .padding(.leading, 12)
-                .frame(maxHeight: .infinity, alignment: .center)
-                .onHover { hovering in
-                    if !manageAgents && !showAgentPicker && mode != .manage {
-                        sidebarHovered = hovering
-                    }
-                }
-                .transition(.opacity)
-            }
-        }
     }
 
     private var showPanel: Bool {
@@ -367,7 +337,7 @@ struct MainPopoverView: View {
                 .background(Color(nsColor: .windowBackgroundColor), in: RoundedRectangle(cornerRadius: 14))
                 .shadow(color: .black.opacity(0.28), radius: 14, y: 5)
                 .padding(.leading, 8)
-                .padding(.top, 8)
+                .padding(.top, 52)
                 .padding(.bottom, 8)
                 .onHover { hovering in
                     sidebarHovered = hovering
@@ -533,29 +503,62 @@ struct MainPopoverView: View {
 
     private var chatPane: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
+                Button {
+                } label: {
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 18, height: 18)
+                        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 5))
+                }
+                .buttonStyle(.plain)
+                .onHover { hovering in
+                    if !manageAgents && !showAgentPicker && mode != .manage {
+                        sidebarHovered = hovering
+                    }
+                }
+                .help(localization.text("toggle_sidebar"))
+
+                avatar(agentStore.activeAgent)
+                Text(localization.agentName(agentStore.activeAgent.name))
+                    .font(.system(size: 14, weight: .heavy))
+                    .lineLimit(1)
+
+                ForEach(agentStore.recentAgents) { agent in
+                    Button {
+                        agentStore.select(agent.id)
+                        webPool.markRead(agent.id)
+                        Analytics.track(kind: "agent_open", name: agent.id)
+                        mode = .chat
+                        sidebarHovered = false
+                    } label: {
+                        avatar(agent)
+                    }
+                    .buttonStyle(.plain)
+                    .help(localization.agentName(agent.name))
+                }
+
+                Spacer(minLength: 0)
+
+                Button {
+                    openExternal(agentStore.activeAgent.urlString)
+                } label: {
+                    Image(systemName: "safari")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 22, height: 22)
+                }
+                .buttonStyle(.plain)
+                .help(localization.text("browser"))
+
                 Picker("", selection: $chatTab) {
                     Text(localization.text("web_mode")).tag(ChatTab.web)
                     Text(localization.text("client_mode")).tag(ChatTab.api)
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                .frame(width: 220)
-                Spacer(minLength: 0)
-                avatar(agentStore.activeAgent)
-                Text(localization.agentName(agentStore.activeAgent.name))
-                    .font(.system(size: 14, weight: .heavy))
-                    .lineLimit(1)
-                Button {
-                    openExternal(agentStore.activeAgent.urlString)
-                } label: {
-                    Image(systemName: "safari")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 24, height: 24)
-                }
-                .buttonStyle(.plain)
-                .help(localization.text("browser"))
+                .frame(width: 210)
             }
             .padding(.horizontal, 12)
             .frame(height: 44)
@@ -627,7 +630,7 @@ struct MainPopoverView: View {
             .help(localization.text("quit"))
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, 5)
+        .frame(height: 44)
         .background(Color(nsColor: .textBackgroundColor))
     }
 
