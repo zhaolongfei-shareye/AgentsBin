@@ -16,6 +16,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     private let defaultSize = NSSize(width: 960, height: 560)
     private let sizeKey = "agentsbin.windowSize"
+    private let originKey = "agentsbin.windowOrigin"
+    private var arrowUp = false
+    private var arrowFlash = true
+    private var arrowTimer: Timer?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let pid = ProcessInfo.processInfo.processIdentifier
@@ -43,23 +47,48 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private func setupStatusItem() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = item.button {
-            let iconPath = Bundle.main.path(forResource: "MenuBarIcon", ofType: "png")
-            let icon = iconPath.flatMap(NSImage.init(contentsOfFile:))
-                ?? NSImage(systemSymbolName: "sparkles", accessibilityDescription: "AIhome")
-            icon?.isTemplate = true
-            icon?.size = NSSize(width: 18, height: 18)
-            button.image = icon
+            button.image = menuBarIcon(arrowUp: false, arrowVisible: true)
             button.action = #selector(statusItemClicked)
             button.target = self
             button.toolTip = "AgentsBin"
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
         statusItem = item
+        arrowTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: true) { [weak self] _ in
+            guard let self, let button = self.statusItem?.button else { return }
+            self.arrowFlash.toggle()
+            button.image = self.menuBarIcon(arrowUp: self.arrowUp, arrowVisible: self.arrowFlash)
+        }
+    }
+
+    private func menuBarIcon(arrowUp: Bool, arrowVisible: Bool) -> NSImage {
+        let size = NSSize(width: 18, height: 18)
+        let image = NSImage(size: size)
+        image.lockFocus()
+        let iconPath = Bundle.main.path(forResource: "MenuBarIcon", ofType: "png")
+        if let base = iconPath.flatMap(NSImage.init(contentsOfFile:)) {
+            base.size = NSSize(width: 14, height: 14)
+            base.draw(at: NSPoint(x: 2, y: 3), from: .zero, operation: .sourceOver, fraction: 1)
+        }
+        if arrowVisible,
+           let arrow = NSImage(systemSymbolName: arrowUp ? "chevron.up" : "chevron.down", accessibilityDescription: nil) {
+            arrow.draw(in: NSRect(x: 5, y: 0, width: 8, height: 5), from: .zero, operation: .sourceOver, fraction: 0.95)
+        }
+        image.unlockFocus()
+        image.isTemplate = true
+        return image
+    }
+
+    private func updateMenuBarArrow(up: Bool) {
+        arrowUp = up
+        arrowFlash = true
+        statusItem?.button?.image = menuBarIcon(arrowUp: up, arrowVisible: true)
     }
 
     @objc private func togglePanel() {
         if let panel, panel.isVisible {
             panel.orderOut(nil)
+            updateMenuBarArrow(up: false)
         } else {
             showPanel()
         }
@@ -122,7 +151,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
             if let raw = UserDefaults.standard.string(forKey: sizeKey) {
                 let size = NSSizeFromString(raw)
-                if size.width >= 640, size.height >= 520 {
+                if size.width >= 720, size.height >= 420 {
                     panel.setContentSize(size)
                 } else {
                     panel.setContentSize(defaultSize)
@@ -130,11 +159,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             } else {
                 panel.setContentSize(defaultSize)
             }
+            if let rawOrigin = UserDefaults.standard.string(forKey: originKey) {
+                let origin = NSPointFromString(rawOrigin)
+                panel.setFrameOrigin(origin)
+            } else {
+                positionPanel()
+            }
             self.panel = panel
             Self.mainPanel = panel
         }
 
-        positionPanel()
+        updateMenuBarArrow(up: true)
         NSApp.activate(ignoringOtherApps: true)
         panel?.orderFrontRegardless()
         panel?.makeKey()
@@ -145,6 +180,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let size = panel.frame.size
         guard size.width >= 720, size.height >= 420 else { return }
         UserDefaults.standard.set(NSStringFromSize(size), forKey: sizeKey)
+    }
+
+    func windowDidMove(_ notification: Notification) {
+        guard let panel = notification.object as? NSPanel else { return }
+        UserDefaults.standard.set(NSStringFromPoint(panel.frame.origin), forKey: originKey)
     }
 
     private func positionPanel() {

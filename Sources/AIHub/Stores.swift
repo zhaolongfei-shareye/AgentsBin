@@ -53,7 +53,7 @@ final class AgentStore: ObservableObject {
         }
         if let data = defaults.data(forKey: recentKey),
            let saved = try? JSONDecoder().decode([String].self, from: data) {
-            recentIDs = Array(saved.prefix(5))
+            recentIDs = Array(saved.prefix(9))
         } else {
             recentIDs = []
         }
@@ -78,8 +78,8 @@ final class AgentStore: ObservableObject {
         activeID = id
         recentIDs.removeAll { $0 == id }
         recentIDs.insert(id, at: 0)
-        if recentIDs.count > 5 {
-            recentIDs = Array(recentIDs.prefix(5))
+        if recentIDs.count > 9 {
+            recentIDs = Array(recentIDs.prefix(9))
         }
     }
 
