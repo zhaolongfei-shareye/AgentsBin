@@ -171,9 +171,13 @@ struct ClientChatView: View {
     }
 
     private func refresh() {
-        guard apiKeyStore.credential(forAgentID: agent.id) != nil else {
+        guard let cred = apiKeyStore.credential(forAgentID: agent.id) else {
             state = .idle
             messages = []
+            return
+        }
+        if apiKeyStore.isVerified(forAgentID: agent.id, credential: cred.credential), state != .failed {
+            state = .ready
             return
         }
         if state != .ready {
@@ -189,6 +193,9 @@ struct ClientChatView: View {
                 switch result {
                 case .success:
                     state = .ready
+                    if let cred = apiKeyStore.credential(forAgentID: agent.id) {
+                        apiKeyStore.markVerified(forAgentID: agent.id, credential: cred.credential)
+                    }
                 case .failure(let error):
                     state = .failed
                     errorDetail = error.localizedDescription

@@ -130,6 +130,7 @@ final class APIKeyStore: ObservableObject {
     private let defaults = UserDefaults.standard
     private let configsKey = "agentsbin.api.configs"
     private let importedKey = "agentsbin.api.importedCCSwitch"
+    private let verifiedKey = "agentsbin.api.verified"
 
     init() {
         if let data = defaults.data(forKey: configsKey),
@@ -216,6 +217,26 @@ final class APIKeyStore: ObservableObject {
             configs[index].credentials[i].isActive = configs[index].credentials[i].id == credentialID
         }
         persist()
+    }
+
+    func isVerified(forAgentID agentID: String, credential: APICredential) -> Bool {
+        let saved = defaults.dictionary(forKey: verifiedKey) as? [String: String] ?? [:]
+        guard let hash = saved[agentID] else { return false }
+        return hash == credentialHash(credential)
+    }
+
+    func markVerified(forAgentID agentID: String, credential: APICredential) {
+        var saved = defaults.dictionary(forKey: verifiedKey) as? [String: String] ?? [:]
+        saved[agentID] = credentialHash(credential)
+        defaults.set(saved, forKey: verifiedKey)
+    }
+
+    private func credentialHash(_ credential: APICredential) -> String {
+        let key = apiKey(for: credential.id)
+        let value = credential.label + "|" + credential.baseURL + "|" + credential.model + "|" + key
+        return SHA256.hash(data: Data(value.utf8))
+            .map { String(format: "%02x", $0) }
+            .joined()
     }
 
     func moveConfig(_ id: String, to targetID: String) {
