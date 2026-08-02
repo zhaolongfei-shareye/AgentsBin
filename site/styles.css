@@ -162,6 +162,7 @@ a {
   font-size: 17px;
   font-weight: 800;
   white-space: nowrap;
+  color: #f2f5f8;
 }
 
 .panel-search {
@@ -281,7 +282,7 @@ a {
 .pc-name {
   font-size: 14px;
   font-weight: 800;
-  color: #1d1d1f;
+  color: #f2f5f8;
 }
 
 .pc-sub {
@@ -311,8 +312,8 @@ a {
   padding: 4px 9px;
 }
 
-.pc-status.live { color: #0f7b35; background: #e6f7ec; }
-.pc-status.soon { color: #a15c00; background: #fff2dc; }
+.pc-status.live { color: #86efac; background: rgba(48,209,88,0.16); }
+.pc-status.soon { color: #fde047; background: rgba(250,204,21,0.14); }
 
 .pc-arrow {
   color: #6e6e73;
