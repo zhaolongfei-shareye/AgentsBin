@@ -237,6 +237,18 @@ struct ClientChatView: View {
                 completion(.failure(error))
                 return
             }
+            guard let http = response as? HTTPURLResponse else {
+                completion(.failure(NSError(domain: "AgentsBin", code: 3, userInfo: [NSLocalizedDescriptionKey: "No HTTP response"])))
+                return
+            }
+            guard (200..<300).contains(http.statusCode) else {
+                let bodyText = String(data: data ?? Data(), encoding: .utf8) ?? ""
+                let detail = String(bodyText.prefix(240))
+                completion(.failure(NSError(domain: "AgentsBin", code: http.statusCode, userInfo: [
+                    NSLocalizedDescriptionKey: "HTTP " + String(http.statusCode) + ": " + detail
+                ])))
+                return
+            }
             guard let data,
                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
                 completion(.failure(NSError(domain: "AgentsBin", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
