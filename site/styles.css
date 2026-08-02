@@ -992,10 +992,10 @@ a {
 }
 
 .contact-card {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(180px, auto) 1fr;
   align-items: center;
   gap: 18px;
-  flex-wrap: wrap;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -1031,8 +1031,8 @@ a {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 8px;
-  margin-left: auto;
 }
 
 .contact-link {
@@ -1135,11 +1135,12 @@ footer {
   }
 
   .contact-card {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
 
   .contact-links {
-    margin-left: 0;
+    justify-content: flex-start;
   }
 }
