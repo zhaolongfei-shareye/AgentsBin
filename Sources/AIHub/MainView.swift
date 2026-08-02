@@ -179,7 +179,7 @@ struct MainPopoverView: View {
         VStack(spacing: 0) {
             Spacer()
             Text("AgentsBin")
-                .font(.system(size: 40, weight: .heavy))
+                .font(.system(size: 40, weight: .medium))
             Text(localization.text("home_slogan"))
                 .font(.system(size: 13))
                 .foregroundStyle(.secondary)
@@ -334,7 +334,8 @@ struct MainPopoverView: View {
                     .padding(8)
                 }
                 .frame(width: 230)
-                .background(Color(nsColor: .windowBackgroundColor), in: RoundedRectangle(cornerRadius: 14))
+                .frame(maxHeight: 320)
+                .background(Color(nsColor: .windowBackgroundColor).opacity(0.8), in: RoundedRectangle(cornerRadius: 14))
                 .shadow(color: .black.opacity(0.28), radius: 14, y: 5)
                 .padding(.leading, 8)
                 .padding(.top, 52)
@@ -460,21 +461,31 @@ struct MainPopoverView: View {
     }
 
     private func avatar(_ agent: Agent) -> some View {
+        let base: AnyView
         if let image = faviconStore.images[agent.id] {
-            return AnyView(
+            base = AnyView(
                 Image(nsImage: image)
                     .resizable()
                     .scaledToFill()
                     .frame(width: 16, height: 16)
                     .clipShape(RoundedRectangle(cornerRadius: 4))
             )
+        } else {
+            base = AnyView(
+                Text(agent.letter)
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 16, height: 16)
+                    .background(Color(hex: agent.colorHex), in: RoundedRectangle(cornerRadius: 4))
+            )
         }
         return AnyView(
-            Text(agent.letter)
-                .font(.system(size: 9, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 16, height: 16)
-                .background(Color(hex: agent.colorHex), in: RoundedRectangle(cornerRadius: 4))
+            base
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(Color.primary.opacity(0.18), lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.28), radius: 1.5, y: 1)
         )
     }
 
@@ -688,7 +699,7 @@ struct ManageView: View {
     private var header: some View {
         HStack(spacing: 8) {
             Button(action: onBack) {
-                Image(systemName: "house")
+                Image(systemName: "chevron.left")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(.secondary)
                     .frame(width: 24, height: 24)
