@@ -680,6 +680,7 @@ struct ManageView: View {
     @State private var generalItem = 0
     @State private var showAddAPIProvider = false
     @State private var addAPIProviderName = ""
+    @State private var apiKeyMasked = true
     @FocusState private var addProviderFocused: Bool
     @State private var pendingDeleteID: String?
     @State private var draggedProviderID: String?
@@ -1112,11 +1113,28 @@ struct ManageView: View {
             }
 
             HStack(spacing: 8) {
-                SecureField(localization.text("api_key"), text: Binding(
-                    get: { apiKeyStore.apiKey(for: credential.id) },
-                    set: { apiKeyStore.save(apiKey: $0, for: credential.id) }
-                ))
+                Group {
+                    if apiKeyMasked {
+                        SecureField(localization.text("api_key"), text: Binding(
+                            get: { apiKeyStore.apiKey(for: credential.id) },
+                            set: { apiKeyStore.save(apiKey: $0, for: credential.id) }
+                        ))
+                    } else {
+                        TextField(localization.text("api_key"), text: Binding(
+                            get: { apiKeyStore.apiKey(for: credential.id) },
+                            set: { apiKeyStore.save(apiKey: $0, for: credential.id) }
+                        ))
+                    }
+                }
                 .textFieldStyle(.roundedBorder)
+                Button {
+                    apiKeyMasked.toggle()
+                } label: {
+                    Image(systemName: apiKeyMasked ? "eye" : "eye.slash")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .help(localization.text(apiKeyMasked ? "show_password" : "hide_password"))
                 Button {
                     apiKeyStore.deleteCredential(configID: config.id, credentialID: credential.id)
                 } label: {

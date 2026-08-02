@@ -72,6 +72,7 @@ struct ClientChatView: View {
             Text(errorText.isEmpty ? localization.text("api_failed") : errorText)
                 .font(.headline)
                 .multilineTextAlignment(.center)
+                .textSelection(.enabled)
                 .padding(.horizontal, 24)
             HStack(spacing: 10) {
                 Button(localization.text("retry")) { refresh() }
