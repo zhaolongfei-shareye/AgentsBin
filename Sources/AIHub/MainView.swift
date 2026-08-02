@@ -457,7 +457,7 @@ struct MainPopoverView: View {
     }
 
     private func agentStatusDots(_ agent: Agent) -> some View {
-        let webColor: Color = agent.isOnline ? .blue : .gray
+        let webColor: Color = webAvailable(for: agent) ? .blue : .gray
         let apiColor: Color = apiKeyStore.hasAPIKey(forAgentID: agent.id) ? .green : .gray
         let hint = localization.text("api_ready") + " / " + localization.text("api_missing")
         return HStack(spacing: 3) {
@@ -469,6 +469,11 @@ struct MainPopoverView: View {
                 .frame(width: 7, height: 7)
         }
         .help(hint)
+    }
+
+    private func webAvailable(for agent: Agent) -> Bool {
+        let target = agent.urlString.hasPrefix("http") ? agent.urlString : "https://" + agent.urlString
+        return URL(string: target)?.host != nil
     }
 
     private func avatar(_ agent: Agent) -> some View {
@@ -523,6 +528,55 @@ struct MainPopoverView: View {
         }
     }
 
+    private var tabSelector: some View {
+        let webColor: Color = webAvailable(for: agentStore.activeAgent) ? .blue : .gray
+        let apiColor: Color = apiKeyStore.hasAPIKey(forAgentID: agentStore.activeAgent.id) ? .green : .gray
+        return HStack(spacing: 3) {
+            Button {
+                chatTab = .web
+            } label: {
+                HStack(spacing: 5) {
+                    Circle()
+                        .fill(webColor)
+                        .frame(width: 6, height: 6)
+                    Text(localization.text("web_mode"))
+                        .font(.system(size: 11, weight: .semibold))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 5)
+                .background(
+                    chatTab == .web ? Color.accentColor.opacity(0.22) : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 7)
+                )
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            Button {
+                chatTab = .api
+            } label: {
+                HStack(spacing: 5) {
+                    Circle()
+                        .fill(apiColor)
+                        .frame(width: 6, height: 6)
+                    Text(localization.text("client_mode"))
+                        .font(.system(size: 11, weight: .semibold))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 5)
+                .background(
+                    chatTab == .api ? Color.accentColor.opacity(0.22) : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 7)
+                )
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(3)
+        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 9))
+        .frame(width: 210)
+    }
+
     private var chatPane: some View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
@@ -574,25 +628,7 @@ struct MainPopoverView: View {
                 .buttonStyle(.plain)
                 .help(localization.text("browser"))
 
-                Picker("", selection: $chatTab) {
-                    HStack(spacing: 5) {
-                        Circle()
-                            .fill(agentStore.activeAgent.isOnline ? Color.blue : Color.gray)
-                            .frame(width: 6, height: 6)
-                        Text(localization.text("web_mode"))
-                    }
-                    .tag(ChatTab.web)
-                    HStack(spacing: 5) {
-                        Circle()
-                            .fill(apiKeyStore.hasAPIKey(forAgentID: agentStore.activeAgent.id) ? Color.green : Color.gray)
-                            .frame(width: 6, height: 6)
-                        Text(localization.text("client_mode"))
-                    }
-                    .tag(ChatTab.api)
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .frame(width: 210)
+                tabSelector
             }
             .padding(.horizontal, 12)
             .frame(height: 44)
