@@ -35,47 +35,18 @@ enum KeychainService {
               let sealed = try? AES.GCM.seal(data, using: masterKey()),
               let boxed = sealed.combined else { return }
         defaults.set(boxed.base64EncodedString(), forKey: key)
-        deleteLegacyKeychain(key)
     }
 
     static func load(_ key: String) -> String? {
-        if let b64 = defaults.string(forKey: key),
-           let boxed = Data(base64Encoded: b64),
-           let sealed = try? AES.GCM.SealedBox(combined: boxed),
-           let data = try? AES.GCM.open(sealed, using: masterKey()) {
-            return String(data: data, encoding: .utf8)
-        }
-        let legacy = legacyKeychainValue(key)
-        if let legacy {
-            save(legacy, forKey: key)
-        }
-        return legacy
+        guard let b64 = defaults.string(forKey: key),
+              let boxed = Data(base64Encoded: b64),
+              let sealed = try? AES.GCM.SealedBox(combined: boxed),
+              let data = try? AES.GCM.open(sealed, using: masterKey()) else { return nil }
+        return String(data: data, encoding: .utf8)
     }
 
     static func delete(_ key: String) {
         defaults.removeObject(forKey: key)
-        deleteLegacyKeychain(key)
-    }
-
-    private static func legacyKeychainValue(_ key: String) -> String? {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
-        var item: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &item) == errSecSuccess,
-              let data = item as? Data else { return nil }
-        return String(data: data, encoding: .utf8)
-    }
-
-    private static func deleteLegacyKeychain(_ key: String) {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key
-        ]
-        SecItemDelete(query as CFDictionary)
     }
 }
 
