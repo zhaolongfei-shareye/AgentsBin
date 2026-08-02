@@ -18,6 +18,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let sizeKey = "agentsbin.windowSize"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        let pid = ProcessInfo.processInfo.processIdentifier
+        for running in NSRunningApplication.runningApplications(withBundleIdentifier: "com.agentsbin.app")
+        where running.processIdentifier != pid {
+            running.terminate()
+        }
         NSApp.setActivationPolicy(.accessory)
         if let raw = UserDefaults.standard.string(forKey: "aihome.appearance"),
            let appearance = NSAppearance(named: NSAppearance.Name(rawValue: raw)) {

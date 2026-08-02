@@ -99,7 +99,7 @@ struct MainPopoverView: View {
     @EnvironmentObject private var faviconStore: FaviconStore
     @EnvironmentObject private var localization: LocalizedStore
     @EnvironmentObject private var apiKeyStore: APIKeyStore
-    @AppStorage("agentsbin.setupDone") private var setupDone = false
+    @State private var setupDone = false
     @State private var mode: RightMode = .chat
     @State private var chatTab = ChatTab.web
     @State private var pendingSettingsTab = 0
@@ -121,6 +121,13 @@ struct MainPopoverView: View {
         }
         .frame(minWidth: 720, minHeight: 460)
         .onAppear {
+            let currentVersion = appVersion
+            let lastVersion = UserDefaults.standard.string(forKey: "agentsbin.lastVersion")
+            if lastVersion != currentVersion {
+                UserDefaults.standard.set(false, forKey: "agentsbin.setupDone")
+                UserDefaults.standard.set(currentVersion, forKey: "agentsbin.lastVersion")
+            }
+            setupDone = UserDefaults.standard.bool(forKey: "agentsbin.setupDone")
             faviconStore.ensureLoaded(for: agentStore.agents)
             launchAtLogin = SMAppService.mainApp.status == .enabled
         }
@@ -223,6 +230,7 @@ struct MainPopoverView: View {
             }
         } catch {
         }
+        UserDefaults.standard.set(true, forKey: "agentsbin.setupDone")
         setupDone = true
     }
 
@@ -237,28 +245,37 @@ struct MainPopoverView: View {
             floatingPanel
         }
         .overlay(alignment: .leading) {
-            Group {
-                if !showPanel {
-                    Button {
-                    } label: {
-                        Image(systemName: "line.3.horizontal")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(.secondary)
-                            .frame(width: 30, height: 56)
-                            .background(Color(nsColor: .windowBackgroundColor), in: RoundedRectangle(cornerRadius: 15))
-                            .overlay(RoundedRectangle(cornerRadius: 15).stroke(Color.primary.opacity(0.12), lineWidth: 1))
-                            .shadow(color: .black.opacity(0.25), radius: 6, y: 3)
+            Rectangle()
+                .fill(Color.clear)
+                .frame(width: 12)
+                .contentShape(Rectangle())
+                .onHover { hovering in
+                    if !manageAgents && !showAgentPicker && mode != .manage {
+                        sidebarHovered = hovering
                     }
-                    .buttonStyle(.plain)
-                    .padding(.leading, 10)
-                    .frame(maxHeight: .infinity, alignment: .center)
-                    .onHover { hovering in
-                        if !manageAgents && !showAgentPicker && mode != .manage {
-                            sidebarHovered = hovering
-                        }
-                    }
-                    .transition(.opacity)
                 }
+        }
+        .overlay(alignment: .leading) {
+            if !showPanel {
+                Button {
+                } label: {
+                    Image(systemName: "line.3.horizontal")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 30, height: 56)
+                        .background(Color(nsColor: .windowBackgroundColor), in: RoundedRectangle(cornerRadius: 15))
+                        .overlay(RoundedRectangle(cornerRadius: 15).stroke(Color.primary.opacity(0.12), lineWidth: 1))
+                        .shadow(color: .black.opacity(0.25), radius: 6, y: 3)
+                }
+                .buttonStyle(.plain)
+                .padding(.leading, 12)
+                .frame(maxHeight: .infinity, alignment: .center)
+                .onHover { hovering in
+                    if !manageAgents && !showAgentPicker && mode != .manage {
+                        sidebarHovered = hovering
+                    }
+                }
+                .transition(.opacity)
             }
         }
     }
