@@ -116,8 +116,8 @@ struct MainPopoverView: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        .padding(.leading, sidebarCollapsed ? 6 : 210)
-        .padding(.vertical, 6)
+        .offset(x: sidebarCollapsed ? 6 : 210)
+        .frame(maxHeight: .infinity, alignment: .center)
         .help(localization.text("toggle_sidebar"))
     }
 
@@ -288,18 +288,12 @@ struct MainPopoverView: View {
                 .buttonStyle(.plain)
             }
 
-            Button {
-                agentStore.select(agent.id)
-                webPool.markRead(agent.id)
-                Analytics.track(kind: "agent_open", name: agent.id)
-                mode = .chat
-            } label: {
-                HStack(spacing: 8) {
-                    agentStatusLight(agent)
-                    Text(localization.agentName(agent.name))
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(isActive ? Color.white : Color.primary)
-                        .lineLimit(1)
+            HStack(spacing: 8) {
+                agentStatusLight(agent)
+                Text(localization.agentName(agent.name))
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(isActive ? Color.white : Color.primary)
+                    .lineLimit(1)
                 if webPool.unreadIDs.contains(agent.id) {
                     Circle()
                         .fill(Color.red)
@@ -307,23 +301,27 @@ struct MainPopoverView: View {
                         .overlay(Circle().stroke(.white, lineWidth: 1))
                 }
                 Spacer(minLength: 0)
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 6)
-                .background(
-                    isActive ? brandBlue : hoveredAgentID == agent.id ? brandBlue.opacity(0.10) : Color.clear,
-                    in: RoundedRectangle(cornerRadius: 8)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(hoveredAgentID == agent.id ? brandBlue.opacity(0.45) : Color.clear, lineWidth: 1)
-                )
-                .contentShape(Rectangle())
-                .onHover { hovering in
-                    hoveredAgentID = hovering ? agent.id : nil
-                }
             }
-            .buttonStyle(.plain)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .background(
+                isActive ? brandBlue : hoveredAgentID == agent.id ? brandBlue.opacity(0.10) : Color.clear,
+                in: RoundedRectangle(cornerRadius: 8)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(hoveredAgentID == agent.id ? brandBlue.opacity(0.45) : Color.clear, lineWidth: 1)
+            )
+            .contentShape(Rectangle())
+            .onTapGesture {
+                agentStore.select(agent.id)
+                webPool.markRead(agent.id)
+                Analytics.track(kind: "agent_open", name: agent.id)
+                mode = .chat
+            }
+            .onHover { hovering in
+                hoveredAgentID = hovering ? agent.id : nil
+            }
 
             if manageAgents && agent.id.hasPrefix("custom-") {
                 Button {
@@ -337,6 +335,13 @@ struct MainPopoverView: View {
                 .buttonStyle(.plain)
                 .help(localization.text("delete"))
             }
+
+            Image(systemName: "line.3.horizontal")
+                .font(.system(size: 11))
+                .foregroundStyle(isActive ? Color.white.opacity(0.8) : Color.secondary.opacity(0.7))
+                .frame(width: 18, height: 24)
+                .contentShape(Rectangle())
+                .help(localization.text("drag_hint"))
         }
         .onDrag {
             draggedAgentID = agent.id

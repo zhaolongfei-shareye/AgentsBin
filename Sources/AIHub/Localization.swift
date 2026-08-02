@@ -289,6 +289,11 @@ final class LocalizedStore: ObservableObject {
             .ko: "로그인 필요", .es: "Requiere inicio", .fr: "Connexion requise", .de: "Anmeldung nötig",
             .ru: "Требуется вход", .pt: "Requer login"
         ],
+        "drag_hint": [
+            .zh: "拖拽排序", .zhHant: "拖曳排序", .en: "Drag to reorder", .ja: "ドラッグで並べ替え",
+            .ko: "드래그로 정렬", .es: "Arrastrar para ordenar", .fr: "Glisser pour trier",
+            .de: "Zum Sortieren ziehen", .ru: "Перетащите для сортировки", .pt: "Arraste para ordenar"
+        ],
         "client_placeholder": [
             .zh: "输入问题，使用 API 直接对话", .zhHant: "輸入問題，使用 API 直接對話", .en: "Ask via API",
             .ja: "APIで質問", .ko: "API로 질문", .es: "Pregunta por API", .fr: "Demandez via API",
