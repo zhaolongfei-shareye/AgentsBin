@@ -143,8 +143,8 @@ a {
   width: min(940px, calc(100vw - 32px));
   max-height: calc(100vh - 110px);
   overflow: auto;
-  background: #f7f8fa;
-  color: #1d1d1f;
+  background: #1a212b;
+  color: #f2f5f8;
   border-radius: 16px;
   padding: 22px;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
@@ -171,8 +171,8 @@ a {
   gap: 8px;
   flex: 1;
   min-width: 190px;
-  background: #fff;
-  border: 1px solid #d9dde3;
+  background: #11161d;
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 9px;
   padding: 8px 11px;
 }
@@ -180,7 +180,7 @@ a {
 .panel-search svg {
   width: 14px;
   height: 14px;
-  color: #6e6e73;
+  color: #8b98a8;
   flex: none;
 }
 
@@ -191,7 +191,7 @@ a {
   font: inherit;
   font-size: 13px;
   width: 100%;
-  color: #1d1d1f;
+  color: #f2f5f8;
 }
 
 .panel-filter {
@@ -201,9 +201,9 @@ a {
 
 .panel-filter button,
 .panel-cats button {
-  background: #fff;
-  border: 1px solid #d9dde3;
-  color: #1d1d1f;
+  background: #202a36;
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #cbd5e1;
   font: inherit;
   font-size: 11px;
   font-weight: 700;
@@ -215,9 +215,9 @@ a {
 
 .panel-filter button.on,
 .panel-cats button.on {
-  background: #1d1d1f;
+  background: #0a84ff;
   color: #fff;
-  border-color: #1d1d1f;
+  border-color: #0a84ff;
 }
 
 .panel-cats {
@@ -237,8 +237,8 @@ a {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background: #fff;
-  border: 1px solid #e6e8ec;
+  background: #202a36;
+  border: 1px solid rgba(255,255,255,0.10);
   border-radius: 12px;
   padding: 16px;
   color: inherit;
@@ -248,7 +248,7 @@ a {
 }
 
 .product-card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   transform: translateY(-2px);
 }
 
@@ -287,13 +287,13 @@ a {
 
 .pc-sub {
   font-size: 10px;
-  color: #6e6e73;
+  color: #8b98a8;
   font-weight: 600;
 }
 
 .pc-desc {
   font-size: 11px;
-  color: #4d4d52;
+  color: #94a3b8;
   margin-top: 6px;
   line-height: 1.45;
 }
@@ -316,7 +316,7 @@ a {
 .pc-status.soon { color: #fde047; background: rgba(250,204,21,0.14); }
 
 .pc-arrow {
-  color: #6e6e73;
+  color: #8b98a8;
   font-size: 15px;
 }
 
