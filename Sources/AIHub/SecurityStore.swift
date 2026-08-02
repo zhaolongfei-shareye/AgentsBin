@@ -140,7 +140,12 @@ final class APIKeyStore: ObservableObject {
             AgentAPIConfig(id: "deepseek", name: "DeepSeek", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.deepseek.com/v1", model: "deepseek-chat")]),
             AgentAPIConfig(id: "kimi", name: "Kimi (Moonshot)", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.moonshot.cn/v1", model: "moonshot-v1-8k")]),
             AgentAPIConfig(id: "qwen", name: "Qwen (DashScope)", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1", model: "qwen-plus")]),
-            AgentAPIConfig(id: "grok", name: "Grok (xAI)", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.x.ai/v1", model: "grok-2-latest")])
+            AgentAPIConfig(id: "grok", name: "Grok (xAI)", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.x.ai/v1", model: "grok-2-latest")]),
+            AgentAPIConfig(id: "doubao", name: "豆包 Doubao", note: "火山方舟 OpenAI 兼容", credentials: [APICredential(label: "Default", baseURL: "https://ark.cn-beijing.volces.com/api/v3", model: "doubao-pro-32k")]),
+            AgentAPIConfig(id: "chatglm", name: "智谱 ChatGLM", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://open.bigmodel.cn/api/paas/v4", model: "glm-4-plus")]),
+            AgentAPIConfig(id: "wenxin", name: "文心一言 Wenxin", note: "千帆 OpenAI 兼容", credentials: [APICredential(label: "Default", baseURL: "https://qianfan.baidubce.com/v2", model: "ernie-4.0-8k")]),
+            AgentAPIConfig(id: "xinghuo", name: "讯飞星火 Xinghuo", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://spark-api-open.xf-yun.com/v1", model: "generalv3.5")]),
+            AgentAPIConfig(id: "yuanbao", name: "腾讯元宝 Yuanbao", note: "混元 OpenAI 兼容", credentials: [APICredential(label: "Default", baseURL: "https://api.hunyuan.cloud.tencent.com/v1", model: "hunyuan-pro")])
         ]
     }
 
@@ -225,8 +230,13 @@ final class APIKeyStore: ObservableObject {
     func addCredential(to configID: String) {
         guard let index = configs.firstIndex(where: { $0.id == configID }) else { return }
         let number = configs[index].credentials.count + 1
-        let defaultBase = configs[index].credentials.first?.baseURL ?? "https://api.openai.com/v1"
-        let defaultModel = configs[index].credentials.first?.model ?? "gpt-4o-mini"
+        let providerDefault = Self.defaultConfigs().first(where: { $0.id == configID })?.credentials.first
+        let defaultBase = configs[index].credentials.first?.baseURL
+            ?? providerDefault?.baseURL
+            ?? "https://api.openai.com/v1"
+        let defaultModel = configs[index].credentials.first?.model
+            ?? providerDefault?.model
+            ?? "gpt-4o-mini"
         configs[index].credentials.append(APICredential(label: "Group \(number)", baseURL: defaultBase, model: defaultModel))
         persist()
     }
