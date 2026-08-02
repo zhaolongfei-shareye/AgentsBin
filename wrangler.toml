@@ -1,0 +1,8 @@
+name = "agentsbin"
+compatibility_date = "2026-08-02"
+pages_build_output_dir = "./site"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "agentsbin-stats"
+database_id = "bc108535-0d23-4276-94bd-7911c49a47a2"

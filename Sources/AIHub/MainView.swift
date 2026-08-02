@@ -323,6 +323,7 @@ struct MainPopoverView: View {
             Button {
                 agentStore.select(agent.id)
                 webPool.markRead(agent.id)
+                Analytics.track(kind: "agent_open", name: agent.id)
                 mode = .chat
             } label: {
                 HStack(spacing: 8) {

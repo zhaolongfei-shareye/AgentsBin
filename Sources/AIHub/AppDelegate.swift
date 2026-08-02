@@ -28,6 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             UserDefaults.standard.set(NSAppearance.Name.darkAqua.rawValue, forKey: "aihome.appearance")
         }
         faviconStore.ensureLoaded(for: agentStore.agents)
+        Analytics.track(kind: "app_open", name: "app")
         setupStatusItem()
     }
 

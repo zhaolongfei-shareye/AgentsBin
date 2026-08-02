@@ -1040,4 +1040,25 @@
   avatar.onerror = loadAvatar;
   loadAvatar();
 
+  document.querySelectorAll('a[href^="downloads/"]').forEach(function (link) {
+    link.addEventListener("click", function () {
+      const payload = JSON.stringify({
+        kind: "download",
+        name: "dmg",
+        version: "1.0.16",
+        source: "web"
+      });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon("/api/track", new Blob([payload], { type: "application/json" }));
+      } else {
+        fetch("/api/track", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload,
+          keepalive: true
+        });
+      }
+    });
+  });
+
 })();
