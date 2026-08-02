@@ -162,11 +162,13 @@ export async function onRequest(context) {
   }
   if (!email || email.toLowerCase() !== adminEmail(env)) {
     const url = new URL(request.url);
-    const message = url.searchParams.get("auth") === "denied"
-      ? "This Google account is not the owner."
-      : url.searchParams.get("auth") === "failed"
-        ? "Sign in failed, please try again."
-        : "";
+    const message = url.searchParams.get("ok") === "1"
+      ? "Login succeeded but the session cookie was not accepted. Please try again or check your browser cookie settings."
+      : url.searchParams.get("auth") === "denied"
+        ? "This Google account is not the owner."
+        : url.searchParams.get("auth") === "failed"
+          ? "Sign in failed, please try again."
+          : "";
     return new Response(loggedOut(message), {
       status: 200,
       headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
