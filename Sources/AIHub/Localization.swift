@@ -272,6 +272,31 @@ final class LocalizedStore: ObservableObject {
             .ko: "API 실패", .es: "Error de API", .fr: "Échec de l'API", .de: "API-Fehler",
             .ru: "Ошибка API", .pt: "Falha na API"
         ],
+        "api_key_invalid": [
+            .zh: "API Key 无效或已过期，请检查 API 配置", .zhHant: "API Key 無效或已過期，請檢查 API 設定", .en: "Invalid or expired API key. Please check your API config.",
+            .ja: "APIキーが無効か期限切れです。API設定を確認してください", .ko: "API 키가 잘못되었거나 만료되었습니다. API 설정을 확인하세요.",
+            .es: "Clave API no válida o caducada. Revisa la configuración", .fr: "Clé API invalide ou expirée. Vérifiez la configuration",
+            .de: "API-Schlüssel ungültig oder abgelaufen. Prüfen Sie die Konfiguration", .ru: "API-ключ недействителен или истёк. Проверьте настройки",
+            .pt: "Chave API inválida ou expirada. Verifique a configuração"
+        ],
+        "api_rate_limited": [
+            .zh: "请求过于频繁，请稍后再试", .zhHant: "請求過於頻繁，請稍後再試", .en: "Too many requests. Please try again later.",
+            .ja: "リクエストが多すぎます。しばらくしてから再試行してください", .ko: "요청이 너무 많습니다. 잠시 후 다시 시도하세요.",
+            .es: "Demasiadas solicitudes. Inténtalo más tarde", .fr: "Trop de requêtes. Réessayez plus tard",
+            .de: "Zu viele Anfragen. Bitte später erneut versuchen", .ru: "Слишком много запросов. Попробуйте позже",
+            .pt: "Muitas solicitações. Tente novamente mais tarde"
+        ],
+        "api_network_error": [
+            .zh: "网络连接失败，请检查网络后重试", .zhHant: "網路連線失敗，請檢查網路後重試", .en: "Network connection failed. Please check your network.",
+            .ja: "ネットワーク接続に失敗しました。接続を確認してください", .ko: "네트워크 연결에 실패했습니다. 연결을 확인하세요.",
+            .es: "Error de conexión. Revisa tu red", .fr: "Échec de connexion. Vérifiez votre réseau",
+            .de: "Verbindung fehlgeschlagen. Prüfen Sie Ihr Netzwerk", .ru: "Ошибка сети. Проверьте подключение",
+            .pt: "Falha de conexão. Verifique sua rede"
+        ],
+        "copy_detail": [
+            .zh: "复制详情", .zhHant: "複製詳情", .en: "Copy details", .ja: "詳細をコピー", .ko: "세부 정보 복사",
+            .es: "Copiar detalles", .fr: "Copier les détails", .de: "Details kopieren", .ru: "Копировать детали", .pt: "Copiar detalhes"
+        ],
         "retry": [
             .zh: "重试", .zhHant: "重試", .en: "Retry", .ja: "再試行", .ko: "다시 시도",
             .es: "Reintentar", .fr: "Réessayer", .de: "Erneut versuchen", .ru: "Повторить", .pt: "Tentar novamente"

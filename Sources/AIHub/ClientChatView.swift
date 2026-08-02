@@ -17,6 +17,7 @@ struct ClientChatView: View {
     @State private var input = ""
     @State private var state = StateValue.idle
     @State private var errorText = ""
+    @State private var errorDetail = ""
     @State private var sending = false
 
     enum StateValue {
@@ -72,14 +73,40 @@ struct ClientChatView: View {
             Text(errorText.isEmpty ? localization.text("api_failed") : errorText)
                 .font(.headline)
                 .multilineTextAlignment(.center)
-                .textSelection(.enabled)
                 .padding(.horizontal, 24)
+            if !errorDetail.isEmpty {
+                Button {
+                    let pasteboard = NSPasteboard.general
+                    pasteboard.clearContents()
+                    pasteboard.setString(errorDetail, forType: .string)
+                } label: {
+                    Label(localization.text("copy_detail"), systemImage: "doc.on.doc")
+                        .font(.system(size: 11))
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+            }
             HStack(spacing: 10) {
                 Button(localization.text("retry")) { refresh() }
                 Button(localization.text("go_configure")) { onOpenSettings() }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func friendlyError(_ error: Error) -> String {
+        let ns = error as NSError
+        if ns.domain == NSURLErrorDomain {
+            return localization.text("api_network_error")
+        }
+        switch ns.code {
+        case 401, 403:
+            return localization.text("api_key_invalid")
+        case 429:
+            return localization.text("api_rate_limited")
+        default:
+            return localization.text("api_failed")
+        }
     }
 
     private var chatView: some View {
@@ -164,7 +191,8 @@ struct ClientChatView: View {
                     state = .ready
                 case .failure(let error):
                     state = .failed
-                    errorText = error.localizedDescription
+                    errorDetail = error.localizedDescription
+                    errorText = friendlyError(error)
                 }
             }
         }
@@ -185,7 +213,8 @@ struct ClientChatView: View {
                 case .success(let reply):
                     messages.append(ClientChatMessage(role: "assistant", content: reply))
                 case .failure(let error):
-                    messages.append(ClientChatMessage(role: "assistant", content: "[Error] " + error.localizedDescription))
+                    errorDetail = error.localizedDescription
+                    messages.append(ClientChatMessage(role: "assistant", content: "[Error] " + friendlyError(error)))
                 }
             }
         }
