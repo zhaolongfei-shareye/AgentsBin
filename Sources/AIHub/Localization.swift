@@ -233,6 +233,61 @@ final class LocalizedStore: ObservableObject {
             .zh: "浏览器模式", .zhHant: "瀏覽器模式", .en: "Browser", .ja: "ブラウザモード", .ko: "브라우저 모드",
             .es: "Modo navegador", .fr: "Mode navigateur", .de: "Browser-Modus", .ru: "Режим браузера", .pt: "Modo navegador"
         ],
+        "web_mode": [
+            .zh: "网页模式", .zhHant: "網頁模式", .en: "Web", .ja: "Web", .ko: "Web",
+            .es: "Web", .fr: "Web", .de: "Web", .ru: "Web", .pt: "Web"
+        ],
+        "client_mode": [
+            .zh: "客户端模式", .zhHant: "客戶端模式", .en: "API", .ja: "API", .ko: "API",
+            .es: "API", .fr: "API", .de: "API", .ru: "API", .pt: "API"
+        ],
+        "api_not_configured": [
+            .zh: "尚未配置 API Key", .zhHant: "尚未設定 API Key", .en: "No API key configured", .ja: "APIキー未設定",
+            .ko: "API 키가 없습니다", .es: "Sin clave API", .fr: "Aucune clé API", .de: "Kein API-Schlüssel",
+            .ru: "API-ключ не настроен", .pt: "Sem chave API"
+        ],
+        "go_configure": [
+            .zh: "前往 API 配置", .zhHant: "前往 API 設定", .en: "Configure API", .ja: "APIを設定",
+            .ko: "API 설정", .es: "Configurar API", .fr: "Configurer l'API", .de: "API konfigurieren",
+            .ru: "Настроить API", .pt: "Configurar API"
+        ],
+        "verifying_api": [
+            .zh: "正在验证 API...", .zhHant: "正在驗證 API...", .en: "Verifying API...", .ja: "APIを確認中...",
+            .ko: "API 확인 중...", .es: "Verificando API...", .fr: "Vérification de l'API...", .de: "API wird geprüft...",
+            .ru: "Проверка API...", .pt: "Verificando API..."
+        ],
+        "api_failed": [
+            .zh: "API 连接失败", .zhHant: "API 連線失敗", .en: "API failed", .ja: "APIエラー",
+            .ko: "API 실패", .es: "Error de API", .fr: "Échec de l'API", .de: "API-Fehler",
+            .ru: "Ошибка API", .pt: "Falha na API"
+        ],
+        "retry": [
+            .zh: "重试", .zhHant: "重試", .en: "Retry", .ja: "再試行", .ko: "다시 시도",
+            .es: "Reintentar", .fr: "Réessayer", .de: "Erneut versuchen", .ru: "Повторить", .pt: "Tentar novamente"
+        ],
+        "api_ready": [
+            .zh: "已配置 API", .zhHant: "已設定 API", .en: "API ready", .ja: "API設定済み", .ko: "API 준비됨",
+            .es: "API lista", .fr: "API prête", .de: "API bereit", .ru: "API готов", .pt: "API pronta"
+        ],
+        "api_missing": [
+            .zh: "未配置 API", .zhHant: "未設定 API", .en: "No API", .ja: "API未設定", .ko: "API 없음",
+            .es: "Sin API", .fr: "Pas d'API", .de: "Keine API", .ru: "Нет API", .pt: "Sem API"
+        ],
+        "api_blocked": [
+            .zh: "需登录或不可用", .zhHant: "需登入或不可用", .en: "Login required", .ja: "ログインが必要",
+            .ko: "로그인 필요", .es: "Requiere inicio", .fr: "Connexion requise", .de: "Anmeldung nötig",
+            .ru: "Требуется вход", .pt: "Requer login"
+        ],
+        "client_placeholder": [
+            .zh: "输入问题，使用 API 直接对话", .zhHant: "輸入問題，使用 API 直接對話", .en: "Ask via API",
+            .ja: "APIで質問", .ko: "API로 질문", .es: "Pregunta por API", .fr: "Demandez via API",
+            .de: "Frage per API", .ru: "Спросить через API", .pt: "Pergunte via API"
+        ],
+        "client_empty": [
+            .zh: "开始新的 API 对话", .zhHant: "開始新的 API 對話", .en: "Start a new API chat", .ja: "新しいAPIチャット",
+            .ko: "새 API 채팅 시작", .es: "Inicia un chat API", .fr: "Démarrez un chat API", .de: "Neuen API-Chat starten",
+            .ru: "Начать новый чат", .pt: "Inicie um novo chat"
+        ],
         "start_chat": [
             .zh: "开始对话", .zhHant: "開始對話", .en: "Start chatting", .ja: "会話を始める", .ko: "대화 시작",
             .es: "Iniciar conversación", .fr: "Commencer la discussion", .de: "Chat starten", .ru: "Начать чат", .pt: "Iniciar conversa"

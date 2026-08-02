@@ -138,6 +138,37 @@ final class APIKeyStore: ObservableObject {
         }
     }
 
+    static let agentToConfigMap: [String: String] = [
+        "chatgpt": "openai",
+        "claude": "anthropic",
+        "gemini": "google",
+        "deepseek": "deepseek",
+        "kimi": "kimi",
+        "qwen": "qwen",
+        "grok": "grok"
+    ]
+
+    func config(forAgentID agentID: String) -> AgentAPIConfig? {
+        let configID = Self.agentToConfigMap[agentID] ?? agentID
+        return configs.first(where: { $0.id == configID && $0.isEnabled })
+    }
+
+    func hasAPIKey(forAgentID agentID: String) -> Bool {
+        guard let config = config(forAgentID: agentID) else { return false }
+        return config.credentials.contains { !apiKey(for: $0.id).isEmpty }
+    }
+
+    func credential(forAgentID agentID: String) -> (config: AgentAPIConfig, credential: APICredential, apiKey: String)? {
+        guard let config = config(forAgentID: agentID) else { return nil }
+        for credential in config.credentials {
+            let key = apiKey(for: credential.id)
+            if !key.isEmpty {
+                return (config, credential, key)
+            }
+        }
+        return nil
+    }
+
     func update(config: AgentAPIConfig) {
         guard let index = configs.firstIndex(where: { $0.id == config.id }) else { return }
         configs[index] = config

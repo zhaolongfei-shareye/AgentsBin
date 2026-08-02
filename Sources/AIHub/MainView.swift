@@ -8,6 +8,11 @@ enum RightMode {
     case manage
 }
 
+enum ChatTab {
+    case web
+    case api
+}
+
 struct ToolbarTextButton: View {
     let icon: String
     let title: String
@@ -47,14 +52,17 @@ extension Color {
     }
 }
 
-private let brandBlue = Color(red: 0.04, green: 0.46, blue: 0.95)
+let brandBlue = Color(red: 0.04, green: 0.46, blue: 0.95)
 
 struct MainPopoverView: View {
     @EnvironmentObject private var agentStore: AgentStore
     @EnvironmentObject private var webPool: WebViewPool
     @EnvironmentObject private var faviconStore: FaviconStore
     @EnvironmentObject private var localization: LocalizedStore
+    @EnvironmentObject private var apiKeyStore: APIKeyStore
     @State private var mode: RightMode = .chat
+    @State private var chatTab = ChatTab.web
+    @State private var pendingSettingsTab = 0
     @State private var hoveredAgentID: String?
     @State private var draggedAgentID: String?
     @State private var sidebarCollapsed = false
@@ -204,6 +212,7 @@ struct MainPopoverView: View {
             }
 
             Button {
+                pendingSettingsTab = 0
                 mode = .manage
             } label: {
                 Image(systemName: "gearshape")
@@ -327,17 +336,11 @@ struct MainPopoverView: View {
                 mode = .chat
             } label: {
                 HStack(spacing: 8) {
-                avatar(agent)
-                VStack(alignment: .leading, spacing: 1) {
+                    agentStatusLight(agent)
                     Text(localization.agentName(agent.name))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(isActive ? Color.white : Color.primary)
                         .lineLimit(1)
-                    Text(agent.urlString)
-                        .font(.system(size: 10))
-                        .foregroundStyle(isActive ? Color.white.opacity(0.75) : Color.secondary)
-                        .lineLimit(1)
-                }
                 if webPool.unreadIDs.contains(agent.id) {
                     Circle()
                         .fill(Color.red)
@@ -386,6 +389,26 @@ struct MainPopoverView: View {
         }
     }
 
+    private func agentStatusLight(_ agent: Agent) -> some View {
+        let color: Color
+        let hint: String
+        if !agent.isOnline {
+            color = .red
+            hint = localization.text("api_blocked")
+        } else if apiKeyStore.hasAPIKey(forAgentID: agent.id) {
+            color = .green
+            hint = localization.text("api_ready")
+        } else {
+            color = .yellow
+            hint = localization.text("api_missing")
+        }
+        return Circle()
+            .fill(color)
+            .frame(width: 9, height: 9)
+            .overlay(Circle().stroke(.white.opacity(0.6), lineWidth: 0.5))
+            .help(hint)
+    }
+
     private func avatar(_ agent: Agent) -> some View {
         if let image = faviconStore.images[agent.id] {
             return AnyView(
@@ -420,14 +443,36 @@ struct MainPopoverView: View {
         case .chat:
             chatPane
         case .manage:
-            ManageView(onBack: { mode = .chat })
+            ManageView(onBack: { mode = .chat }, initialTab: pendingSettingsTab)
         }
     }
 
     private var chatPane: some View {
-        WebViewPoolView(agent: agentStore.activeAgent, pool: webPool)
-            .id(agentStore.activeAgent.id)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        VStack(spacing: 0) {
+            Picker("", selection: $chatTab) {
+                Text(localization.text("web_mode")).tag(ChatTab.web)
+                Text(localization.text("client_mode")).tag(ChatTab.api)
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .frame(width: 240)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .background(.bar)
+            Divider()
+            switch chatTab {
+            case .web:
+                WebViewPoolView(agent: agentStore.activeAgent, pool: webPool)
+                    .id(agentStore.activeAgent.id)
+            case .api:
+                ClientChatView(agent: agentStore.activeAgent) {
+                    pendingSettingsTab = 1
+                    mode = .manage
+                }
+                .id(agentStore.activeAgent.id)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func officialURL(_ agent: Agent) -> String {
@@ -468,6 +513,11 @@ struct ManageView: View {
     @State private var passwordMasked = true
     @State private var launchAtLogin = false
     @State private var darkModeEnabled = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+
+    init(onBack: @escaping () -> Void, initialTab: Int = 0) {
+        self.onBack = onBack
+        _settingsTab = State(initialValue: initialTab)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
