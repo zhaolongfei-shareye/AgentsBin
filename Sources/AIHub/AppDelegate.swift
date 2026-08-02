@@ -13,7 +13,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let localization = LocalizedStore()
     private let faviconStore = FaviconStore()
     private let apiKeyStore = APIKeyStore()
-    private let adminAuth = AdminAuthStore()
 
     private let defaultSize = NSSize(width: 960, height: 680)
     private let sizeKey = "agentsbin.windowSize"
@@ -94,7 +93,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 .environmentObject(localization)
                 .environmentObject(faviconStore)
                 .environmentObject(apiKeyStore)
-                .environmentObject(adminAuth)
             hostingController = NSHostingController(rootView: AnyView(view))
         }
 
@@ -113,7 +111,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             panel.titleVisibility = .hidden
             panel.titlebarAppearsTransparent = true
             panel.isReleasedWhenClosed = false
-            panel.minSize = NSSize(width: 640, height: 520)
+            panel.minSize = NSSize(width: 520, height: 400)
             panel.delegate = self
             panel.contentViewController = hostingController
             panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]

@@ -1,7 +1,7 @@
 # AgentsBin 项目文档
 
 文档日期：2026-08-02  
-当前版本：V1.0.17（免费内测版）  
+当前版本：V1.0.18（免费内测版）  
 仓库：https://github.com/zhaolongfei-shareye/AgentsBin  
 官网：https://www.agentsbin.com  
 作者：Jacky Zhao（zhaolongfei@gmail.com）
@@ -27,7 +27,7 @@ AgentsBin 是一款 macOS 菜单栏 AI 智能体快速入口应用，目标是�
 
 ---
 
-## 2. 当前功能清单（V1.0.17）
+## 2. 当前功能清单（V1.0.18）
 
 ### 2.1 macOS 应用
 
@@ -125,7 +125,7 @@ AgentsBin/
 | 样式 | CSS3（原生） | - | 浏览器 | `site/styles.css` |
 | 逻辑 | JavaScript（原生，无框架） | - | 浏览器 | `site/app.js` |
 | 静态托管 | Cloudflare Pages | - | Cloudflare | `site/` |
-| 下载安装包 | DMG | 1.0.17 | macOS | `site/downloads/` |
+| 下载安装包 | DMG | 1.0.18 | macOS | `site/downloads/` |
 | 爬虫/SEO | robots.txt / sitemap.xml | - | 搜索引擎 | `site/robots.txt`、`site/sitemap.xml` |
 
 ### 4.3 后端统计
@@ -292,7 +292,7 @@ git push origin master
 
 ```bash
 ./Scripts/build_dmg.sh
-open dist/AgentsBin-1.0.17.dmg
+open dist/AgentsBin-1.0.18.dmg
 ```
 
 ### 8.2 分发流程

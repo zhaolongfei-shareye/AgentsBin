@@ -115,37 +115,41 @@ struct MainPopoverView: View {
     }
 
     private var rightFooterBar: some View {
-        HStack(alignment: .center, spacing: 10) {
-            Image(systemName: "lightbulb.fill")
-                .font(.system(size: 14))
-                .foregroundStyle(.yellow)
-
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 8) {
-                    Button {
-                        openExternal("https://agentsbin.pages.dev")
-                    } label: {
-                        Text("agentsbin.pages.dev")
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundStyle(brandBlue)
-                    }
-                    .buttonStyle(.plain)
-
-                    Button {
-                        openExternal("mailto:zhaolongfei@gmail.com")
-                    } label: {
-                        Text("zhaolongfei@gmail.com")
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundStyle(brandBlue)
-                    }
-                    .buttonStyle(.plain)
-                }
-                Text("—— " + localization.text("footer_contact_text"))
-                    .font(.system(size: 10))
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
-            }
+        HStack(spacing: 8) {
             Spacer()
+            HStack(spacing: 6) {
+                Image(systemName: "globe")
+                    .foregroundStyle(.secondary)
+                Picker("", selection: $localization.language) {
+                    ForEach(AppLanguage.allCases, id: \.self) { lang in
+                        Text(lang.displayName).tag(lang)
+                    }
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+                .frame(width: 86)
+            }
+            Button {
+                pendingSettingsTab = 0
+                mode = .manage
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 22, height: 22)
+            }
+            .buttonStyle(.plain)
+            .help(localization.text("settings"))
+            Button {
+                NSApp.terminate(nil)
+            } label: {
+                Image(systemName: "power")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 22, height: 22)
+            }
+            .buttonStyle(.plain)
+            .help(localization.text("quit"))
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 5)
@@ -165,8 +169,8 @@ struct MainPopoverView: View {
             previousSidebarWidth = current.width
         }
         let width = collapsed
-            ? max(640, previousSidebarWidth - 224)
-            : max(640, previousSidebarWidth)
+            ? max(520, previousSidebarWidth - 224)
+            : max(860, previousSidebarWidth)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
             panel.setContentSize(NSSize(width: width, height: height))
         }
@@ -174,15 +178,7 @@ struct MainPopoverView: View {
 
     private var header: some View {
         HStack(spacing: 10) {
-            Text("AgentsBin")
-                .font(.system(size: 22, weight: .heavy))
-            Text("V\(appVersion)")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(.quaternary, in: Capsule())
-            Spacer()
+            Spacer(minLength: 0)
             avatar(agentStore.activeAgent)
             Text(localization.agentName(agentStore.activeAgent.name))
                 .font(.system(size: 20, weight: .heavy))
@@ -197,42 +193,6 @@ struct MainPopoverView: View {
             }
             .buttonStyle(.plain)
             .help(localization.text("browser"))
-
-            HStack(spacing: 6) {
-                Image(systemName: "globe")
-                    .foregroundStyle(.secondary)
-                Picker("", selection: $localization.language) {
-                    ForEach(AppLanguage.allCases, id: \.self) { lang in
-                        Text(lang.displayName).tag(lang)
-                    }
-                }
-                .pickerStyle(.menu)
-                .labelsHidden()
-                .frame(width: 86)
-            }
-
-            Button {
-                pendingSettingsTab = 0
-                mode = .manage
-            } label: {
-                Image(systemName: "gearshape")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 22, height: 22)
-            }
-            .buttonStyle(.plain)
-            .help(localization.text("settings"))
-
-            Button {
-                NSApp.terminate(nil)
-            } label: {
-                Image(systemName: "power")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 22, height: 22)
-            }
-            .buttonStyle(.plain)
-            .help(localization.text("quit"))
         }
         .padding(.horizontal, 12)
         .frame(height: 48)
@@ -245,6 +205,21 @@ struct MainPopoverView: View {
 
     private var sidebar: some View {
         VStack(spacing: 8) {
+            HStack(spacing: 8) {
+                Text("AgentsBin")
+                    .font(.system(size: 18, weight: .heavy))
+                    .lineLimit(1)
+                Text("V\(appVersion)")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(.quaternary, in: Capsule())
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 8)
+            .padding(.top, 6)
+
             agentList
 
             Divider()
@@ -488,21 +463,8 @@ struct MainPopoverView: View {
 
 struct ManageView: View {
     @EnvironmentObject private var apiKeyStore: APIKeyStore
-    @EnvironmentObject private var adminAuth: AdminAuthStore
     @EnvironmentObject private var localization: LocalizedStore
     let onBack: () -> Void
-    @State private var email = ""
-    @State private var password = ""
-    @State private var confirm = ""
-    @State private var oldPassword = ""
-    @State private var newPassword = ""
-    @State private var resetInput = ""
-    @State private var showChangePassword = false
-    @State private var showResetForm = false
-    @State private var showChangeEmail = false
-    @State private var newEmail = ""
-    @State private var confirmEmail = ""
-    @State private var emailPassword = ""
     @State private var selectedConfigID: String?
     @State private var settingsTab = 0
     @State private var generalItem = 0
@@ -510,7 +472,6 @@ struct ManageView: View {
     @State private var addAPIProviderName = ""
     @FocusState private var addProviderFocused: Bool
     @State private var pendingDeleteID: String?
-    @State private var passwordMasked = true
     @State private var launchAtLogin = false
     @State private var darkModeEnabled = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
 
@@ -522,27 +483,17 @@ struct ManageView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-            if !adminAuth.isConfigured {
-                setupView
-            } else if !adminAuth.isUnlocked {
-                unlockView
+            Picker("", selection: $settingsTab) {
+                Text(localization.text("general_settings")).tag(0)
+                Text(localization.text("api_backup")).tag(1)
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .padding(10)
+            if settingsTab == 0 {
+                generalSettingsView
             } else {
-                Picker("", selection: $settingsTab) {
-                    Text(localization.text("general_settings")).tag(0)
-                    Text(localization.text("api_backup")).tag(1)
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .padding(10)
-                if settingsTab == 0 {
-                    generalSettingsView
-                } else {
-                    if adminAuth.isUnlocked {
-                        configListView
-                    } else {
-                        unlockView
-                    }
-                }
+                configListView
             }
         }
         .onAppear {
@@ -568,15 +519,6 @@ struct ManageView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
             Spacer()
-            if adminAuth.isConfigured && adminAuth.isUnlocked {
-                Text(adminAuth.adminEmail)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Button(localization.text("lock")) {
-                    adminAuth.lock()
-                }
-                .buttonStyle(.plain)
-            }
         }
         .padding(.horizontal, 12)
         .frame(height: 44)
@@ -592,125 +534,10 @@ struct ManageView: View {
 
     private var currentGeneralItemTitle: String {
         switch generalItem {
-        case 0: return localization.text("change_password")
-        case 1: return localization.text("change_email")
-        case 2: return localization.text("auto_launch")
-        case 3: return localization.text("language")
+        case 0: return localization.text("auto_launch")
+        case 1: return localization.text("language")
         default: return localization.text("appearance")
         }
-    }
-
-    private var setupView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
-                Text(localization.text("admin_setup_title"))
-                    .font(.title3.weight(.bold))
-                Text(localization.text("admin_setup_desc"))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                TextField(localization.text("admin_email"), text: $email)
-                    .textFieldStyle(.roundedBorder)
-                SecureField(localization.text("admin_password"), text: $password)
-                    .textFieldStyle(.roundedBorder)
-                SecureField(localization.text("admin_confirm"), text: $confirm)
-                    .textFieldStyle(.roundedBorder)
-                Text(localization.text("password_rule"))
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                if !adminAuth.message.isEmpty {
-                    Text(adminAuth.message)
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                }
-                Button {
-                    guard password == confirm else {
-                        adminAuth.message = localization.text("password_mismatch")
-                        return
-                    }
-                    _ = adminAuth.setup(email: email, password: password)
-                } label: {
-                    Label(localization.text("save"), systemImage: "checkmark")
-                }
-                .buttonStyle(.borderedProminent)
-            }
-            .padding(20)
-            .frame(maxWidth: 420)
-        }
-        .frame(maxWidth: .infinity)
-    }
-
-    private var unlockView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
-                Text(localization.text("admin_unlock_title"))
-                    .font(.title3.weight(.bold))
-                if let locked = adminAuth.lockedUntil, locked > Date() {
-                    Text(localization.text("locked_until"))
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                } else {
-                    if adminAuth.isDefaultPassword {
-                        Text(localization.format("initial_password_hint", AdminAuthStore.initialPassword))
-                            .font(.caption)
-                            .foregroundStyle(.orange)
-                    }
-                    SecureField(localization.text("admin_password"), text: $password)
-                        .textFieldStyle(.roundedBorder)
-                    if !adminAuth.message.isEmpty {
-                        Text(adminAuth.message)
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                    }
-                    Button(localization.text("unlock")) {
-                        _ = adminAuth.unlock(password: password)
-                        password = ""
-                    }
-                    .buttonStyle(.borderedProminent)
-                    Button(localization.text("reset_to_initial")) {
-                        adminAuth.resetToInitial()
-                        password = AdminAuthStore.initialPassword
-                    }
-                    .buttonStyle(.plain)
-                    Button(localization.text("forgot_password")) {
-                        _ = adminAuth.requestReset()
-                        showResetForm = true
-                    }
-                    .buttonStyle(.plain)
-                }
-
-                if showResetForm {
-                    Divider()
-                    if let code = adminAuth.resetCode {
-                        Text(localization.format("reset_code_shown", code))
-                            .font(.system(.body, design: .monospaced))
-                        Button(localization.text("copy_reset_code")) {
-                            let pasteboard = NSPasteboard.general
-                            pasteboard.clearContents()
-                            pasteboard.setString(code, forType: .string)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    SecureField(localization.text("reset_code"), text: $resetInput)
-                        .textFieldStyle(.roundedBorder)
-                    SecureField(localization.text("new_password"), text: $newPassword)
-                        .textFieldStyle(.roundedBorder)
-                    Button(localization.text("reset_password")) {
-                        if adminAuth.reset(code: resetInput, newPassword: newPassword) {
-                            showResetForm = false
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-            }
-            .padding(20)
-            .frame(maxWidth: 420)
-            .onAppear {
-                if adminAuth.isDefaultPassword && password.isEmpty {
-                    password = AdminAuthStore.initialPassword
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
     }
 
     private var configListView: some View {
@@ -721,12 +548,6 @@ struct ManageView: View {
                         .font(.caption)
                         .foregroundStyle(.green)
                 }
-                if !adminAuth.message.isEmpty {
-                    Text(adminAuth.message)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
                 HStack(alignment: .top, spacing: 10) {
                     VStack(spacing: 6) {
                         ScrollView {
@@ -869,21 +690,11 @@ struct ManageView: View {
 
     private var generalSettingsView: some View {
         VStack(spacing: 8) {
-            if adminAuth.requireChange {
-                Text(localization.text("change_required"))
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(.orange)
-                    .padding(8)
-                    .background(Color.orange.opacity(0.14), in: RoundedRectangle(cornerRadius: 8))
-            }
-
             HStack(alignment: .top, spacing: 10) {
                 VStack(spacing: 4) {
-                    generalItemButton(index: 0, icon: "key.fill", title: localization.text("change_password"))
-                    generalItemButton(index: 1, icon: "envelope.fill", title: localization.text("change_email"))
-                    generalItemButton(index: 2, icon: "bolt.fill", title: localization.text("auto_launch"))
-                    generalItemButton(index: 3, icon: "globe", title: localization.text("language"))
-                    generalItemButton(index: 4, icon: "paintbrush.fill", title: localization.text("appearance"))
+                    generalItemButton(index: 0, icon: "bolt.fill", title: localization.text("auto_launch"))
+                    generalItemButton(index: 1, icon: "globe", title: localization.text("language"))
+                    generalItemButton(index: 2, icon: "paintbrush.fill", title: localization.text("appearance"))
                     Spacer(minLength: 0)
                 }
                 .frame(width: 210)
@@ -893,16 +704,9 @@ struct ManageView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 10) {
                         switch generalItem {
-                        case 0: passwordSettings
-                        case 1: emailSettings
-                        case 2: launchSettings
-                        case 3: languageSettings
+                        case 0: launchSettings
+                        case 1: languageSettings
                         default: appearanceSettings
-                        }
-                        if !adminAuth.message.isEmpty {
-                            Text(adminAuth.message)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
                         }
                     }
                     .padding(8)
@@ -936,71 +740,6 @@ struct ManageView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-    }
-
-    private var passwordSettings: some View {
-        VStack(spacing: 8) {
-            HStack {
-                Text(localization.text("password_rule"))
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Button {
-                    passwordMasked.toggle()
-                } label: {
-                    Image(systemName: passwordMasked ? "eye" : "eye.slash")
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
-                .help(localization.text(passwordMasked ? "show_password" : "hide_password"))
-            }
-            if passwordMasked {
-                SecureField(localization.text("old_password"), text: $oldPassword)
-                    .textFieldStyle(.roundedBorder)
-                SecureField(localization.text("new_password"), text: $newPassword)
-                    .textFieldStyle(.roundedBorder)
-            } else {
-                TextField(localization.text("old_password"), text: $oldPassword)
-                    .textFieldStyle(.roundedBorder)
-                TextField(localization.text("new_password"), text: $newPassword)
-                    .textFieldStyle(.roundedBorder)
-            }
-            HStack {
-                Spacer()
-                Button(localization.text("save")) {
-                    _ = adminAuth.changePassword(old: oldPassword, new: newPassword)
-                    oldPassword = ""
-                    newPassword = ""
-                }
-                .buttonStyle(.borderedProminent)
-            }
-        }
-        .padding(8)
-        .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
-    }
-
-    private var emailSettings: some View {
-        VStack(spacing: 8) {
-            TextField(localization.text("new_email"), text: $newEmail)
-                .textFieldStyle(.roundedBorder)
-            TextField(localization.text("confirm_email"), text: $confirmEmail)
-                .textFieldStyle(.roundedBorder)
-            SecureField(localization.text("admin_password"), text: $emailPassword)
-                .textFieldStyle(.roundedBorder)
-            HStack {
-                Spacer()
-                Button(localization.text("save")) {
-                    if adminAuth.changeEmail(new: newEmail, confirm: confirmEmail, password: emailPassword) {
-                        newEmail = ""
-                        confirmEmail = ""
-                        emailPassword = ""
-                    }
-                }
-                .buttonStyle(.borderedProminent)
-            }
-        }
-        .padding(8)
-        .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
     }
 
     private var launchSettings: some View {
