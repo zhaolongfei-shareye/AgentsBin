@@ -395,7 +395,7 @@ struct MainPopoverView: View {
             }
 
             HStack(spacing: 8) {
-                agentStatusLight(agent)
+                agentStatusDots(agent)
                 Text(localization.agentName(agent.name))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(isActive ? Color.white : Color.primary)
@@ -456,24 +456,19 @@ struct MainPopoverView: View {
         }
     }
 
-    private func agentStatusLight(_ agent: Agent) -> some View {
-        let color: Color
-        let hint: String
-        if !agent.isOnline {
-            color = .red
-            hint = localization.text("api_blocked")
-        } else if apiKeyStore.hasAPIKey(forAgentID: agent.id) {
-            color = .green
-            hint = localization.text("api_ready")
-        } else {
-            color = .yellow
-            hint = localization.text("api_missing")
+    private func agentStatusDots(_ agent: Agent) -> some View {
+        let webColor: Color = agent.isOnline ? .blue : .gray
+        let apiColor: Color = apiKeyStore.hasAPIKey(forAgentID: agent.id) ? .green : .gray
+        let hint = localization.text("api_ready") + " / " + localization.text("api_missing")
+        return HStack(spacing: 3) {
+            Circle()
+                .fill(webColor)
+                .frame(width: 7, height: 7)
+            Circle()
+                .fill(apiColor)
+                .frame(width: 7, height: 7)
         }
-        return Circle()
-            .fill(color)
-            .frame(width: 8, height: 8)
-            .overlay(Circle().stroke(.white.opacity(0.6), lineWidth: 0.5))
-            .help(hint)
+        .help(hint)
     }
 
     private func avatar(_ agent: Agent) -> some View {
@@ -580,8 +575,20 @@ struct MainPopoverView: View {
                 .help(localization.text("browser"))
 
                 Picker("", selection: $chatTab) {
-                    Text(localization.text("web_mode")).tag(ChatTab.web)
-                    Text(localization.text("client_mode")).tag(ChatTab.api)
+                    HStack(spacing: 5) {
+                        Circle()
+                            .fill(agentStore.activeAgent.isOnline ? Color.blue : Color.gray)
+                            .frame(width: 6, height: 6)
+                        Text(localization.text("web_mode"))
+                    }
+                    .tag(ChatTab.web)
+                    HStack(spacing: 5) {
+                        Circle()
+                            .fill(apiKeyStore.hasAPIKey(forAgentID: agentStore.activeAgent.id) ? Color.green : Color.gray)
+                            .frame(width: 6, height: 6)
+                        Text(localization.text("client_mode"))
+                    }
+                    .tag(ChatTab.api)
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
