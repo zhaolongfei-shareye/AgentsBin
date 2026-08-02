@@ -67,7 +67,7 @@ AgentsBin 是一款 macOS 菜单栏 AI 智能体快速入口应用，目标是�
 ## 3. 项目目录结构
 
 ```text
-AI导航/
+AgentsBin/
 ├── Sources/AIHub/            macOS 应用源码（SwiftUI）
 │   ├── AIHubApp.swift        应用入口
 │   ├── AppDelegate.swift     菜单栏、主面板、埋点
