@@ -45,7 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private func setupStatusItem() {
-        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        let item = NSStatusBar.system.statusItem(withLength: 30)
         if let button = item.button {
             button.image = menuBarIcon(arrowUp: false, arrowVisible: true)
             button.action = #selector(statusItemClicked)
@@ -62,17 +62,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private func menuBarIcon(arrowUp: Bool, arrowVisible: Bool) -> NSImage {
-        let size = NSSize(width: 18, height: 18)
+        let size = NSSize(width: 26, height: 24)
         let image = NSImage(size: size)
         image.lockFocus()
-        let iconPath = Bundle.main.path(forResource: "MenuBarIcon", ofType: "png")
-        if let base = iconPath.flatMap(NSImage.init(contentsOfFile:)) {
-            base.size = NSSize(width: 14, height: 14)
-            base.draw(at: NSPoint(x: 2, y: 3), from: .zero, operation: .sourceOver, fraction: 1)
-        }
+        let text = "[AB]" as NSString
+        let attrs: [NSAttributedString.Key: Any] = [
+            .font: NSFont.systemFont(ofSize: 13, weight: .semibold),
+            .foregroundColor: NSColor.black
+        ]
+        text.draw(at: NSPoint(x: 1, y: 6), withAttributes: attrs)
         if arrowVisible,
            let arrow = NSImage(systemSymbolName: arrowUp ? "chevron.up" : "chevron.down", accessibilityDescription: nil) {
-            arrow.draw(in: NSRect(x: 5, y: 0, width: 8, height: 5), from: .zero, operation: .sourceOver, fraction: 0.95)
+            arrow.draw(in: NSRect(x: 9, y: 0, width: 8, height: 5), from: .zero, operation: .sourceOver, fraction: 0.95)
         }
         image.unlockFocus()
         image.isTemplate = true
