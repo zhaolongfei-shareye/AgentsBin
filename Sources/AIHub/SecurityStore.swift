@@ -5,19 +5,59 @@ import Foundation
 import SQLite3
 
 enum KeychainService {
+    private static let defaults = UserDefaults.standard
+    private static let masterKeyURL = FileManager.default
+        .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        .appendingPathComponent("AIHub", isDirectory: true)
+        .appendingPathComponent("master.key")
+
+    private static func masterKey() -> SymmetricKey {
+        if let data = try? Data(contentsOf: masterKeyURL), data.count == 32 {
+            return SymmetricKey(data: data)
+        }
+        let key = SymmetricKey(size: .bits256)
+        try? FileManager.default.createDirectory(
+            at: masterKeyURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+        key.withUnsafeBytes { raw in
+            try? Data(raw).write(to: masterKeyURL, options: .atomic)
+        }
+        try? FileManager.default.setAttributes(
+            [.posixPermissions: 0o600],
+            ofItemAtPath: masterKeyURL.path
+        )
+        return key
+    }
+
     static func save(_ value: String, forKey key: String) {
-        let data = Data(value.utf8)
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
-            kSecValueData as String: data,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
-        ]
-        SecItemDelete(query as CFDictionary)
-        SecItemAdd(query as CFDictionary, nil)
+        guard let data = value.data(using: .utf8),
+              let sealed = try? AES.GCM.seal(data, using: masterKey()),
+              let boxed = sealed.combined else { return }
+        defaults.set(boxed.base64EncodedString(), forKey: key)
+        deleteLegacyKeychain(key)
     }
 
     static func load(_ key: String) -> String? {
+        if let b64 = defaults.string(forKey: key),
+           let boxed = Data(base64Encoded: b64),
+           let sealed = try? AES.GCM.SealedBox(combined: boxed),
+           let data = try? AES.GCM.open(sealed, using: masterKey()) {
+            return String(data: data, encoding: .utf8)
+        }
+        let legacy = legacyKeychainValue(key)
+        if let legacy {
+            save(legacy, forKey: key)
+        }
+        return legacy
+    }
+
+    static func delete(_ key: String) {
+        defaults.removeObject(forKey: key)
+        deleteLegacyKeychain(key)
+    }
+
+    private static func legacyKeychainValue(_ key: String) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key,
@@ -30,7 +70,7 @@ enum KeychainService {
         return String(data: data, encoding: .utf8)
     }
 
-    static func delete(_ key: String) {
+    private static func deleteLegacyKeychain(_ key: String) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key
