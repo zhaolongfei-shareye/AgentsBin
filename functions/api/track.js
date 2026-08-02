@@ -23,7 +23,11 @@ export async function onRequest(context) {
   if (!KINDS.has(kind) || !name) return json({ ok: false, error: "bad payload" }, 400);
 
   const db = env.DB;
-  await initDB(db);
+  try {
+    await initDB(db);
+  } catch (error) {
+    return json({ ok: false, error: "db: " + String(error && error.message || error) }, 500);
+  }
 
   const hash = await ipHash(request);
   const date = new Date().toISOString().slice(0, 10);

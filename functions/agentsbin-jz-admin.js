@@ -154,7 +154,12 @@ const loggedIn = `
 
 export async function onRequest(context) {
   const { request, env } = context;
-  const email = await getSessionEmail(request, env);
+  let email;
+  try {
+    email = await getSessionEmail(request, env);
+  } catch (error) {
+    return new Response("auth error: " + String(error && error.message || error), { status: 500 });
+  }
   if (!email || email.toLowerCase() !== adminEmail(env)) {
     const url = new URL(request.url);
     const message = url.searchParams.get("auth") === "denied"

@@ -6,7 +6,7 @@ export function json(data, status = 200) {
 }
 
 export async function initDB(db) {
-  await db.exec(
+  await db.prepare(
     `CREATE TABLE IF NOT EXISTS events (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       date TEXT NOT NULL,
@@ -17,10 +17,10 @@ export async function initDB(db) {
       source TEXT DEFAULT '',
       ip_hash TEXT DEFAULT '',
       ua TEXT DEFAULT ''
-    );
-    CREATE INDEX IF NOT EXISTS idx_events_date ON events(date);
-    CREATE INDEX IF NOT EXISTS idx_events_kind ON events(kind, name);`
-  );
+    )`
+  ).run();
+  await db.prepare("CREATE INDEX IF NOT EXISTS idx_events_date ON events(date)").run();
+  await db.prepare("CREATE INDEX IF NOT EXISTS idx_events_kind ON events(kind, name)").run();
 }
 
 export function b64urlEncode(data) {
