@@ -61,6 +61,16 @@
     c_x: "X",
     c_github: "GitHub",
     footer: "AgentsBin · Menu bar AI agent hub for macOS",
+    analytics_title: "AgentsBin Analytics",
+    analytics_sub: "Download and agent usage",
+    analytics_period: "Last 30 days",
+    kpi_downloads: "Total Downloads",
+    kpi_opens: "Agent Opens",
+    kpi_session: "Avg. Session",
+    kpi_active: "Active Agents",
+    chart_title: "Top AI agents by opens",
+    chart_sub: "Opens through AgentsBin in the last 30 days",
+    opens_label: "opens",
     agents: ["ChatGPT", "Claude", "Copilot", "DeepSeek", "Doubao", "Gemini", "Grok", "Kimi", "Le Chat", "Mistral", "Perplexity", "Pi", "Poe", "Qwen", "Tongyi", "You.com", "Tencent Yuanbao", "ChatGLM", "Hailuo", "Wenxin", "Xinghuo", "Meta AI", "HuggingChat", "Coze", "Monica", "Cursor", "Character.AI", "Cohere", "Flowith", "DeepAI", "Julius AI", "Tiangong", "Metaso", "Blackbox AI", "Sider", "Phind", "Wenxiaoyan"]
   };
 
@@ -125,6 +135,16 @@
     c_x: "X",
     c_github: "GitHub",
     footer: "AgentsBin · 菜单栏 AI 智能体聚合工具",
+    analytics_title: "AgentsBin 统计",
+    analytics_sub: "下载与智能体使用统计",
+    analytics_period: "最近 30 天",
+    kpi_downloads: "总下载次数",
+    kpi_opens: "智能体打开次数",
+    kpi_session: "平均会话时长",
+    kpi_active: "活跃智能体",
+    chart_title: "智能体访问量排行",
+    chart_sub: "最近 30 天内通过 AgentsBin 打开的智能体访问量",
+    opens_label: "次",
     agents: ["ChatGPT", "Claude", "Copilot", "DeepSeek", "豆包", "Gemini", "Grok", "Kimi", "Le Chat", "Mistral", "Perplexity", "Pi", "Poe", "千问", "通义", "You.com", "腾讯元宝", "智谱清言", "海螺 AI", "文心一言", "讯飞星火", "Meta AI", "HuggingChat", "Coze", "Monica", "Cursor", "Character.AI", "Cohere", "Flowith", "DeepAI", "Julius AI", "天工", "秘塔 AI", "Blackbox AI", "Sider", "Phind", "文小言"]
   };
 
@@ -186,6 +206,16 @@
     c_email: "信箱",
     c_wechat: "微信",
     footer: "AgentsBin · 選單列 AI 智能體聚合工具",
+    analytics_title: "AgentsBin 統計",
+    analytics_sub: "下載與智能體使用統計",
+    analytics_period: "最近 30 天",
+    kpi_downloads: "總下載次數",
+    kpi_opens: "智能體開啟次數",
+    kpi_session: "平均會話時長",
+    kpi_active: "活躍智能體",
+    chart_title: "智能體開啟排行",
+    chart_sub: "最近 30 天內透過 AgentsBin 開啟的智能體次數",
+    opens_label: "次",
     agents: zhOverrides.agents
   };
 
@@ -243,7 +273,17 @@
     contact_title: "作者・連絡先",
     contact_sub: "Jacky Zhao が開発。フィードバックや協業歓迎。",
     author_role: "インディー開発者 · macOS ツール",
-    footer: "AgentsBin · メニューバー AI エージェント"
+    footer: "AgentsBin · メニューバー AI エージェント",
+    analytics_title: "AgentsBin 統計",
+    analytics_sub: "ダウンロードと利用統計",
+    analytics_period: "過去30日",
+    kpi_downloads: "総ダウンロード",
+    kpi_opens: "エージェント起動",
+    kpi_session: "平均セッション",
+    kpi_active: "アクティブエージェント",
+    chart_title: "エージェント起動ランキング",
+    chart_sub: "過去30日の AgentsBin での起動回数",
+    opens_label: "回"
   };
 
   const koOverrides = {
@@ -300,7 +340,17 @@
     contact_title: "작성자 · 연락처",
     contact_sub: "Jacky Zhao가 개발했습니다. 피드백과 협업을 환영합니다.",
     author_role: "인디 개발자 · macOS 도구",
-    footer: "AgentsBin · 메뉴바 AI 에이전트"
+    footer: "AgentsBin · 메뉴바 AI 에이전트",
+    analytics_title: "AgentsBin 통계",
+    analytics_sub: "다운로드 및 사용 통계",
+    analytics_period: "최근 30일",
+    kpi_downloads: "총 다운로드",
+    kpi_opens: "에이전트 열기",
+    kpi_session: "평균 세션",
+    kpi_active: "활성 에이전트",
+    chart_title: "에이전트 열기 순위",
+    chart_sub: "최근 30일 AgentsBin 열기 횟수",
+    opens_label: "회"
   };
 
   const esOverrides = {
@@ -357,7 +407,17 @@
     contact_title: "Autor y contacto",
     contact_sub: "Creado por Jacky Zhao. Comentarios y alianzas bienvenidos.",
     author_role: "Desarrollador independiente · herramientas macOS",
-    footer: "AgentsBin · Hub de agentes AI para macOS"
+    footer: "AgentsBin · Hub de agentes AI para macOS",
+    analytics_title: "Estadísticas de AgentsBin",
+    analytics_sub: "Descargas y uso de agentes",
+    analytics_period: "Últimos 30 días",
+    kpi_downloads: "Descargas totales",
+    kpi_opens: "Aperturas de agentes",
+    kpi_session: "Sesión media",
+    kpi_active: "Agentes activos",
+    chart_title: "Ranking de aperturas",
+    chart_sub: "Aperturas a través de AgentsBin en 30 días",
+    opens_label: "aperturas"
   };
 
   const frOverrides = {
@@ -414,7 +474,17 @@
     contact_title: "Auteur et contact",
     contact_sub: "Créé par Jacky Zhao. Retours et partenariats bienvenus.",
     author_role: "Développeur indépendant · outils macOS",
-    footer: "AgentsBin · Hub d'agents IA pour macOS"
+    footer: "AgentsBin · Hub d'agents IA pour macOS",
+    analytics_title: "Statistiques AgentsBin",
+    analytics_sub: "Téléchargements et usage",
+    analytics_period: "30 derniers jours",
+    kpi_downloads: "Téléchargements",
+    kpi_opens: "Ouvertures d'agents",
+    kpi_session: "Session moyenne",
+    kpi_active: "Agents actifs",
+    chart_title: "Classement des ouvertures",
+    chart_sub: "Ouvertures via AgentsBin en 30 jours",
+    opens_label: "ouvertures"
   };
 
   const deOverrides = {
@@ -471,7 +541,17 @@
     contact_title: "Autor und Kontakt",
     contact_sub: "Von Jacky Zhao entwickelt. Feedback und Partnerschaften willkommen.",
     author_role: "Indie-Entwickler · macOS-Tools",
-    footer: "AgentsBin · KI-Agenten-Hub für macOS"
+    footer: "AgentsBin · KI-Agenten-Hub für macOS",
+    analytics_title: "AgentsBin-Statistiken",
+    analytics_sub: "Downloads & Nutzung",
+    analytics_period: "Letzte 30 Tage",
+    kpi_downloads: "Downloads gesamt",
+    kpi_opens: "Agenten-Aufrufe",
+    kpi_session: "Ø Sitzung",
+    kpi_active: "Aktive Agenten",
+    chart_title: "Rangliste der Aufrufe",
+    chart_sub: "Aufrufe über AgentsBin in 30 Tagen",
+    opens_label: "Aufrufe"
   };
 
   const ruOverrides = {
@@ -528,7 +608,17 @@
     contact_title: "Автор и контакты",
     contact_sub: "Создано Jacky Zhao. Отзывы и партнёрство приветствуются.",
     author_role: "Независимый разработчик · инструменты macOS",
-    footer: "AgentsBin · AI-агенты в строке меню macOS"
+    footer: "AgentsBin · AI-агенты в строке меню macOS",
+    analytics_title: "Статистика AgentsBin",
+    analytics_sub: "Загрузки и использование",
+    analytics_period: "За 30 дней",
+    kpi_downloads: "Всего загрузок",
+    kpi_opens: "Открытия агентов",
+    kpi_session: "Средняя сессия",
+    kpi_active: "Активные агенты",
+    chart_title: "Рейтинг открытий",
+    chart_sub: "Открытий через AgentsBin за 30 дней",
+    opens_label: "открытий"
   };
 
   const ptOverrides = {
@@ -585,7 +675,17 @@
     contact_title: "Autor e contato",
     contact_sub: "Criado por Jacky Zhao. Feedback e parcerias bem-vindos.",
     author_role: "Desenvolvedor independente · ferramentas macOS",
-    footer: "AgentsBin · Hub de agentes de IA para macOS"
+    footer: "AgentsBin · Hub de agentes de IA para macOS",
+    analytics_title: "Estatísticas do AgentsBin",
+    analytics_sub: "Downloads e uso de agentes",
+    analytics_period: "Últimos 30 dias",
+    kpi_downloads: "Downloads totais",
+    kpi_opens: "Aberturas de agentes",
+    kpi_session: "Sessão média",
+    kpi_active: "Agentes ativos",
+    chart_title: "Ranking de aberturas",
+    chart_sub: "Aberturas pelo AgentsBin em 30 dias",
+    opens_label: "aberturas"
   };
 
   const i18n = {
