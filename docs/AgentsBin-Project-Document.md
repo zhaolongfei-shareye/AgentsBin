@@ -102,9 +102,80 @@ AgentsBin/
 
 ---
 
-## 4. 统计系统架构
+## 4. 技术栈与依赖清单
 
-### 4.1 数据链路
+### 4.1 macOS 应用
+
+| 项 | 技术 / 依赖 | 版本 | 平台 | 路径 |
+| --- | --- | --- | --- | --- |
+| 语言 | Swift | 5.9（swift-tools-version） | macOS 13+ | `Package.swift` |
+| UI 框架 | SwiftUI + AppKit | 系统框架 | macOS | `Sources/AIHub/` |
+| 本地存储 | SQLite3（系统库） | 系统库 | macOS | `Package.swift`（linkerSettings） |
+| 数据库文件 | SQLite | - | 用户目录 | 由 `SecurityStore.swift` 管理 |
+| 图标资源 | PNG / ICNS | - | macOS | `Assets/` |
+| 第三方 Swift 包 | 无 | - | - | 仅系统框架 |
+| 构建脚本 | Shell | - | macOS | `Scripts/build_app.sh`、`Scripts/build_dmg.sh`、`Scripts/build_pkg.sh` |
+| 图标生成 | Python 3 | - | macOS | `Scripts/generate_icon.py`、`Scripts/convert_agent_icons.py` |
+
+### 4.2 官网前端
+
+| 项 | 技术 / 依赖 | 版本 | 平台 | 路径 |
+| --- | --- | --- | --- | --- |
+| 页面结构 | HTML5 | - | 浏览器 | `site/index.html` |
+| 样式 | CSS3（原生） | - | 浏览器 | `site/styles.css` |
+| 逻辑 | JavaScript（原生，无框架） | - | 浏览器 | `site/app.js` |
+| 静态托管 | Cloudflare Pages | - | Cloudflare | `site/` |
+| 下载安装包 | DMG | 1.0.16 | macOS | `site/downloads/` |
+| 爬虫/SEO | robots.txt / sitemap.xml | - | 搜索引擎 | `site/robots.txt`、`site/sitemap.xml` |
+
+### 4.3 后端统计
+
+| 项 | 技术 / 依赖 | 版本 | 平台 | 路径 |
+| --- | --- | --- | --- | --- |
+| 函数运行时 | Cloudflare Pages Functions（JavaScript ESM） | - | Cloudflare | `functions/` |
+| 数据库 | Cloudflare D1（SQLite） | - | Cloudflare | `wrangler.toml`（binding: DB） |
+| 登录 | Google OAuth 2.0 | - | Google Cloud | `functions/api/auth/` |
+| 埋点 API | Pages Function | - | Cloudflare | `functions/api/track.js` |
+| 查询 API | Pages Function | - | Cloudflare | `functions/api/stats.js` |
+| 后台页面 | 服务端渲染 HTML + 原生 JS | - | Cloudflare | `functions/agentsbin-jz-admin.js` |
+
+### 4.4 部署与代码托管
+
+| 项 | 平台 | 说明 | 位置/命令 |
+| --- | --- | --- | --- |
+| 代码仓库 | GitHub | `zhaolongfei-shareye/AgentsBin` | `git push origin master` |
+| 官网部署 | Cloudflare Pages | 项目名 `agentsbin` | `npx wrangler pages deploy site --project-name agentsbin --branch main` |
+| 域名 | agentsbin.com | Porkbun 注册，DNS 指向 Cloudflare | Cloudflare 控制台 |
+| D1 管理 | Cloudflare | `agentsbin-stats` | `npx wrangler d1 execute agentsbin-stats --remote --command "..."` |
+| 安全变量 | Cloudflare Pages secrets | Google OAuth 凭据 | `npx wrangler pages secret put ...` |
+| 本地开发服务器 | Python 3 | 官网预览 | `python3 -m http.server 8137 --directory site` |
+
+### 4.5 本机环境
+
+| 项 | 值 |
+| --- | --- |
+| 项目根目录 | `/Users/zlfmac/Documents/AgentsBin` |
+| 系统 | macOS（Apple Silicon，arm64） |
+| 工具链 | Xcode CommandLineTools（当前 Swift 6.3.3） |
+| macOS SDK | `MacOSX26.5.sdk`（当前与 Swift 6.3.3 不匹配，打包受阻） |
+| Node / npm | 通过 npx 使用 wrangler |
+| 数据 | 统计数据在 Cloudflare D1，本机不落库 |
+
+### 4.6 配置与环境变量
+
+| 变量 | 平台 | 用途 | 配置位置 |
+| --- | --- | --- | --- |
+| `GOOGLE_CLIENT_ID` | Cloudflare Pages | Google 登录客户端 ID | Production secret |
+| `GOOGLE_CLIENT_SECRET` | Cloudflare Pages | Google 登录密钥 | Production secret |
+| `ADMIN_EMAIL` | Cloudflare Pages（可选） | 后台管理员邮箱，默认 `zhaolongfei@gmail.com` | Environment variables |
+| `ADMIN_COOKIE_SECRET` | Cloudflare Pages（可选） | 会话签名密钥，默认用 Client Secret | Environment variables |
+| `database_id` | wrangler.toml | D1 数据库绑定 | `wrangler.toml` |
+
+---
+
+## 5. 统计系统架构
+
+### 5.1 数据链路
 
 ```text
 官网下载按钮 / macOS App
@@ -119,7 +190,7 @@ Cloudflare D1 数据库（真实数据，永久保留）
 统计后台 /agentsbin-jz-admin
 ```
 
-### 4.2 事件类型
+### 5.2 事件类型
 
 | kind | 触发点 | source |
 | --- | --- | --- |
@@ -127,7 +198,7 @@ Cloudflare D1 数据库（真实数据，永久保留）
 | app_open | macOS 应用每次启动 | app |
 | agent_open | 每次切换智能体 | app |
 
-### 4.3 数据表
+### 5.3 数据表
 
 ```sql
 CREATE TABLE events (
@@ -143,7 +214,7 @@ CREATE TABLE events (
 );
 ```
 
-### 4.4 防刷
+### 5.4 防刷
 
 - 同一 IP 同一天同类型事件最多 40 次
 - IP 只保存哈希，不保存原始地址
@@ -151,9 +222,9 @@ CREATE TABLE events (
 
 ---
 
-## 5. Google 登录配置
+## 6. Google 登录配置
 
-### 5.1 已配置项
+### 6.1 已配置项
 
 - Google Cloud OAuth 客户端：Web 应用类型
 - 授权重定向 URI：`https://www.agentsbin.com/api/auth/callback`
@@ -162,7 +233,7 @@ CREATE TABLE events (
   - `GOOGLE_CLIENT_SECRET`
 - 管理员邮箱：`zhaolongfei@gmail.com`（可用环境变量 `ADMIN_EMAIL` 覆盖）
 
-### 5.2 登录流程
+### 6.2 登录流程
 
 1. 用户访问 `/agentsbin-jz-admin`
 2. 点击 Sign in with Google
@@ -171,7 +242,7 @@ CREATE TABLE events (
 5. 校验通过后写入签名 Cookie（HttpOnly / Secure / SameSite=Lax，7 天）
 6. `/agentsbin-jz-admin` 通过 Cookie 鉴权，未登录或非管理员一律拒绝
 
-### 5.3 安全提示
+### 6.3 安全提示
 
 - 客户端密钥不要写入代码、文档或公开仓库
 - 如需更换密钥，在 Google Cloud 重新生成并更新 Cloudflare secret
@@ -179,9 +250,9 @@ CREATE TABLE events (
 
 ---
 
-## 6. 部署
+## 7. 部署
 
-### 6.1 官网与 Functions
+### 7.1 官网与 Functions
 
 ```bash
 npx wrangler pages deploy site --project-name agentsbin --branch main
@@ -189,7 +260,7 @@ npx wrangler pages deploy site --project-name agentsbin --branch main
 
 注意：`functions/` 必须放在项目根目录（与 `site/` 同级），wrangler 才会自动打包 Functions。
 
-### 6.2 D1 数据库
+### 7.2 D1 数据库
 
 ```bash
 npx wrangler d1 create agentsbin-stats
@@ -198,14 +269,14 @@ npx wrangler d1 execute agentsbin-stats --remote --file schema.sql
 
 数据库 ID 已写入 `wrangler.toml` 的 `d1_databases` 绑定。
 
-### 6.3 安全变量
+### 7.3 安全变量
 
 ```bash
 npx wrangler pages secret put GOOGLE_CLIENT_ID --project-name agentsbin
 npx wrangler pages secret put GOOGLE_CLIENT_SECRET --project-name agentsbin
 ```
 
-### 6.4 GitHub 推送
+### 7.4 GitHub 推送
 
 ```bash
 git add -A
@@ -215,23 +286,23 @@ git push origin master
 
 ---
 
-## 7. macOS 应用构建与分发
+## 8. macOS 应用构建与分发
 
-### 7.1 构建命令
+### 8.1 构建命令
 
 ```bash
 ./Scripts/build_dmg.sh
 open dist/AgentsBin-1.0.16.dmg
 ```
 
-### 7.2 分发流程
+### 8.2 分发流程
 
 1. `build_dmg.sh` 生成 DMG
 2. 拷贝到 `site/downloads/AgentsBin-<版本>.dmg`
 3. 更新官网版本号、下载链接、SHA-256
 4. 部署官网
 
-### 7.3 当前障碍
+### 8.3 当前障碍
 
 本机 Swift 工具链为 6.3.3，macOS SDK 为 6.3.2 编译，`swift build` 报工具链/SDK 版本不匹配，暂时无法在本机重新打包新版 DMG。应用统计埋点代码已合入仓库，待工具链修复后重新打包。
 
@@ -243,7 +314,7 @@ open dist/AgentsBin-1.0.16.dmg
 
 ---
 
-## 8. 版本历史
+## 9. 版本历史
 
 | 提交 | 说明 |
 | --- | --- |
@@ -260,7 +331,7 @@ open dist/AgentsBin-1.0.16.dmg
 
 ---
 
-## 9. 已上线地址
+## 10. 已上线地址
 
 | 资源 | 地址 |
 | --- | --- |
@@ -273,7 +344,7 @@ open dist/AgentsBin-1.0.16.dmg
 
 ---
 
-## 10. 下一步计划
+## 11. 下一步计划
 
 - 修复 Swift 工具链后重新打包 DMG，更新官网下载
 - 新版应用上线后开始积累真实统计
