@@ -317,7 +317,7 @@ struct MainPopoverView: View {
     }
 
     private var showPanel: Bool {
-        manageAgents || showAgentPicker || mode == .manage || sidebarHovered
+        manageAgents || showAgentPicker || sidebarHovered
     }
 
     private var floatingPanel: some View {
@@ -523,7 +523,11 @@ struct MainPopoverView: View {
         case .chat:
             chatPane
         case .manage:
-            ManageView(onBack: { mode = .chat }, initialTab: pendingSettingsTab)
+            ManageView(onBack: {
+                mode = .chat
+                manageAgents = false
+                sidebarHovered = false
+            }, initialTab: pendingSettingsTab)
         }
     }
 
