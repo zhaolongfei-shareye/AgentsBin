@@ -158,7 +158,7 @@ export async function onRequest(context) {
   try {
     email = await getSessionEmail(request, env);
   } catch (error) {
-    return new Response("auth error: " + String(error && error.message || error), { status: 500 });
+    return new Response("internal error", { status: 500 });
   }
   if (!email || email.toLowerCase() !== adminEmail(env)) {
     const url = new URL(request.url);

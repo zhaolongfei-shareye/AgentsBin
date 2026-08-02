@@ -26,7 +26,7 @@ export async function onRequest(context) {
   try {
     await initDB(db);
   } catch (error) {
-    return json({ ok: false, error: "db: " + String(error && error.message || error) }, 500);
+    return json({ ok: false, error: "internal" }, 500);
   }
 
   const hash = await ipHash(request);
