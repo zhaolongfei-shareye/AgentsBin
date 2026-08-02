@@ -277,7 +277,6 @@ a {
 .pc-icon-main { background: #0a84ff; }
 .pc-icon-audio { background: linear-gradient(135deg, #ff9f0a, #ff5f57); }
 .pc-icon-media { background: linear-gradient(135deg, #30d158, #0a84ff); }
-.pc-icon-more { background: linear-gradient(135deg, #8b98a8, #5b6270); }
 
 .pc-name {
   font-size: 14px;
@@ -318,23 +317,6 @@ a {
 .pc-arrow {
   color: #6e6e73;
   font-size: 15px;
-}
-
-.panel-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid #e6e8ec;
-  font-size: 12px;
-  color: #6e6e73;
-}
-
-.panel-foot a {
-  color: #0a84ff;
-  text-decoration: none;
-  font-weight: 700;
 }
 
 .lang-toggle {
