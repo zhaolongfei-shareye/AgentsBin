@@ -145,6 +145,7 @@ struct MainPopoverView: View {
     @State private var hoveredAgentID: String?
     @State private var draggedAgentID: String?
     @State private var sidebarHovered = false
+    @State private var hideTask: Task<Void, Never>?
     @State private var manageAgents = false
     @State private var showAgentPicker = false
     @State private var launchAtLogin = false
@@ -290,6 +291,21 @@ struct MainPopoverView: View {
         manageAgents || showAgentPicker || sidebarHovered
     }
 
+    private func setHovered(_ hovering: Bool) {
+        if hovering {
+            hideTask?.cancel()
+            hideTask = nil
+            sidebarHovered = true
+        } else {
+            hideTask?.cancel()
+            hideTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                guard !Task.isCancelled else { return }
+                sidebarHovered = false
+            }
+        }
+    }
+
     private var floatingPanel: some View {
         Group {
             if showPanel {
@@ -338,10 +354,10 @@ struct MainPopoverView: View {
                 .background(Color(nsColor: .windowBackgroundColor).opacity(0.8), in: RoundedRectangle(cornerRadius: 14))
                 .shadow(color: .black.opacity(0.28), radius: 14, y: 5)
                 .padding(.leading, 8)
-                .padding(.top, 52)
+                .padding(.top, 46)
                 .padding(.bottom, 8)
                 .onHover { hovering in
-                    sidebarHovered = hovering
+                    setHovered(hovering)
                 }
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
@@ -526,7 +542,7 @@ struct MainPopoverView: View {
                 .buttonStyle(.plain)
                 .onHover { hovering in
                     if !manageAgents && !showAgentPicker && mode != .manage {
-                        sidebarHovered = hovering
+                        setHovered(hovering)
                     }
                 }
                 .help(localization.text("toggle_sidebar"))
