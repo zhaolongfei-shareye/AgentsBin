@@ -225,7 +225,9 @@ final class APIKeyStore: ObservableObject {
     func addCredential(to configID: String) {
         guard let index = configs.firstIndex(where: { $0.id == configID }) else { return }
         let number = configs[index].credentials.count + 1
-        configs[index].credentials.append(APICredential(label: "Group \(number)", baseURL: "", model: ""))
+        let defaultBase = configs[index].credentials.first?.baseURL ?? "https://api.openai.com/v1"
+        let defaultModel = configs[index].credentials.first?.model ?? "gpt-4o-mini"
+        configs[index].credentials.append(APICredential(label: "Group \(number)", baseURL: defaultBase, model: defaultModel))
         persist()
     }
 
@@ -235,7 +237,7 @@ final class APIKeyStore: ObservableObject {
             id: id,
             name: name,
             note: "",
-            credentials: [APICredential(label: "Default", baseURL: "", model: "")]
+            credentials: [APICredential(label: "Default", baseURL: "https://api.openai.com/v1", model: "gpt-4o-mini")]
         )
         configs.append(config)
         persist()
