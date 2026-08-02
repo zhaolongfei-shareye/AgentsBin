@@ -60,37 +60,27 @@ struct MainPopoverView: View {
     @EnvironmentObject private var faviconStore: FaviconStore
     @EnvironmentObject private var localization: LocalizedStore
     @EnvironmentObject private var apiKeyStore: APIKeyStore
+    @AppStorage("agentsbin.setupDone") private var setupDone = false
     @State private var mode: RightMode = .chat
     @State private var chatTab = ChatTab.web
     @State private var pendingSettingsTab = 0
     @State private var hoveredAgentID: String?
     @State private var draggedAgentID: String?
-    @State private var sidebarCollapsed = false
-    @State private var previousSidebarWidth: CGFloat = 224
+    @State private var sidebarHovered = false
     @State private var manageAgents = false
     @State private var showAgentPicker = false
     @State private var launchAtLogin = false
+    @State private var selectedSetupIDs: Set<String> = ["chatgpt", "claude", "gemini", "deepseek", "kimi", "qwen", "grok"]
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                if !sidebarCollapsed {
-                    sidebar
-                        .frame(width: 224)
-                    Divider()
-                }
-                VStack(spacing: 0) {
-                    rightPane
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color(nsColor: .textBackgroundColor))
-                    rightFooterBar
-                }
+            if !setupDone {
+                setupHome
+            } else {
+                mainContent
             }
         }
-        .frame(minWidth: sidebarCollapsed ? 520 : 860, minHeight: 400)
-        .overlay(alignment: .leading) {
-            collapseButton
-        }
+        .frame(minWidth: 720, minHeight: 460)
         .onAppear {
             faviconStore.ensureLoaded(for: agentStore.agents)
             launchAtLogin = SMAppService.mainApp.status == .enabled
@@ -100,166 +90,187 @@ struct MainPopoverView: View {
         }
     }
 
-    private var collapseButton: some View {
-        Button {
-            toggleSidebar()
-        } label: {
-            Image(systemName: sidebarCollapsed ? "chevron.right" : "chevron.left")
-                .font(.system(size: 10, weight: .bold))
-                .foregroundStyle(.secondary)
-                .frame(width: 22, height: 22)
-                .background(
-                    Circle()
-                        .fill(Color(nsColor: .windowBackgroundColor))
-                        .shadow(color: .black.opacity(0.25), radius: 3, y: 1)
-                )
-                .contentShape(Circle())
-        }
-        .buttonStyle(.plain)
-        .offset(x: sidebarCollapsed ? 6 : 210)
-        .frame(maxHeight: .infinity, alignment: .center)
-        .help(localization.text("toggle_sidebar"))
-    }
-
-    private var rightFooterBar: some View {
-        HStack(spacing: 8) {
+    private var setupHome: some View {
+        VStack(spacing: 0) {
             Spacer()
-            HStack(spacing: 6) {
-                Image(systemName: "globe")
-                    .foregroundStyle(.secondary)
-                Picker("", selection: $localization.language) {
-                    ForEach(AppLanguage.allCases, id: \.self) { lang in
-                        Text(lang.displayName).tag(lang)
+            Text("AgentsBin")
+                .font(.system(size: 40, weight: .heavy))
+            Text(localization.text("home_slogan"))
+                .font(.system(size: 13))
+                .foregroundStyle(.secondary)
+                .padding(.top, 8)
+
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 86), spacing: 8)], spacing: 8) {
+                    ForEach(agentStore.agents) { agent in
+                        setupChip(agent)
                     }
                 }
-                .pickerStyle(.menu)
-                .labelsHidden()
-                .frame(width: 86)
+                .padding(.horizontal, 28)
+                .padding(.top, 28)
             }
+            .frame(maxWidth: 560)
+
             Button {
-                pendingSettingsTab = 0
-                mode = .manage
+                finishSetup()
             } label: {
-                Image(systemName: "gearshape")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 22, height: 22)
-            }
-            .buttonStyle(.plain)
-            .help(localization.text("settings"))
-            Button {
-                NSApp.terminate(nil)
-            } label: {
-                Image(systemName: "power")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 22, height: 22)
-            }
-            .buttonStyle(.plain)
-            .help(localization.text("quit"))
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 5)
-        .background(Color(nsColor: .textBackgroundColor))
-    }
-
-    private func toggleSidebar() {
-        guard let panel = AppDelegate.mainPanel else {
-            sidebarCollapsed.toggle()
-            return
-        }
-        let current = panel.frame.size
-        let height = current.height
-        sidebarCollapsed.toggle()
-        let collapsed = sidebarCollapsed
-        if collapsed {
-            previousSidebarWidth = current.width
-        }
-        let width = collapsed
-            ? max(520, previousSidebarWidth - 224)
-            : max(860, previousSidebarWidth)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-            panel.setContentSize(NSSize(width: width, height: height))
-        }
-    }
-
-    private var appVersion: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
-    }
-
-    private var sidebar: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                Text("AgentsBin")
-                    .font(.system(size: 18, weight: .heavy))
-                    .lineLimit(1)
-                Text("V\(appVersion)")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(.quaternary, in: Capsule())
-                Spacer(minLength: 0)
-            }
-            .padding(.horizontal, 8)
-            .padding(.top, 6)
-
-            agentList
-
-            Divider()
-            HStack(spacing: 8) {
-                Button {
-                    manageAgents.toggle()
-                } label: {
-                    HStack(spacing: 5) {
-                        Image(systemName: "wrench.adjustable")
-                            .font(.system(size: 13, weight: .semibold))
-                        Text(localization.text("edit_agents"))
-                            .font(.system(size: 12, weight: .semibold))
-                    }
-                    .foregroundStyle(manageAgents ? Color.white : Color.primary)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 26)
-                    .background(manageAgents ? brandBlue : Color.secondary.opacity(0.14), in: RoundedRectangle(cornerRadius: 9))
-                }
-                .buttonStyle(.plain)
-                .help(localization.text("edit_agents_hint"))
-
-                Button {
-                    showAgentPicker = true
-                } label: {
-                    HStack(spacing: 5) {
-                        Image(systemName: "slider.horizontal.3")
-                            .font(.system(size: 13, weight: .semibold))
-                        Text(localization.text("add_custom_agent"))
-                            .font(.system(size: 12, weight: .semibold))
-                    }
+                Text(localization.text("home_open"))
+                    .font(.system(size: 15, weight: .heavy))
                     .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 26)
-                        .background(brandBlue, in: RoundedRectangle(cornerRadius: 9))
-                }
-                .buttonStyle(.plain)
-                .help(localization.text("add_custom_agent_hint"))
+                    .frame(width: 240, height: 40)
+                    .background(brandBlue, in: RoundedRectangle(cornerRadius: 11))
             }
+            .buttonStyle(.plain)
+            .padding(.top, 22)
+
+            Toggle(isOn: $launchAtLogin) {
+                Text(localization.text("home_boot"))
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.secondary)
+            }
+            .toggleStyle(.checkbox)
+            .padding(.top, 10)
+
+            Spacer()
+
+            HStack(spacing: 8) {
+                Text("AgentsBin V\(appVersion)")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.tertiary)
+                Spacer()
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(Color(nsColor: .textBackgroundColor))
         }
-        .sheet(isPresented: $showAgentPicker) {
-            AgentPickerView()
-        }
-        .padding(10)
         .background(Color(nsColor: .windowBackgroundColor))
     }
 
-    private func toggleLaunchAtLogin() {
+    private func setupChip(_ agent: Agent) -> some View {
+        let selected = selectedSetupIDs.contains(agent.id)
+        return Button {
+            if selected {
+                selectedSetupIDs.remove(agent.id)
+            } else {
+                selectedSetupIDs.insert(agent.id)
+            }
+        } label: {
+            Text(localization.agentName(agent.name))
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(selected ? Color.white : Color.primary)
+                .lineLimit(1)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 7)
+                .background(
+                    selected ? Color(red: 0.98, green: 0.45, blue: 0.09) : Color.secondary.opacity(0.12),
+                    in: Capsule()
+                )
+                .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func finishSetup() {
+        agentStore.selectedIDs = selectedSetupIDs
+        if !selectedSetupIDs.contains(agentStore.activeID), let first = agentStore.agents.first(where: { selectedSetupIDs.contains($0.id) }) {
+            agentStore.activeID = first.id
+        }
         do {
             if launchAtLogin {
-                try SMAppService.mainApp.unregister()
-            } else {
                 try SMAppService.mainApp.register()
+            } else {
+                try SMAppService.mainApp.unregister()
             }
-            launchAtLogin = SMAppService.mainApp.status == .enabled
         } catch {
-            launchAtLogin = SMAppService.mainApp.status == .enabled
+        }
+        setupDone = true
+    }
+
+    private var mainContent: some View {
+        ZStack(alignment: .leading) {
+            VStack(spacing: 0) {
+                rightPane
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color(nsColor: .textBackgroundColor))
+                rightFooterBar
+            }
+            floatingPanel
+        }
+        .overlay(alignment: .leading) {
+            Rectangle()
+                .fill(Color.clear)
+                .frame(width: 10)
+                .contentShape(Rectangle())
+                .onHover { hovering in
+                    if !manageAgents && !showAgentPicker && mode != .manage {
+                        sidebarHovered = hovering
+                    }
+                }
+        }
+    }
+
+    private var showPanel: Bool {
+        manageAgents || showAgentPicker || mode == .manage || sidebarHovered
+    }
+
+    private var floatingPanel: some View {
+        Group {
+            if showPanel {
+                VStack(spacing: 0) {
+                    agentList
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    HStack(spacing: 6) {
+                        Button {
+                            manageAgents.toggle()
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "wrench.adjustable")
+                                    .font(.system(size: 11, weight: .semibold))
+                                Text(localization.text("edit_agents"))
+                                    .font(.system(size: 11, weight: .semibold))
+                            }
+                            .foregroundStyle(manageAgents ? Color.white : Color.primary)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 26)
+                            .background(manageAgents ? brandBlue : Color.secondary.opacity(0.14), in: RoundedRectangle(cornerRadius: 8))
+                        }
+                        .buttonStyle(.plain)
+                        .help(localization.text("edit_agents_hint"))
+
+                        Button {
+                            showAgentPicker = true
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 11, weight: .semibold))
+                                Text(localization.text("add_custom_agent"))
+                                    .font(.system(size: 11, weight: .semibold))
+                            }
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 26)
+                            .background(brandBlue, in: RoundedRectangle(cornerRadius: 8))
+                        }
+                        .buttonStyle(.plain)
+                        .help(localization.text("add_custom_agent_hint"))
+                    }
+                    .padding(8)
+                }
+                .frame(width: 230)
+                .background(Color(nsColor: .windowBackgroundColor))
+                .shadow(color: .black.opacity(0.28), radius: 14, y: 5)
+                .padding(.leading, 8)
+                .padding(.top, 8)
+                .padding(.bottom, 8)
+                .onHover { hovering in
+                    sidebarHovered = hovering
+                }
+                .transition(.move(edge: .leading).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.16), value: showPanel)
+        .sheet(isPresented: $showAgentPicker) {
+            AgentPickerView()
         }
     }
 
@@ -270,6 +281,7 @@ struct MainPopoverView: View {
                     agentRow(agent)
                 }
             }
+            .padding(6)
         }
     }
 
@@ -281,9 +293,9 @@ struct MainPopoverView: View {
                     agentStore.setEnabled(agent.id, !agent.isEnabled)
                 } label: {
                     Image(systemName: agent.isEnabled ? "checkmark.circle.fill" : "circle")
-                        .font(.system(size: 16))
+                        .font(.system(size: 15))
                         .foregroundStyle(agent.isEnabled ? brandBlue : Color.secondary)
-                        .frame(width: 22, height: 22)
+                        .frame(width: 20, height: 20)
                 }
                 .buttonStyle(.plain)
             }
@@ -291,13 +303,13 @@ struct MainPopoverView: View {
             HStack(spacing: 8) {
                 agentStatusLight(agent)
                 Text(localization.agentName(agent.name))
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(isActive ? Color.white : Color.primary)
                     .lineLimit(1)
                 if webPool.unreadIDs.contains(agent.id) {
                     Circle()
                         .fill(Color.red)
-                        .frame(width: 8, height: 8)
+                        .frame(width: 7, height: 7)
                         .overlay(Circle().stroke(.white, lineWidth: 1))
                 }
                 Spacer(minLength: 0)
@@ -308,16 +320,13 @@ struct MainPopoverView: View {
                 isActive ? brandBlue : hoveredAgentID == agent.id ? brandBlue.opacity(0.10) : Color.clear,
                 in: RoundedRectangle(cornerRadius: 8)
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(hoveredAgentID == agent.id ? brandBlue.opacity(0.45) : Color.clear, lineWidth: 1)
-            )
             .contentShape(Rectangle())
             .onTapGesture {
                 agentStore.select(agent.id)
                 webPool.markRead(agent.id)
                 Analytics.track(kind: "agent_open", name: agent.id)
                 mode = .chat
+                sidebarHovered = false
             }
             .onHover { hovering in
                 hoveredAgentID = hovering ? agent.id : nil
@@ -328,18 +337,18 @@ struct MainPopoverView: View {
                     agentStore.delete(agent.id)
                 } label: {
                     Image(systemName: "trash")
-                        .font(.system(size: 13))
+                        .font(.system(size: 12))
                         .foregroundStyle(.red)
-                        .frame(width: 22, height: 22)
+                        .frame(width: 20, height: 20)
                 }
                 .buttonStyle(.plain)
                 .help(localization.text("delete"))
             }
 
             Image(systemName: "line.3.horizontal")
-                .font(.system(size: 11))
+                .font(.system(size: 10))
                 .foregroundStyle(isActive ? Color.white.opacity(0.8) : Color.secondary.opacity(0.7))
-                .frame(width: 18, height: 24)
+                .frame(width: 16, height: 22)
                 .contentShape(Rectangle())
                 .help(localization.text("drag_hint"))
         }
@@ -368,7 +377,7 @@ struct MainPopoverView: View {
         }
         return Circle()
             .fill(color)
-            .frame(width: 9, height: 9)
+            .frame(width: 8, height: 8)
             .overlay(Circle().stroke(.white.opacity(0.6), lineWidth: 0.5))
             .help(hint)
     }
@@ -420,27 +429,26 @@ struct MainPopoverView: View {
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                .frame(width: 240)
+                .frame(width: 220)
                 Spacer(minLength: 0)
                 avatar(agentStore.activeAgent)
                 Text(localization.agentName(agentStore.activeAgent.name))
-                    .font(.system(size: 15, weight: .heavy))
+                    .font(.system(size: 14, weight: .heavy))
                     .lineLimit(1)
                 Button {
                     openExternal(agentStore.activeAgent.urlString)
                 } label: {
                     Image(systemName: "safari")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(.secondary)
-                        .frame(width: 26, height: 26)
+                        .frame(width: 24, height: 24)
                 }
                 .buttonStyle(.plain)
                 .help(localization.text("browser"))
             }
             .padding(.horizontal, 12)
-            .frame(height: 46)
+            .frame(height: 44)
             .background(Color(nsColor: .textBackgroundColor))
-            Divider()
             switch chatTab {
             case .web:
                 WebViewPoolView(agent: agentStore.activeAgent, pool: webPool)
@@ -456,9 +464,64 @@ struct MainPopoverView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func officialURL(_ agent: Agent) -> String {
-        let host = agent.urlString.components(separatedBy: "/").first ?? agent.urlString
-        return "https://" + host
+    private var rightFooterBar: some View {
+        HStack(spacing: 8) {
+            Button {
+                openExternal("https://www.agentsbin.com")
+            } label: {
+                Image(systemName: "globe")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 20, height: 20)
+            }
+            .buttonStyle(.plain)
+            .help("https://www.agentsbin.com")
+
+            Text("AgentsBin V\(appVersion)")
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(.tertiary)
+            Spacer()
+            HStack(spacing: 6) {
+                Image(systemName: "globe")
+                    .foregroundStyle(.secondary)
+                Picker("", selection: $localization.language) {
+                    ForEach(AppLanguage.allCases, id: \.self) { lang in
+                        Text(lang.displayName).tag(lang)
+                    }
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+                .frame(width: 86)
+            }
+            Button {
+                pendingSettingsTab = 0
+                mode = .manage
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 22, height: 22)
+            }
+            .buttonStyle(.plain)
+            .help(localization.text("settings"))
+            Button {
+                NSApp.terminate(nil)
+            } label: {
+                Image(systemName: "power")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 22, height: 22)
+            }
+            .buttonStyle(.plain)
+            .help(localization.text("quit"))
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 5)
+        .background(Color(nsColor: .textBackgroundColor))
+    }
+
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
     }
 
     private func openExternal(_ urlString: String) {

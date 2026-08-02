@@ -294,6 +294,21 @@ final class LocalizedStore: ObservableObject {
             .ko: "드래그로 정렬", .es: "Arrastrar para ordenar", .fr: "Glisser pour trier",
             .de: "Zum Sortieren ziehen", .ru: "Перетащите для сортировки", .pt: "Arraste para ordenar"
         ],
+        "home_slogan": [
+            .zh: "所有 AI 智能体，一个菜单栏就够了", .zhHant: "所有 AI 智能體，一個選單列就夠了", .en: "All your AI agents, one menu bar away",
+            .ja: "すべての AI エージェントをメニューバーに", .ko: "모든 AI 에이전트를 메뉴바 하나로", .es: "Todos tus agentes AI, a un clic",
+            .fr: "Tous vos agents IA, à un clic", .de: "Alle KI-Agenten, ein Klick entfernt", .ru: "Все AI-агенты в одном меню",
+            .pt: "Todos os seus agentes de IA em um menu"
+        ],
+        "home_open": [
+            .zh: "开启", .zhHant: "開啟", .en: "Open", .ja: "開始", .ko: "시작",
+            .es: "Abrir", .fr: "Ouvrir", .de: "Öffnen", .ru: "Открыть", .pt: "Abrir"
+        ],
+        "home_boot": [
+            .zh: "开机自动开启", .zhHant: "開機自動開啟", .en: "Launch at login", .ja: "ログイン時に起動",
+            .ko: "로그인 시 시작", .es: "Iniciar al iniciar sesión", .fr: "Lancer à la connexion",
+            .de: "Bei Anmeldung starten", .ru: "Запуск при входе", .pt: "Iniciar no login"
+        ],
         "client_placeholder": [
             .zh: "输入问题，使用 API 直接对话", .zhHant: "輸入問題，使用 API 直接對話", .en: "Ask via API",
             .ja: "APIで質問", .ko: "API로 질문", .es: "Pregunta por API", .fr: "Demandez via API",
