@@ -276,7 +276,7 @@ struct MainPopoverView: View {
     }
 
     private var mainContent: some View {
-        ZStack(alignment: .leading) {
+        ZStack(alignment: .topLeading) {
             VStack(spacing: 0) {
                 rightPane
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
