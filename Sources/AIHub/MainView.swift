@@ -160,7 +160,7 @@ struct MainPopoverView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 5)
-        .background(.bar)
+        .background(Color(nsColor: .textBackgroundColor))
     }
 
     private func toggleSidebar() {
@@ -379,16 +379,16 @@ struct MainPopoverView: View {
                 Image(nsImage: image)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 26, height: 26)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .frame(width: 16, height: 16)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
             )
         }
         return AnyView(
             Text(agent.letter)
-                .font(.system(size: 12, weight: .bold))
+                .font(.system(size: 9, weight: .bold))
                 .foregroundStyle(.white)
-                .frame(width: 26, height: 26)
-                .background(Color(hex: agent.colorHex), in: RoundedRectangle(cornerRadius: 8))
+                .frame(width: 16, height: 16)
+                .background(Color(hex: agent.colorHex), in: RoundedRectangle(cornerRadius: 4))
         )
     }
 
@@ -424,7 +424,7 @@ struct MainPopoverView: View {
                 Spacer(minLength: 0)
                 avatar(agentStore.activeAgent)
                 Text(localization.agentName(agentStore.activeAgent.name))
-                    .font(.system(size: 20, weight: .heavy))
+                    .font(.system(size: 15, weight: .heavy))
                     .lineLimit(1)
                 Button {
                     openExternal(agentStore.activeAgent.urlString)
@@ -439,7 +439,7 @@ struct MainPopoverView: View {
             }
             .padding(.horizontal, 12)
             .frame(height: 46)
-            .background(.bar)
+            .background(Color(nsColor: .textBackgroundColor))
             Divider()
             switch chatTab {
             case .web:
@@ -478,6 +478,7 @@ struct ManageView: View {
     @State private var addAPIProviderName = ""
     @FocusState private var addProviderFocused: Bool
     @State private var pendingDeleteID: String?
+    @State private var draggedProviderID: String?
     @State private var launchAtLogin = false
     @State private var darkModeEnabled = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
 
@@ -510,7 +511,7 @@ struct ManageView: View {
     private var header: some View {
         HStack(spacing: 8) {
             Button(action: onBack) {
-                Image(systemName: "door.left.hand.open")
+                Image(systemName: "house")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(.secondary)
                     .frame(width: 24, height: 24)
@@ -519,9 +520,9 @@ struct ManageView: View {
             .help(localization.text("back"))
 
             Label(localization.text("settings"), systemImage: "gearshape")
-                .font(.headline)
+                .font(.system(size: 13, weight: .semibold))
             Text("· " + settingsTitle)
-                .font(.caption.weight(.semibold))
+                .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
             Spacer()
@@ -558,35 +559,56 @@ struct ManageView: View {
                     VStack(spacing: 6) {
                         ScrollView {
                             VStack(spacing: 4) {
+                                Text(localization.text("provider_list_title"))
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 6)
+                                    .padding(.bottom, 2)
                                 ForEach(apiKeyStore.configs) { config in
-                                    Button {
-                                        selectedConfigID = config.id
-                                    } label: {
-                                        HStack(spacing: 8) {
-                                            Toggle("", isOn: Binding(
-                                                get: { config.isEnabled },
-                                                set: { apiKeyStore.updateEnabled(config.id, $0) }
-                                            ))
-                                            .toggleStyle(.checkbox)
-                                            .labelsHidden()
-                                            Text(config.name)
-                                                .font(.system(size: 12, weight: .semibold))
-                                                .foregroundStyle(selectedConfigID == config.id ? Color.white : Color.primary)
-                                                .lineLimit(1)
-                                            if config.id.hasPrefix("custom-") {
-                                                deleteProviderButton(config: config)
+                                    HStack(spacing: 4) {
+                                        Button {
+                                            selectedConfigID = config.id
+                                        } label: {
+                                            HStack(spacing: 8) {
+                                                Toggle("", isOn: Binding(
+                                                    get: { config.isEnabled },
+                                                    set: { apiKeyStore.updateEnabled(config.id, $0) }
+                                                ))
+                                                .toggleStyle(.checkbox)
+                                                .labelsHidden()
+                                                Text(config.name)
+                                                    .font(.system(size: 12, weight: .semibold))
+                                                    .foregroundStyle(selectedConfigID == config.id ? Color.white : Color.primary)
+                                                    .lineLimit(1)
+                                                if config.id.hasPrefix("custom-") {
+                                                    deleteProviderButton(config: config)
+                                                }
+                                                Spacer(minLength: 0)
                                             }
-                                            Spacer(minLength: 0)
+                                            .padding(.horizontal, 8)
+                                            .padding(.vertical, 7)
+                                            .background(
+                                                selectedConfigID == config.id ? brandBlue : Color.clear,
+                                                in: RoundedRectangle(cornerRadius: 7)
+                                            )
+                                            .contentShape(Rectangle())
                                         }
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 7)
-                                        .background(
-                                            selectedConfigID == config.id ? brandBlue : Color.clear,
-                                            in: RoundedRectangle(cornerRadius: 7)
-                                        )
-                                        .contentShape(Rectangle())
+                                        .buttonStyle(.plain)
+                                        Image(systemName: "line.3.horizontal")
+                                            .font(.system(size: 10))
+                                            .foregroundStyle(.tertiary)
+                                            .frame(width: 14, height: 22)
+                                            .contentShape(Rectangle())
                                     }
-                                    .buttonStyle(.plain)
+                                    .onDrag {
+                                        draggedProviderID = config.id
+                                        return NSItemProvider(object: config.id as NSString)
+                                    }
+                                    .onDrop(of: [.text], isTargeted: nil) { _ in
+                                        handleProviderDrop(targetID: config.id)
+                                        return true
+                                    }
                                 }
                             }
                         }
@@ -692,6 +714,15 @@ struct ManageView: View {
         }
         .buttonStyle(.plain)
         .help(localization.text("delete"))
+    }
+
+    private func handleProviderDrop(targetID: String) {
+        guard let dragged = draggedProviderID, dragged != targetID else {
+            draggedProviderID = nil
+            return
+        }
+        apiKeyStore.moveConfig(dragged, to: targetID)
+        draggedProviderID = nil
     }
 
     private var generalSettingsView: some View {
@@ -890,6 +921,24 @@ struct ManageView: View {
                 }
                 .buttonStyle(.plain)
                 .help(localization.text("delete_key"))
+            }
+
+            HStack(spacing: 8) {
+                Button {
+                    apiKeyStore.setActiveCredential(configID: config.id, credentialID: credential.id)
+                } label: {
+                    Image(systemName: credential.isActive ? "play.circle.fill" : "pause.circle.fill")
+                        .font(.system(size: 22))
+                        .foregroundStyle(credential.isActive ? Color.green : Color.secondary)
+                }
+                .buttonStyle(.plain)
+                .help(credential.isActive ? localization.text("group_active") : localization.text("group_inactive"))
+                Text(credential.isActive ? localization.text("activated") : localization.text("activate"))
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(credential.isActive ? Color.green : Color.secondary)
+                Text(credential.isActive ? localization.text("group_active_hint") : localization.text("group_inactive_hint"))
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
             }
         }
         .padding(10)

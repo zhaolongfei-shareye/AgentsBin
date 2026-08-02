@@ -44,6 +44,28 @@ struct APICredential: Codable, Identifiable, Hashable {
     var label: String
     var baseURL: String
     var model: String
+    var isActive: Bool = false
+
+    private enum CodingKeys: String, CodingKey {
+        case id, label, baseURL, model, isActive
+    }
+
+    init(id: UUID = UUID(), label: String, baseURL: String, model: String, isActive: Bool = false) {
+        self.id = id
+        self.label = label
+        self.baseURL = baseURL
+        self.model = model
+        self.isActive = isActive
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        label = try container.decode(String.self, forKey: .label)
+        baseURL = try container.decodeIfPresent(String.self, forKey: .baseURL) ?? ""
+        model = try container.decodeIfPresent(String.self, forKey: .model) ?? ""
+        isActive = try container.decodeIfPresent(Bool.self, forKey: .isActive) ?? false
+    }
 }
 
 struct AgentAPIConfig: Codable, Identifiable, Hashable {
@@ -160,6 +182,9 @@ final class APIKeyStore: ObservableObject {
 
     func credential(forAgentID agentID: String) -> (config: AgentAPIConfig, credential: APICredential, apiKey: String)? {
         guard let config = config(forAgentID: agentID) else { return nil }
+        if let active = config.credentials.first(where: { $0.isActive && !apiKey(for: $0.id).isEmpty }) {
+            return (config, active, apiKey(for: active.id))
+        }
         for credential in config.credentials {
             let key = apiKey(for: credential.id)
             if !key.isEmpty {
@@ -167,6 +192,22 @@ final class APIKeyStore: ObservableObject {
             }
         }
         return nil
+    }
+
+    func setActiveCredential(configID: String, credentialID: UUID) {
+        guard let index = configs.firstIndex(where: { $0.id == configID }) else { return }
+        for i in configs[index].credentials.indices {
+            configs[index].credentials[i].isActive = configs[index].credentials[i].id == credentialID
+        }
+        persist()
+    }
+
+    func moveConfig(_ id: String, to targetID: String) {
+        guard let from = configs.firstIndex(where: { $0.id == id }),
+              let target = configs.firstIndex(where: { $0.id == targetID }) else { return }
+        let config = configs.remove(at: from)
+        configs.insert(config, at: target > from ? target - 1 : target)
+        persist()
     }
 
     func update(config: AgentAPIConfig) {

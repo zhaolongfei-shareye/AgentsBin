@@ -679,9 +679,47 @@ final class LocalizedStore: ObservableObject {
             .ru: "Введите название", .pt: "O nome é obrigatório"
         ],
         "api_backup": [
-            .zh: "API 参数备份", .zhHant: "API 參數備份", .en: "API Keys",
-            .ja: "API キー", .ko: "API 키", .es: "Claves API", .fr: "Clés API",
-            .de: "API-Schlüssel", .ru: "API-ключи", .pt: "Chaves API"
+            .zh: "API 配置", .zhHant: "API 設定", .en: "API Config",
+            .ja: "API設定", .ko: "API 설정", .es: "Config. API", .fr: "Config. API",
+            .de: "API-Konfig.", .ru: "Настройки API", .pt: "Config. API"
+        ],
+        "provider_list_title": [
+            .zh: "供应商（可拖拽排序）", .zhHant: "供應商（可拖曳排序）", .en: "Providers (drag to reorder)",
+            .ja: "プロバイダ（ドラッグで並べ替え）", .ko: "공급자 (드래그로 정렬)", .es: "Proveedores (arrastrar)",
+            .fr: "Fournisseurs (glisser)", .de: "Anbieter (ziehen)", .ru: "Провайдеры (перетащить)",
+            .pt: "Provedores (arrastrar)"
+        ],
+        "activate": [
+            .zh: "激活", .zhHant: "啟動", .en: "Activate", .ja: "有効化", .ko: "활성화",
+            .es: "Activar", .fr: "Activer", .de: "Aktivieren", .ru: "Активировать", .pt: "Ativar"
+        ],
+        "activated": [
+            .zh: "已激活", .zhHant: "已啟動", .en: "Active", .ja: "有効", .ko: "활성화됨",
+            .es: "Activo", .fr: "Active", .de: "Aktiv", .ru: "Активен", .pt: "Ativo"
+        ],
+        "group_active": [
+            .zh: "该参数组正在被客户端模式调用", .zhHant: "該參數組正在被客戶端模式呼叫", .en: "Used by client mode",
+            .ja: "クライアントモードで使用中", .ko: "클라이언트 모드에서 사용 중", .es: "Usado por el modo cliente",
+            .fr: "Utilisé par le mode client", .de: "Vom Client-Modus verwendet", .ru: "Используется клиентским режимом",
+            .pt: "Usado pelo modo cliente"
+        ],
+        "group_inactive": [
+            .zh: "点击激活后由客户端模式调用", .zhHant: "點擊啟動後由客戶端模式呼叫", .en: "Click to activate for client mode",
+            .ja: "クリックで有効化", .ko: "클릭하여 활성화", .es: "Activar para modo cliente",
+            .fr: "Activer pour le mode client", .de: "Für Client-Modus aktivieren", .ru: "Активировать для клиентского режима",
+            .pt: "Ativar para modo cliente"
+        ],
+        "group_active_hint": [
+            .zh: "当前激活 · 客户端模式调用该参数组", .zhHant: "目前啟動 · 客戶端模式呼叫該參數組", .en: "Active - used by client mode",
+            .ja: "有効 - クライアントモードで使用", .ko: "활성 - 클라이언트 모드에서 사용", .es: "Activo - usado por el modo cliente",
+            .fr: "Actif - utilisé par le mode client", .de: "Aktiv - vom Client-Modus verwendet", .ru: "Активен - используется клиентским режимом",
+            .pt: "Ativo - usado pelo modo cliente"
+        ],
+        "group_inactive_hint": [
+            .zh: "未激活 · 点击激活后客户端调用该参数组", .zhHant: "未啟動 · 點擊啟動後客戶端呼叫該參數組", .en: "Inactive - click to activate",
+            .ja: "未有効 - クリックで有効化", .ko: "비활성 - 클릭하여 활성화", .es: "Inactivo - toca para activar",
+            .fr: "Inactif - touchez pour activer", .de: "Inaktiv - zum Aktivieren klicken", .ru: "Неактивен - нажмите, чтобы активировать",
+            .pt: "Inativo - toque para ativar"
         ],
         "general_settings": [
             .zh: "通用设置", .zhHant: "通用設定", .en: "General",
