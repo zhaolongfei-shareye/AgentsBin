@@ -369,10 +369,8 @@ struct MainPopoverView: View {
                 .padding(.leading, 8)
                 .padding(.top, 8)
                 .padding(.bottom, 8)
-                .overlay {
-                    HoverSensorView { hovering in
-                        sidebarHovered = hovering
-                    }
+                .onHover { hovering in
+                    sidebarHovered = hovering
                 }
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
