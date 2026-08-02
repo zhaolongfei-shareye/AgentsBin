@@ -13,6 +13,45 @@ enum ChatTab {
     case api
 }
 
+struct HoverSensorView: NSViewRepresentable {
+    var onHover: (Bool) -> Void
+
+    func makeNSView(context: Context) -> HoverSensorNSView {
+        let view = HoverSensorNSView()
+        view.onHover = onHover
+        return view
+    }
+
+    func updateNSView(_ nsView: HoverSensorNSView, context: Context) {
+        nsView.onHover = onHover
+    }
+}
+
+final class HoverSensorNSView: NSView {
+    var onHover: ((Bool) -> Void)?
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        for area in trackingAreas {
+            removeTrackingArea(area)
+        }
+        addTrackingArea(NSTrackingArea(
+            rect: bounds,
+            options: [.activeAlways, .mouseEnteredAndExited, .inVisibleRect],
+            owner: self,
+            userInfo: nil
+        ))
+    }
+
+    override func mouseEntered(with event: NSEvent) {
+        onHover?(true)
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        onHover?(false)
+    }
+}
+
 struct FlowLayout: Layout {
     var spacing: CGFloat = 10
 
@@ -245,15 +284,12 @@ struct MainPopoverView: View {
             floatingPanel
         }
         .overlay(alignment: .leading) {
-            Rectangle()
-                .fill(Color.clear)
-                .frame(width: 12)
-                .contentShape(Rectangle())
-                .onHover { hovering in
-                    if !manageAgents && !showAgentPicker && mode != .manage {
-                        sidebarHovered = hovering
-                    }
+            HoverSensorView { hovering in
+                if !manageAgents && !showAgentPicker && mode != .manage {
+                    sidebarHovered = hovering
                 }
+            }
+            .frame(width: 14)
         }
         .overlay(alignment: .leading) {
             if !showPanel {
@@ -333,8 +369,10 @@ struct MainPopoverView: View {
                 .padding(.leading, 8)
                 .padding(.top, 8)
                 .padding(.bottom, 8)
-                .onHover { hovering in
-                    sidebarHovered = hovering
+                .overlay {
+                    HoverSensorView { hovering in
+                        sidebarHovered = hovering
+                    }
                 }
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
