@@ -351,7 +351,7 @@ struct MainPopoverView: View {
                 }
                 .frame(width: 230)
                 .frame(maxHeight: 320)
-                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+                .background(Color(nsColor: .windowBackgroundColor), in: RoundedRectangle(cornerRadius: 10))
                 .shadow(color: .black.opacity(0.22), radius: 12, y: 4)
                 .padding(.leading, 8)
                 .padding(.top, 46)
