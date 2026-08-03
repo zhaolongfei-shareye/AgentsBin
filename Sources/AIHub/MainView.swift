@@ -545,8 +545,8 @@ struct MainPopoverView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 5)
                 .background(
-                    chatTab == .web ? Color.accentColor.opacity(0.22) : Color.clear,
-                    in: RoundedRectangle(cornerRadius: 7)
+                    chatTab == .web ? brandBlue.opacity(0.22) : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 6)
                 )
                 .contentShape(Rectangle())
             }
@@ -565,15 +565,15 @@ struct MainPopoverView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 5)
                 .background(
-                    chatTab == .api ? Color.accentColor.opacity(0.22) : Color.clear,
-                    in: RoundedRectangle(cornerRadius: 7)
+                    chatTab == .api ? brandBlue.opacity(0.22) : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 6)
                 )
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
         }
         .padding(3)
-        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 9))
+        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
         .frame(width: 210)
     }
 
