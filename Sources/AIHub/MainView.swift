@@ -130,7 +130,7 @@ extension Color {
     }
 }
 
-let brandBlue = Color(red: 0.04, green: 0.46, blue: 0.95)
+let brandBlue = Color(nsColor: .controlAccentColor)
 
 struct MainPopoverView: View {
     @EnvironmentObject private var agentStore: AgentStore
@@ -180,7 +180,7 @@ struct MainPopoverView: View {
         VStack(spacing: 0) {
             Spacer()
             Text("AgentsBin")
-                .font(.system(size: 40, weight: .medium))
+                .font(ThemeRegistry.current().titleFont)
             Text(localization.text("home_slogan"))
                 .font(.system(size: 13))
                 .foregroundStyle(.secondary)
@@ -192,8 +192,8 @@ struct MainPopoverView: View {
                         setupChip(agent)
                     }
                 }
-                .padding(.horizontal, 28)
-                .padding(.top, 28)
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
             }
             .frame(maxWidth: 560)
             .frame(maxHeight: 190)
@@ -203,9 +203,9 @@ struct MainPopoverView: View {
                 finishSetup()
             } label: {
                 Text(localization.text("home_open"))
-                    .font(.system(size: 15, weight: .heavy))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.white)
-                    .frame(width: 240, height: 40)
+                    .frame(width: 220, height: 32)
                     .background(brandBlue, in: RoundedRectangle(cornerRadius: 8))
             }
             .buttonStyle(.plain)
@@ -213,7 +213,7 @@ struct MainPopoverView: View {
 
             Toggle(isOn: $launchAtLogin) {
                 Text(localization.text("home_boot"))
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 12, weight: .regular))
                     .foregroundStyle(.secondary)
             }
             .toggleStyle(.checkbox)
@@ -223,7 +223,7 @@ struct MainPopoverView: View {
 
             HStack(spacing: 8) {
                 Text("AgentsBin V\(appVersion)")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: 11, weight: .regular))
                     .foregroundStyle(.tertiary)
                 Spacer()
             }
@@ -244,11 +244,11 @@ struct MainPopoverView: View {
             }
         } label: {
             Text(localization.agentName(agent.name))
-                .font(.system(size: 11, weight: .medium))
+                .font(.system(size: 13, weight: .regular))
                 .foregroundStyle(selected ? Color.white : Color.primary)
                 .lineLimit(1)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 7)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 6)
                 .background(
                     selected ? brandBlue : Color.secondary.opacity(0.12),
                     in: Capsule()
@@ -318,9 +318,9 @@ struct MainPopoverView: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "wrench.adjustable")
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.system(size: 12, weight: .regular))
                                 Text(localization.text("edit_agents"))
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.system(size: 12, weight: .regular))
                             }
                             .foregroundStyle(manageAgents ? Color.white : Color.primary)
                             .frame(maxWidth: .infinity)
@@ -335,9 +335,9 @@ struct MainPopoverView: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "plus")
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.system(size: 12, weight: .regular))
                                 Text(localization.text("add_custom_agent"))
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.system(size: 12, weight: .regular))
                             }
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
@@ -397,7 +397,7 @@ struct MainPopoverView: View {
             HStack(spacing: 8) {
                 agentStatusDots(agent)
                 Text(localization.agentName(agent.name))
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 13, weight: .regular))
                     .foregroundStyle(isActive ? Color.white : Color.primary)
                     .lineLimit(1)
                 if webPool.unreadIDs.contains(agent.id) {
@@ -409,7 +409,7 @@ struct MainPopoverView: View {
                 Spacer(minLength: 0)
             }
             .padding(.horizontal, 8)
-            .padding(.vertical, 6)
+            .padding(.vertical, 4)
             .background(
                 isActive ? brandBlue : hoveredAgentID == agent.id ? brandBlue.opacity(0.10) : Color.clear,
                 in: RoundedRectangle(cornerRadius: 6)
@@ -440,7 +440,7 @@ struct MainPopoverView: View {
             }
 
             Image(systemName: "line.3.horizontal")
-                .font(.system(size: 10))
+                .font(.system(size: 11))
                 .foregroundStyle(isActive ? Color.white.opacity(0.8) : Color.secondary.opacity(0.7))
                 .frame(width: 16, height: 22)
                 .contentShape(Rectangle())
@@ -540,7 +540,7 @@ struct MainPopoverView: View {
                         .fill(webColor)
                         .frame(width: 6, height: 6)
                     Text(localization.text("web_mode"))
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: 12, weight: .medium))
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 5)
@@ -560,7 +560,7 @@ struct MainPopoverView: View {
                         .fill(apiColor)
                         .frame(width: 6, height: 6)
                     Text(localization.text("client_mode"))
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: 12, weight: .medium))
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 5)
@@ -598,7 +598,7 @@ struct MainPopoverView: View {
 
                 avatar(agentStore.activeAgent)
                 Text(localization.agentName(agentStore.activeAgent.name))
-                    .font(.system(size: 14, weight: .heavy))
+                    .font(.system(size: 13, weight: .semibold))
                     .lineLimit(1)
 
                 ForEach(agentStore.recentAgents) { agent in
@@ -630,13 +630,14 @@ struct MainPopoverView: View {
 
                 tabSelector
             }
-            .padding(.horizontal, 12)
+            .padding(.horizontal, 16)
             .frame(height: 44)
             .background(Color(nsColor: .textBackgroundColor))
             switch chatTab {
             case .web:
                 WebViewPoolView(agent: agentStore.activeAgent, pool: webPool)
                     .id(agentStore.activeAgent.id)
+                    .padding(6)
             case .api:
                 ClientChatView(agent: agentStore.activeAgent) {
                     pendingSettingsTab = 1
@@ -1274,7 +1275,7 @@ struct AgentPickerView: View {
             }
         }
         .padding(18)
-        .frame(width: 380, height: 320)
+        .frame(width: 420, height: 280)
         .onChange(of: customName) { _ in validate() }
         .onChange(of: customURL) { _ in validate() }
     }
