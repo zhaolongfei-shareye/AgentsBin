@@ -206,7 +206,7 @@ struct MainPopoverView: View {
                     .font(.system(size: 15, weight: .heavy))
                     .foregroundStyle(.white)
                     .frame(width: 240, height: 40)
-                    .background(brandBlue, in: RoundedRectangle(cornerRadius: 11))
+                    .background(brandBlue, in: RoundedRectangle(cornerRadius: 8))
             }
             .buttonStyle(.plain)
             .padding(.top, 22)
@@ -244,13 +244,13 @@ struct MainPopoverView: View {
             }
         } label: {
             Text(localization.agentName(agent.name))
-                .font(.system(size: 11, weight: .bold))
+                .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(selected ? Color.white : Color.primary)
                 .lineLimit(1)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 7)
                 .background(
-                    selected ? Color(red: 0.98, green: 0.45, blue: 0.09) : Color.secondary.opacity(0.12),
+                    selected ? brandBlue : Color.secondary.opacity(0.12),
                     in: Capsule()
                 )
                 .contentShape(Capsule())
@@ -351,8 +351,8 @@ struct MainPopoverView: View {
                 }
                 .frame(width: 230)
                 .frame(maxHeight: 320)
-                .background(Color(nsColor: .windowBackgroundColor).opacity(0.8), in: RoundedRectangle(cornerRadius: 14))
-                .shadow(color: .black.opacity(0.28), radius: 14, y: 5)
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+                .shadow(color: .black.opacity(0.22), radius: 12, y: 4)
                 .padding(.leading, 8)
                 .padding(.top, 46)
                 .padding(.bottom, 8)
@@ -412,7 +412,7 @@ struct MainPopoverView: View {
             .padding(.vertical, 6)
             .background(
                 isActive ? brandBlue : hoveredAgentID == agent.id ? brandBlue.opacity(0.10) : Color.clear,
-                in: RoundedRectangle(cornerRadius: 8)
+                in: RoundedRectangle(cornerRadius: 6)
             )
             .contentShape(Rectangle())
             .onTapGesture {
