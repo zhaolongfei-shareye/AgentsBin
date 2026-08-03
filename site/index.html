@@ -123,6 +123,7 @@
           <option value="ru">Русский</option>
           <option value="pt">Português</option>
         </select>
+        <button class="button button-small demo-btn" id="demoBtn" type="button" data-i18n="demo_try">Try Demo</button>
         <a class="button button-small" href="#download" data-i18n="nav_download">Download</a>
       </div>
     </div>
@@ -169,6 +170,38 @@
           <span class="pc-sub" data-i18n="p3s">macOS · Media Tools</span>
           <span class="pc-desc" data-i18n="p3d">Batch watermark and copyright protection for images and video. In development.</span>
           <span class="pc-foot"><span class="pc-status soon" data-i18n="pm_soon_s">Coming Soon</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-backdrop" id="demoBackdrop"></div>
+  <div class="demo-shell" id="demoShell" hidden>
+    <div class="demo-desktop">
+      <div class="demo-menubar">
+        <span class="demo-apple"></span>
+        <span class="demo-mbrand">AgentsBin</span>
+        <span class="demo-menuitem">File Edit View</span>
+        <span class="demo-msp"></span>
+        <span class="demo-ab" id="demoAB"><b>[AB]</b><span class="demo-arrow">⌄</span></span>
+        <span class="demo-clock">09:41</span>
+      </div>
+      <div class="demo-hint"><span data-i18n="demo_hint">Move your mouse to the menu bar and hover</span> <span class="demo-hl">[AB]</span><span class="demo-cursor">↖</span></div>
+      <div class="demo-icons">
+        <div class="demo-ic">🗂<span data-i18n="demo_finder">Finder</span></div>
+        <div class="demo-ic">🌐<span>Safari</span></div>
+        <div class="demo-ic">📄<span data-i18n="demo_docs">Docs</span></div>
+      </div>
+      <div class="demo-dock"><div class="demo-dk">🗂</div><div class="demo-dk">🌐</div><div class="demo-dk">💬</div><div class="demo-dk">✉️</div><div class="demo-dk demo-dk-ab">AB</div><div class="demo-dk">🎵</div></div>
+      <div class="demo-app" id="demoApp">
+        <div class="demo-tbar"><span class="demo-td demo-r"></span><span class="demo-td demo-y"></span><span class="demo-td demo-g"></span><b>AgentsBin</b><button class="demo-close" id="demoClose" type="button" data-i18n="demo_close">Close Demo</button></div>
+        <div class="demo-body">
+          <div class="demo-side" id="demoAgents"></div>
+          <div class="demo-main">
+            <div class="demo-atop"><img id="demoAI" alt=""><b id="demoAN"></b><div class="demo-seg"><span class="on" data-i18n="web_mode">Web</span><span data-i18n="client_mode">API</span></div></div>
+            <div class="demo-chat" id="demoChat"></div>
+            <div class="demo-compose"><input id="demoInput" data-i18n-ph="demo_ph" placeholder="Type a message..."><button id="demoSend" type="button" data-i18n="demo_send">Send</button></div>
+          </div>
         </div>
       </div>
     </div>

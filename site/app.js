@@ -911,6 +911,22 @@
     pt: Object.assign({}, base, ptOverrides)
   };
 
+  const demoI18n = {
+    en: { demo_try: "Try Demo", demo_welcome: "Hi, this is a demo conversation with", demo_hint: "Move your mouse to the menu bar and hover", demo_close: "Close Demo", demo_ph: "Type a message...", demo_send: "Send", demo_reply: "Demo reply from ", demo_finder: "Finder", demo_docs: "Docs" },
+    zh: { demo_try: "在线体验", demo_welcome: "你好，这是与", demo_hint: "把鼠标移到菜单栏，悬停", demo_close: "关闭体验", demo_ph: "输入消息...", demo_send: "发送", demo_reply: "这是来自 ", demo_finder: "访达", demo_docs: "文稿" },
+    "zh-Hant": { demo_try: "線上體驗", demo_welcome: "你好，這是與", demo_hint: "把滑鼠移到選單列，懸停", demo_close: "關閉體驗", demo_ph: "輸入訊息...", demo_send: "傳送", demo_reply: "這是來自 ", demo_finder: "訪達", demo_docs: "文稿" },
+    ja: { demo_try: "デモ", demo_welcome: "これは", demo_hint: "メニューバーにマウスを移動してホバー", demo_close: "デモを閉じる", demo_ph: "メッセージを入力...", demo_send: "送信", demo_reply: "デモ返信：", demo_finder: "Finder", demo_docs: "書類" },
+    ko: { demo_try: "데모", demo_welcome: "안녕하세요,", demo_hint: "메뉴바로 마우스를 옮겨 호버", demo_close: "데모 닫기", demo_ph: "메시지 입력...", demo_send: "보내기", demo_reply: "데모 답변: ", demo_finder: "파인더", demo_docs: "문서" },
+    es: { demo_try: "Probar Demo", demo_welcome: "Hola, conversación demo con", demo_hint: "Mueve el ratón a la barra de menús y pasa el cursor", demo_close: "Cerrar demo", demo_ph: "Escribe un mensaje...", demo_send: "Enviar", demo_reply: "Respuesta demo de ", demo_finder: "Finder", demo_docs: "Documentos" },
+    fr: { demo_try: "Essayer la démo", demo_welcome: "Bonjour, démo avec", demo_hint: "Déplacez la souris vers la barre de menus et survolez", demo_close: "Fermer la démo", demo_ph: "Écrivez un message...", demo_send: "Envoyer", demo_reply: "Réponse démo de ", demo_finder: "Finder", demo_docs: "Documents" },
+    de: { demo_try: "Demo testen", demo_welcome: "Hallo, Demo-Chat mit", demo_hint: "Bewegen Sie die Maus zur Menüleiste und fahren Sie darüber", demo_close: "Demo schließen", demo_ph: "Nachricht eingeben...", demo_send: "Senden", demo_reply: "Demo-Antwort von ", demo_finder: "Finder", demo_docs: "Dokumente" },
+    ru: { demo_try: "Демо", demo_welcome: "Привет, демо-чат с", demo_hint: "Наведите курсор на строку меню", demo_close: "Закрыть демо", demo_ph: "Введите сообщение...", demo_send: "Отправить", demo_reply: "Демо-ответ от ", demo_finder: "Finder", demo_docs: "Документы" },
+    pt: { demo_try: "Experimentar", demo_welcome: "Olá, conversa demo com", demo_hint: "Mova o mouse para a barra de menus e passe o cursor", demo_close: "Fechar demo", demo_ph: "Digite uma mensagem...", demo_send: "Enviar", demo_reply: "Resposta demo de ", demo_finder: "Finder", demo_docs: "Documentos" }
+  };
+  Object.keys(i18n).forEach(function (lang) {
+    Object.assign(i18n[lang], demoI18n[lang] || demoI18n.en);
+  });
+
   const agentHosts = [
     "chatgpt.com", "claude.ai", "copilot.microsoft.com", "chat.deepseek.com", "doubao.com",
     "gemini.google.com", "grok.com", "kimi.moonshot.cn", "chat.mistral.ai", "chat.mistral.ai",
@@ -1039,6 +1055,115 @@
   }
   avatar.onerror = loadAvatar;
   loadAvatar();
+
+  const demoBtn = document.getElementById("demoBtn");
+  const demoShell = document.getElementById("demoShell");
+  const demoBackdrop = document.getElementById("demoBackdrop");
+  const demoApp = document.getElementById("demoApp");
+  const demoAB = document.getElementById("demoAB");
+  const demoAgents = document.getElementById("demoAgents");
+  const demoChat = document.getElementById("demoChat");
+  const demoInput = document.getElementById("demoInput");
+  const demoSend = document.getElementById("demoSend");
+  const demoClose = document.getElementById("demoClose");
+  const demoAI = document.getElementById("demoAI");
+  const demoAN = document.getElementById("demoAN");
+  let demoHideTimer;
+
+  function openDemo() {
+    demoShell.classList.add("on");
+    demoBackdrop.classList.add("on");
+    demoRefresh();
+  }
+  function closeDemo() {
+    demoShell.classList.remove("on");
+    demoBackdrop.classList.remove("on");
+    demoApp.classList.remove("on");
+    demoAB.classList.remove("hot");
+  }
+  function demoOpenApp() {
+    clearTimeout(demoHideTimer);
+    demoApp.classList.add("on");
+    demoAB.classList.add("hot");
+  }
+  function demoCloseApp() {
+    demoHideTimer = setTimeout(function () {
+      demoApp.classList.remove("on");
+      demoAB.classList.remove("hot");
+    }, 500);
+  }
+
+  function demoIcon(name) {
+    const norm = name.replace(/ /g, "").replace(/\./g, "");
+    const letter = (name.charAt(0) || "?").toUpperCase();
+    return '<img src="assets/agents/' + norm + '.png" alt="' + letter + '" loading="lazy">';
+  }
+
+  function demoAddMsg(role, text) {
+    const m = document.createElement("div");
+    m.className = "demo-msg " + (role === "u" ? "u" : "b");
+    m.textContent = text;
+    demoChat.appendChild(m);
+    demoChat.scrollTop = 9999;
+  }
+
+  function demoRefresh() {
+    const dict = i18n[lang] || i18n.en;
+    demoAgents.innerHTML = dict.agents.map(function (name, index) {
+      return '<div class="demo-ai' + (index === 0 ? " on" : "") + '" data-index="' + index + '">' + demoIcon(name) + '<span>' + name + '</span></div>';
+    }).join("");
+    demoAgents.querySelectorAll(".demo-ai img").forEach(function (img) {
+      img.addEventListener("error", function () {
+        const span = document.createElement("span");
+        span.className = "demo-letter";
+        span.textContent = img.getAttribute("alt") || "?";
+        img.replaceWith(span);
+      });
+    });
+    demoAgents.querySelectorAll(".demo-ai").forEach(function (el) {
+      el.addEventListener("click", function () {
+        const idx = Number(el.getAttribute("data-index"));
+        demoAgents.querySelectorAll(".demo-ai").forEach(function (x) { x.classList.remove("on"); });
+        el.classList.add("on");
+        const name = dict.agents[idx];
+        const host = (agentHosts[idx] || "example.com").replace(/^www\./, "");
+        demoAN.textContent = name;
+        demoAI.src = "assets/agents/" + name.replace(/ /g, "").replace(/\./g, "") + ".png";
+        demoAI.onerror = function () { demoAI.style.display = "none"; };
+        demoChat.innerHTML = "";
+        demoAddMsg("b", dict.demo_welcome + " " + name + ".");
+      });
+    });
+    demoChat.innerHTML = "";
+    demoAddMsg("b", dict.demo_welcome + " " + demoAN.textContent + ".");
+  }
+
+  function demoSendMsg() {
+    const dict = i18n[lang] || i18n.en;
+    const value = demoInput.value.trim();
+    if (!value) return;
+    demoAddMsg("u", value);
+    demoInput.value = "";
+    setTimeout(function () {
+      demoAddMsg("b", dict.demo_reply + demoAN.textContent + ".");
+    }, 400);
+  }
+
+  if (demoBtn) demoBtn.addEventListener("click", openDemo);
+  if (demoClose) demoClose.addEventListener("click", closeDemo);
+  if (demoBackdrop) demoBackdrop.addEventListener("click", closeDemo);
+  if (demoAB) {
+    demoAB.addEventListener("mouseenter", demoOpenApp);
+    demoAB.addEventListener("mouseleave", demoCloseApp);
+  }
+  if (demoApp) {
+    demoApp.addEventListener("mouseenter", demoOpenApp);
+    demoApp.addEventListener("mouseleave", demoCloseApp);
+  }
+  if (demoSend) demoSend.addEventListener("click", demoSendMsg);
+  if (demoInput) demoInput.addEventListener("keydown", function (e) { if (e.key === "Enter") demoSendMsg(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDemo(); });
+
 
   document.querySelectorAll('a[href^="downloads/"]').forEach(function (link) {
     link.addEventListener("click", function () {
