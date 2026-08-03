@@ -1,7 +1,7 @@
 (function () {
   const base = {
-    page_title: "AgentsBin · Menu bar AI agent hub for macOS",
-    page_desc: "AgentsBin is a macOS menu bar hub for AI agents with embedded web chat, agent management and encrypted API key backup.",
+    page_title: "AgentsBin · All-in-One AI Chat Hub for macOS | ChatGPT, Claude, Gemini, DeepSeek, Qwen",
+    page_desc: "AgentsBin is the all-in-one AI chat hub for macOS. Launch ChatGPT, Claude, Gemini, DeepSeek, Qwen and 30+ AI agents from the menu bar, switch between web chat and API mode, and keep API keys encrypted locally. Free beta for macOS 13+.",
     nav_download: "Download",
     nav_products: "Products",
     pm_title: "Explore products",
