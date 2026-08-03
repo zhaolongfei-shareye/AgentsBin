@@ -18,7 +18,7 @@ export async function onRequest(context) {
   const range = Math.min(365, Math.max(1, Number(new URL(request.url).searchParams.get("range") || 30)));
   const cutoff = daysAgo(range);
 
-  const [kindRows, agentRows, sourceRows] = await Promise.all([
+  const [kindRows, agentRows, sourceRows, countryRows] = await Promise.all([
     db
       .prepare("SELECT date, kind, COUNT(*) AS n FROM events WHERE date >= ? GROUP BY date, kind ORDER BY date ASC")
       .bind(cutoff)
@@ -29,7 +29,11 @@ export async function onRequest(context) {
       )
       .bind(cutoff)
       .all(),
-    db.prepare("SELECT source, COUNT(*) AS n FROM events WHERE date >= ? GROUP BY source").bind(cutoff).all()
+    db.prepare("SELECT source, COUNT(*) AS n FROM events WHERE date >= ? GROUP BY source").bind(cutoff).all(),
+    db
+      .prepare("SELECT country, kind, COUNT(*) AS n FROM events WHERE country != '' AND date >= ? GROUP BY country, kind")
+      .bind(cutoff)
+      .all()
   ]);
 
   const byDate = {};
@@ -46,6 +50,17 @@ export async function onRequest(context) {
     totals.agent_opens += d.agent_opens;
   }
 
+  const byCountry = {};
+  for (const row of countryRows.results || []) {
+    byCountry[row.country] = byCountry[row.country] || { code: row.country, count: 0, downloads: 0, app_opens: 0, agent_opens: 0 };
+    const c = byCountry[row.country];
+    c.count += row.n;
+    if (row.kind === "download") c.downloads = row.n;
+    if (row.kind === "app_open") c.app_opens = row.n;
+    if (row.kind === "agent_open") c.agent_opens = row.n;
+  }
+  const countries = Object.values(byCountry).sort((a, b) => b.count - a.count).slice(0, 20);
+
   return json({
     ok: true,
     range,
@@ -55,6 +70,7 @@ export async function onRequest(context) {
     sources: (sourceRows.results || []).reduce((acc, r) => {
       acc[r.source] = r.n;
       return acc;
-    }, {})
+    }, {}),
+    countries
   });
 }

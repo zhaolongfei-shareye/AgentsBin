@@ -113,6 +113,11 @@ const loggedIn = `
         <div id="topAgents"></div>
       </div>
     </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Country sources</h2>
+      <div class="sub">All events by country, selected range</div>
+      <div id="countries"></div>
+    </div>
     <div class="foot">Data is collected from agentsbin.com and the macOS app. Timestamps are UTC.</div>
   </div>
   <script>
@@ -147,6 +152,14 @@ const loggedIn = `
             '<div class="bar-row"><span>' + esc(a.name) + '</span><div class="bar-track"><div class="bar-fill" style="width:' + Math.max(2, Math.round((a.count / maxAgent) * 100)) + '%"></div></div><span class="bar-count">' + fmt.format(a.count) + "</span></div>"
           ).join("")
         : '<div class="empty">No agent activity yet</div>';
+      const countries = data.countries || [];
+      const maxCountry = countries.reduce((m, c) => Math.max(m, c.count), 0) || 1;
+      document.getElementById("countries").innerHTML = countries.length
+        ? countries.map((c) =>
+            '<div class="bar-row"><span style="font-weight:800">' + esc(c.code) + '</span><div class="bar-track"><div class="bar-fill" style="width:' + Math.max(2, Math.round((c.count / maxCountry) * 100)) + '%"></div></div><span class="bar-count">' + fmt.format(c.count) + '</span></div>' +
+            '<div style="font-size:10px;color:#8b98a8;margin:-4px 0 6px 116px">D ' + fmt.format(c.downloads || 0) + ' · App ' + fmt.format(c.app_opens || 0) + ' · Agents ' + fmt.format(c.agent_opens || 0) + '</div>'
+          ).join("")
+        : '<div class="empty">No country data yet</div>';
     }
     document.querySelectorAll("#range button").forEach((b) => b.addEventListener("click", () => load(Number(b.dataset.range))));
     load(currentRange);

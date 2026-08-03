@@ -20,6 +20,7 @@ export async function onRequest(context) {
   const name = String(body.name || "").slice(0, 128);
   const version = String(body.version || "").slice(0, 32);
   const source = String(body.source || "web").slice(0, 16);
+  const country = String(request.headers.get("CF-IPCountry") || "").slice(0, 4).toUpperCase();
   if (!KINDS.has(kind) || !name) return json({ ok: false, error: "bad payload" }, 400);
 
   const db = env.DB;
@@ -39,8 +40,8 @@ export async function onRequest(context) {
 
   const ua = String(request.headers.get("user-agent") || "").slice(0, 200);
   await db
-    .prepare("INSERT INTO events (date, ts, kind, name, version, source, ip_hash, ua) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-    .bind(date, new Date().toISOString(), kind, name, version, source, hash, ua)
+    .prepare("INSERT INTO events (date, ts, kind, name, version, source, ip_hash, country, ua) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+    .bind(date, new Date().toISOString(), kind, name, version, source, hash, country, ua)
     .run();
 
   return json({ ok: true });

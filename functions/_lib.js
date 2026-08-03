@@ -16,11 +16,15 @@ export async function initDB(db) {
       version TEXT DEFAULT '',
       source TEXT DEFAULT '',
       ip_hash TEXT DEFAULT '',
+      country TEXT DEFAULT '',
       ua TEXT DEFAULT ''
     )`
   ).run();
   await db.prepare("CREATE INDEX IF NOT EXISTS idx_events_date ON events(date)").run();
   await db.prepare("CREATE INDEX IF NOT EXISTS idx_events_kind ON events(kind, name)").run();
+  try {
+    await db.prepare("ALTER TABLE events ADD COLUMN country TEXT DEFAULT ''").run();
+  } catch {}
 }
 
 export function b64urlEncode(data) {
