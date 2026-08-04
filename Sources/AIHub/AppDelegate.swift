@@ -45,7 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private func setupStatusItem() {
-        let item = NSStatusBar.system.statusItem(withLength: 30)
+        let item = NSStatusBar.system.statusItem(withLength: 26)
         if let button = item.button {
             button.image = menuBarIcon(arrowUp: false, arrowVisible: true)
             button.action = #selector(statusItemClicked)
@@ -62,18 +62,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private func menuBarIcon(arrowUp: Bool, arrowVisible: Bool) -> NSImage {
-        let size = NSSize(width: 26, height: 24)
+        let size = NSSize(width: 20, height: 20)
         let image = NSImage(size: size)
         image.lockFocus()
-        let text = "[AB]" as NSString
-        let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 13, weight: .semibold),
-            .foregroundColor: NSColor.black
-        ]
-        text.draw(at: NSPoint(x: 1, y: 6), withAttributes: attrs)
+        if let bulb = NSImage(systemSymbolName: "lightbulb", accessibilityDescription: nil) {
+            bulb.draw(in: NSRect(x: 1, y: 3, width: 18, height: 16), from: .zero, operation: .sourceOver, fraction: 1)
+        }
         if arrowVisible,
-           let arrow = NSImage(systemSymbolName: arrowUp ? "chevron.up" : "chevron.down", accessibilityDescription: nil) {
-            arrow.draw(in: NSRect(x: 9, y: 0, width: 8, height: 5), from: .zero, operation: .sourceOver, fraction: 0.95)
+           let bolt = NSImage(systemSymbolName: "bolt.fill", accessibilityDescription: nil) {
+            bolt.draw(in: NSRect(x: 7, y: 7, width: 6, height: 8), from: .zero, operation: .sourceOver, fraction: 0.95)
         }
         image.unlockFocus()
         image.isTemplate = true
