@@ -1,316 +1,160 @@
 # AgentsBin 项目文档
 
-文档日期：2026-08-02  
-当前版本：V1.0.22（免费内测版）  
-仓库：https://github.com/zhaolongfei-shareye/AgentsBin  
-官网：https://www.agentsbin.com  
+文档更新：2026-08-04
+当前版本：V1.1.4（免费内测版）
+仓库：https://github.com/zhaolongfei-shareye/AgentsBin
+官网：https://www.agentsbin.com
 作者：Jacky Zhao（zhaolongfei@gmail.com）
 
 ---
 
 ## 1. 项目简介
 
-AgentsBin 是一款 macOS 菜单栏 AI 智能体快速入口应用，目标是用一个常驻菜单栏图标聚合主流 AI 智能体：
+AgentsBin 是一款 macOS 菜单栏 AI 智能体快速入口应用：
 
-- 点击菜单栏图标瞬间拉起置顶弹窗
-- 左侧选择智能体，右侧嵌入官方网页直接对话
-- 支持智能体管理、API Key 加密备份、多语言
-- 提供官网、下载分发和真实使用统计后台
+- 点击菜单栏 `[AB]` 图标瞬间拉起置顶弹窗
+- 左侧浮层选择智能体，右侧嵌入官方网页对话，或使用 API 模式直连调用
+- 支持智能体管理、API Key 本地加密备份、10 语言
+- 提供官网、下载分发、真实使用统计后台（含国家来源）
 
-项目同时包含三部分：
-
-| 部分 | 说明 |
-| --- | --- |
-| macOS 应用 | SwiftUI 菜单栏 App，核心产品 |
-| 官网 | Cloudflare Pages 静态站，用于介绍和下载分发 |
-| 统计后台 | Cloudflare Pages Functions + D1，真实下载与应用使用统计，Google 登录保护 |
+项目包含三部分：macOS 应用（SwiftUI）、官网（Cloudflare Pages）、统计后台（Pages Functions + D1 + Google 登录）。
 
 ---
 
-## 2. 当前功能清单（V1.0.22）
+## 2. 当前功能清单（V1.1.4）
 
 ### 2.1 macOS 应用
 
-- 菜单栏常驻图标，左键打开/收起主窗口，右键显示打开与退出菜单
-- 主窗口置顶浮动，可拖拽调整大小，可折叠左侧边栏缩小整体宽度
-- 单智能体对话模式：一次只在一个智能体网页内对话，右侧嵌入真实官网
-- 左侧智能体列表：反白显示当前项、未读红点、拖拽排序、自定义添加、文本导入导出
-- 内置 37 个智能体，按字母排序，含 ChatGPT、Claude、DeepSeek、Kimi、Qwen、Grok 等
-- 智能体管理：显示/隐藏、自定义智能体（LOGO 自动取域名首字母）、置顶与排序
-- API Key 保险箱：管理员账号密码保护，本地加密保存，支持多组参数、备份
-- 通用设置：修改密码、修改邮箱、自动启动、语言、深浅色切换
-- 多语言：10 种语言手动切换，包含中英日韩西法德俄葡繁中
-- 浏览器跳转：右上角打开系统默认浏览器进入当前智能体页面
-- 应用埋点：启动上报 app_open，切换智能体上报 agent_open（统计用）
+- 菜单栏常驻 `[AB]` 图标：下方箭头缓慢闪动提醒点击，展开时箭头向上提示收起
+- 首次安装打开首页：官网式文字胶囊选择默认智能体，前 7 个默认选中（系统 accent 蓝），Open / Launch at login；版本变化自动重置首页
+- 单一视图主界面：无左右分栏、色块分区、少线条
+- 顶部栏：箭头按钮 + 当前智能体（16px 图标 + 名称）+ 最近 9 个切换 Logo（悬停全名、点击切换）+ Web/API 自定义分段 tab（带状态圆点）
+- 智能体浮层：鼠标移到顶部箭头自动展开（从上往下渐变），移开 1 秒延迟收起；紧贴箭头下方；默认容纳 10 行，下方滚动；背景固定系统窗口色；设置界面不显示
+- 智能体双状态点：蓝 = Web 可用，绿 = API 可用，灰 = 不可用
+- 客户端模式：OpenAI 兼容 / Anthropic API 直连；验证结果按配置哈希缓存，配置未变不重复验证；友好错误提示 + 复制详情
+- API 配置：按供应商预填默认参数（DeepSeek 等）、参数组激活（绿播放/灰暂停）、10 组上限、供应商与参数组拖拽排序
+- API Key：本地 AES-GCM 加密存储（无钥匙串弹窗），不依赖网络
+- 智能体管理：37 个内置智能体、自定义添加、拖拽排序、导入导出
+- 多语言：10 种语言手动切换，默认英文
+- 窗口：默认 960×560、最小 720×420；位置与尺寸记忆，收起再展开恢复
+- 原生一致性：系统 accent 色、系统字体/间距/圆角、深浅模式自动适配；样式集中在 Theme.swift 便于扩展多风格
+- 其他：开机自动启动、深浅模式、右上角浏览器按钮、底部地球图标（悬停显示官网、点击打开）
 
 ### 2.2 官网
 
-- 深色科技感设计，动态渐变背景，默认英文、手动 10 语言切换
-- 顶部 AB Logo + “Products” 产品入口（Adobe 风格多列卡片弹窗）
-- 产品卡片：AgentsBin（已发布）、AgentsBin Audio（Coming Soon）、AgentsBin Watermark（Coming Soon）
-- 功能详解、操作说明、内置智能体跑马灯、下载区
-- 模拟统计展示区（Top 5 智能体访问量柱状图），后续可接真实数据
-- 作者联系方式区：邮箱、微信、Facebook、X
+- 深色科技感设计，动态渐变背景；默认英文、10 语言手动切换
+- 顶部 AgentsBin.com 品牌 + Products 产品弹窗（深灰风格，三卡片 + 搜索/筛选）
+- 首页右侧 App 预览为模拟操作动画：智能体高亮自动切换 + 对话淡入循环
+- 功能详解、操作说明（网页或 API 模式、桌面自由摆放）、FAQ（AI 关键词问答）
+- SEO：AI 热门关键词、FAQPage/WebSite/Organization 结构化数据、sitemap、Google Search Console 已验证
+- 下载区：AgentsBin 1.1.4 DMG（约 913 KB），SHA-256 校验
+- 作者联系方式：邮箱、微信、Facebook、X
 
 ### 2.3 统计后台
 
-- 隐蔽路径：https://www.agentsbin.com/agentsbin-jz-admin
-- Google OAuth 登录，仅允许管理员邮箱（默认 zhaolongfei@gmail.com）
-- 数据范围切换：7 / 30 / 90 / 365 天
+- 隐蔽路径：https://www.agentsbin.com/agentsbin-jz-admin（Google 登录，仅管理员邮箱）
+- 数据范围：7 / 30 / 90 / 365 天
 - KPI：总下载、应用打开、智能体访问、活跃天数
-- 每日明细表：日期、下载、应用打开、智能体访问
-- 智能体访问量排行：Top 12 柱状图
-- 实时写入 Cloudflare D1，数据永久保留
+- 每日明细、智能体访问排行、来源（Web/App）、国家来源（Cloudflare CF-IPCountry 自动记录）
+- 真实数据写入 Cloudflare D1，永久保留
 
 ---
 
-## 3. 项目目录结构
+## 3. 目录结构
 
 ```text
 AgentsBin/
-├── Sources/AIHub/            macOS 应用源码（SwiftUI）
-│   ├── AIHubApp.swift        应用入口
-│   ├── AppDelegate.swift     菜单栏、主面板、埋点
-│   ├── MainView.swift        主界面、智能体列表
-│   ├── Models.swift          智能体数据模型
-│   ├── Stores.swift          智能体存储与状态
-│   ├── WebViewPool.swift     嵌入网页池
-│   ├── SecurityStore.swift   API Key 加密存储
-│   ├── Localization.swift    多语言
-│   ├── FaviconStore.swift    官网图标缓存
-│   └── Analytics.swift       统计埋点上报
-├── Assets/                   App 图标、菜单栏图标、智能体图标
-├── Scripts/                  构建脚本（build_app.sh / build_dmg.sh / build_pkg.sh）
-├── site/                     官网静态文件
-│   ├── index.html
-│   ├── styles.css
-│   ├── app.js
-│   ├── assets/
-│   └── downloads/            DMG 安装包
-├── functions/                Cloudflare Pages Functions
-│   ├── _lib.js               公共工具（D1、Cookie 签名）
-│   ├── agentsbin-jz-admin.js 统计后台页面
-│   └── api/
-│       ├── track.js          事件写入 API
-│       ├── stats.js          统计查询 API
-│       └── auth/             Google OAuth（google / callback / logout）
-├── wrangler.toml             Cloudflare Pages + D1 配置
-├── Package.swift             Swift Package 配置
-├── version.txt               版本号
-└── docs/                     项目文档
+├── Sources/AIHub/            macOS 应用源码（SwiftUI + AppKit）
+│   ├── main.swift            入口（纯 AppKit，避免 Settings 空窗口）
+│   ├── AppDelegate.swift     菜单栏、窗口、动态 [AB] 图标、启动杀旧实例
+│   ├── MainView.swift        首页、主界面、浮层、双模式、设置
+│   ├── Theme.swift           集中主题配置（系统风格，可扩展多风格）
+│   ├── Stores.swift          智能体存储、最近 9 个历史
+│   ├── SecurityStore.swift   API 配置、本地 AES 加密、验证缓存
+│   ├── ClientChatView.swift  API 客户端对话
+│   ├── Localization.swift    10 语言
+│   ├── WebViewPool.swift     网页嵌入
+│   └── Analytics.swift       统计埋点
+├── Assets/AgentIcons/        37 个官方书签图标（按智能体名称命名）
+├── Scripts/                  构建脚本
+├── site/                     官网静态文件与 downloads
+├── functions/                Pages Functions（track/stats/auth/后台）
+├── wrangler.toml             Pages + D1 配置
+└── docs/                     项目文档与工作流指南
 ```
 
 ---
 
 ## 4. 技术栈与依赖清单
 
-### 4.1 macOS 应用
-
-| 项 | 技术 / 依赖 | 版本 | 平台 | 路径 |
-| --- | --- | --- | --- | --- |
-| 语言 | Swift | 5.9（swift-tools-version） | macOS 13+ | `Package.swift` |
-| UI 框架 | SwiftUI + AppKit | 系统框架 | macOS | `Sources/AIHub/` |
-| 本地存储 | SQLite3（系统库） | 系统库 | macOS | `Package.swift`（linkerSettings） |
-| 数据库文件 | SQLite | - | 用户目录 | 由 `SecurityStore.swift` 管理 |
-| 图标资源 | PNG / ICNS | - | macOS | `Assets/` |
-| 第三方 Swift 包 | 无 | - | - | 仅系统框架 |
-| 构建脚本 | Shell | - | macOS | `Scripts/build_app.sh`、`Scripts/build_dmg.sh`、`Scripts/build_pkg.sh` |
-| 图标生成 | Python 3 | - | macOS | `Scripts/generate_icon.py`、`Scripts/convert_agent_icons.py` |
-
-### 4.2 官网前端
-
-| 项 | 技术 / 依赖 | 版本 | 平台 | 路径 |
-| --- | --- | --- | --- | --- |
-| 页面结构 | HTML5 | - | 浏览器 | `site/index.html` |
-| 样式 | CSS3（原生） | - | 浏览器 | `site/styles.css` |
-| 逻辑 | JavaScript（原生，无框架） | - | 浏览器 | `site/app.js` |
-| 静态托管 | Cloudflare Pages | - | Cloudflare | `site/` |
-| 下载安装包 | DMG | 1.0.22 | macOS | `site/downloads/` |
-| 爬虫/SEO | robots.txt / sitemap.xml | - | 搜索引擎 | `site/robots.txt`、`site/sitemap.xml` |
-
-### 4.3 后端统计
-
-| 项 | 技术 / 依赖 | 版本 | 平台 | 路径 |
-| --- | --- | --- | --- | --- |
-| 函数运行时 | Cloudflare Pages Functions（JavaScript ESM） | - | Cloudflare | `functions/` |
-| 数据库 | Cloudflare D1（SQLite） | - | Cloudflare | `wrangler.toml`（binding: DB） |
-| 登录 | Google OAuth 2.0 | - | Google Cloud | `functions/api/auth/` |
-| 埋点 API | Pages Function | - | Cloudflare | `functions/api/track.js` |
-| 查询 API | Pages Function | - | Cloudflare | `functions/api/stats.js` |
-| 后台页面 | 服务端渲染 HTML + 原生 JS | - | Cloudflare | `functions/agentsbin-jz-admin.js` |
-
-### 4.4 部署与代码托管
-
-| 项 | 平台 | 说明 | 位置/命令 |
+| 项 | 技术 / 依赖 | 平台 | 路径 |
 | --- | --- | --- | --- |
-| 代码仓库 | GitHub | `zhaolongfei-shareye/AgentsBin` | `git push origin master` |
-| 官网部署 | Cloudflare Pages | 项目名 `agentsbin` | `npx wrangler pages deploy site --project-name agentsbin --branch main` |
-| 域名 | agentsbin.com | Porkbun 注册，DNS 指向 Cloudflare | Cloudflare 控制台 |
-| D1 管理 | Cloudflare | `agentsbin-stats` | `npx wrangler d1 execute agentsbin-stats --remote --command "..."` |
-| 安全变量 | Cloudflare Pages secrets | Google OAuth 凭据 | `npx wrangler pages secret put ...` |
-| 本地开发服务器 | Python 3 | 官网预览 | `python3 -m http.server 8137 --directory site` |
-
-### 4.5 本机环境
-
-| 项 | 值 |
-| --- | --- |
-| 项目根目录 | `/Users/zlfmac/Documents/AgentsBin` |
-| 系统 | macOS（Apple Silicon，arm64） |
-| 工具链 | Xcode CommandLineTools（当前 Swift 6.3.3） |
-| macOS SDK | `MacOSX26.5.sdk`（当前与 Swift 6.3.3 不匹配，打包受阻） |
-| Node / npm | 通过 npx 使用 wrangler |
-| 数据 | 统计数据在 Cloudflare D1，本机不落库 |
-
-### 4.6 配置与环境变量
-
-| 变量 | 平台 | 用途 | 配置位置 |
-| --- | --- | --- | --- |
-| `GOOGLE_CLIENT_ID` | Cloudflare Pages | Google 登录客户端 ID | Production secret |
-| `GOOGLE_CLIENT_SECRET` | Cloudflare Pages | Google 登录密钥 | Production secret |
-| `ADMIN_EMAIL` | Cloudflare Pages（可选） | 后台管理员邮箱，默认 `zhaolongfei@gmail.com` | Environment variables |
-| `ADMIN_COOKIE_SECRET` | Cloudflare Pages（可选） | 会话签名密钥，默认用 Client Secret | Environment variables |
-| `database_id` | wrangler.toml | D1 数据库绑定 | `wrangler.toml` |
+| 应用语言 | Swift 5.9 + SwiftUI/AppKit | macOS 13+ | Package.swift |
+| 构建工具链 | Swift 6.3.2（本机安装，系统 6.3.3 不匹配） | macOS | ~/Library/Developer/Toolchains/swift-6.3.2-RELEASE.xctoolchain |
+| 本地加密 | CryptoKit AES-GCM | macOS | SecurityStore.swift |
+| 官网 | HTML/CSS/JS 原生 | Cloudflare Pages | site/ |
+| 后端 | Pages Functions（JS ESM） | Cloudflare | functions/ |
+| 数据库 | D1（SQLite） | Cloudflare | wrangler.toml |
+| 登录 | Google OAuth 2.0 | Google Cloud | functions/api/auth/ |
+| 部署 | Wrangler CLI + Cloudflare API Token | Cloudflare | 命令见第 7 章 |
+| 版本控制 | GitHub | 远程 | zhaolongfei-shareye/AgentsBin |
+| 域名 | agentsbin.com（Porkbun 注册） | Web | Cloudflare Pages 绑定 |
 
 ---
 
 ## 5. 统计系统架构
 
-### 5.1 数据链路
-
 ```text
 官网下载按钮 / macOS App
-        │  POST /api/track
-        ▼
-Cloudflare Pages Functions
-        │  D1（agentsbin-stats）
-        ▼
-Cloudflare D1 数据库（真实数据，永久保留）
-        ▲
-        │  GET /api/stats（管理员 Cookie）
-统计后台 /agentsbin-jz-admin
+   │  POST /api/track（含 CF-IPCountry）
+   ▼
+Pages Functions → D1（events 表，含 country 字段）
+   ▲
+   │  GET /api/stats（管理员 Cookie）
+后台 /agentsbin-jz-admin
 ```
 
-### 5.2 事件类型
-
-| kind | 触发点 | source |
-| --- | --- | --- |
-| download | 官网点击 Download DMG | web |
-| app_open | macOS 应用每次启动 | app |
-| agent_open | 每次切换智能体 | app |
-
-### 5.3 数据表
-
-```sql
-CREATE TABLE events (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  date TEXT NOT NULL,        -- YYYY-MM-DD（UTC）
-  ts TEXT NOT NULL,          -- ISO 时间
-  kind TEXT NOT NULL,        -- download / app_open / agent_open
-  name TEXT NOT NULL,        -- dmg / 智能体 ID
-  version TEXT,              -- 应用版本
-  source TEXT,               -- web / app
-  ip_hash TEXT,              -- IP 哈希（防刷，不存原始 IP）
-  ua TEXT                    -- User-Agent
-);
-```
-
-### 5.4 防刷
-
-- 同一 IP 同一天同类型事件最多 40 次
-- IP 只保存哈希，不保存原始地址
-- 请求体大小限制 4KB
+- 事件类型：download / app_open / agent_open
+- 防刷：同一 IP 每天每类最多 40 次，IP 只存哈希
+- 国家来源：Cloudflare CF-IPCountry 自动注入；旧数据无国家，新事件开始积累
 
 ---
 
 ## 6. Google 登录配置
 
-### 6.1 已配置项
-
-- Google Cloud OAuth 客户端：Web 应用类型
-- 授权重定向 URI：`https://www.agentsbin.com/api/auth/callback`
-- Cloudflare Production secrets：
-  - `GOOGLE_CLIENT_ID`
-  - `GOOGLE_CLIENT_SECRET`
-- 管理员邮箱：`zhaolongfei@gmail.com`（可用环境变量 `ADMIN_EMAIL` 覆盖）
-
-### 6.2 登录流程
-
-1. 用户访问 `/agentsbin-jz-admin`
-2. 点击 Sign in with Google
-3. `/api/auth/google` 生成 state 并跳转 Google 授权
-4. Google 回调 `/api/auth/callback`，交换 token、校验邮箱
-5. 校验通过后写入签名 Cookie（HttpOnly / Secure / SameSite=Lax，7 天）
-6. `/agentsbin-jz-admin` 通过 Cookie 鉴权，未登录或非管理员一律拒绝
-
-### 6.3 安全提示
-
-- 客户端密钥不要写入代码、文档或公开仓库
-- 如需更换密钥，在 Google Cloud 重新生成并更新 Cloudflare secret
-- 后台路径默认不对外公布，仍由 Google 登录做最终鉴权
+- OAuth 客户端：Web 应用，重定向 https://www.agentsbin.com/api/auth/callback
+- Cloudflare secrets：GOOGLE_CLIENT_ID、GOOGLE_CLIENT_SECRET
+- 管理员邮箱：zhaolongfei@gmail.com（可用 ADMIN_EMAIL 覆盖）
+- 登录会话：HMAC 签名 Cookie（7 天），仅允许管理员邮箱
+- 注意：邮箱含点号时 Cookie 解析需从右侧拆分
 
 ---
 
 ## 7. 部署
 
-### 7.1 官网与 Functions
-
 ```bash
+export CLOUDFLARE_API_TOKEN='<token>'
 npx wrangler pages deploy site --project-name agentsbin --branch main
+npx wrangler d1 execute agentsbin-stats --remote --command "..."
 ```
 
-注意：`functions/` 必须放在项目根目录（与 `site/` 同级），wrangler 才会自动打包 Functions。
-
-### 7.2 D1 数据库
-
-```bash
-npx wrangler d1 create agentsbin-stats
-npx wrangler d1 execute agentsbin-stats --remote --file schema.sql
-```
-
-数据库 ID 已写入 `wrangler.toml` 的 `d1_databases` 绑定。
-
-### 7.3 安全变量
-
-```bash
-npx wrangler pages secret put GOOGLE_CLIENT_ID --project-name agentsbin
-npx wrangler pages secret put GOOGLE_CLIENT_SECRET --project-name agentsbin
-```
-
-### 7.4 GitHub 推送
-
-```bash
-git add -A
-git commit -m "..."
-git push origin master
-```
+- 部署后刷新 CDN：资源引用带版本参数（如 ?v=1.1.7），并用 no-cache 请求验证
+- 下载文件必须验证 SHA-256、hdiutil verify、挂载、启动
+- Wrangler 登录失效时使用 Cloudflare API Token（权限：Workers Scripts / Pages / D1 Edit）
 
 ---
 
 ## 8. macOS 应用构建与分发
 
-### 8.1 构建命令
-
 ```bash
+export PATH="$HOME/Library/Developer/Toolchains/swift-6.3.2-RELEASE.xctoolchain/usr/bin:$PATH"
 ./Scripts/build_dmg.sh
-open dist/AgentsBin-1.0.22.dmg
+open dist/AgentsBin-1.1.4.dmg
 ```
 
-### 8.2 分发流程
-
-1. `build_dmg.sh` 生成 DMG
-2. 拷贝到 `site/downloads/AgentsBin-<版本>.dmg`
-3. 更新官网版本号、下载链接、SHA-256
-4. 部署官网
-
-### 8.3 当前障碍
-
-本机 Swift 工具链为 6.3.3，macOS SDK 为 6.3.2 编译，`swift build` 报工具链/SDK 版本不匹配，暂时无法在本机重新打包新版 DMG。应用统计埋点代码已合入仓库，待工具链修复后重新打包。
-
-建议：
-
-- 更新 Xcode 或 CommandLineTools 至与 SDK 匹配的版本
-- 或安装与 SDK 6.3.2 匹配的 Swift 工具链
-- 正式分发前还需 Developer ID 签名与公证
+- build_dmg.sh 自动递增 PATCH；发布指定版本时临时将递增改为 +0，构建后恢复脚本
+- 本地验证：shasum、hdiutil verify、挂载检查 Info.plist、open 启动 + pgrep
+- 上架 Mac App Store：需安装 Xcode、开发者证书、沙盒与隐私说明
 
 ---
 
@@ -318,16 +162,16 @@ open dist/AgentsBin-1.0.22.dmg
 
 | 提交 | 说明 |
 | --- | --- |
-| dd133e6 | 修复邮箱含点导致的管理员会话 Cookie 解析失败 |
-| a0b272b | Google 登录失败时显示详细原因 |
-| 50be030 | 统计 API 错误响应加固 |
-| 89785a0 | Pages Functions 移到项目根，修复 D1 建表 |
-| a60ceda | 新增真实统计系统：D1、Google 登录后台、官网/应用埋点 |
-| 59f63b7 | 官网移除 GitHub 入口，作者与平台同一行 |
-| ab0c0ec | 产品弹窗删除空卡片 |
-| 49be4cb | Products 按钮紧靠 Logo |
-| 1a5faad | 官网新增 Adobe 风格产品菜单 |
-| ee771b3 | 官网统计 Top 5 柱状图（模拟数据） |
+| 5e2d219 | 修复首页误删，移除 Demo 残留，首页动画预览 v1.1.7 |
+| ca758b0 | 移除官网 Demo 弹窗，新增首页预览动画 |
+| c48c491 | 官网新增交互式 macOS Demo（后撤销） |
+| 1526594 | SEO：AI 关键词、FAQ、结构化数据、sitemap |
+| 037d964 | 统计后台新增国家来源分析 |
+| d80b9e1 | 1.1.4：浮层固定背景色并部署 |
+| eaabebf | 1.1.3：集中主题配置、原生字体/间距/圆角、弹窗尺寸 |
+| 139c072 | 1.1.2：真正应用原生风格（accent 蓝、毛玻璃、圆角） |
+| 47e4ece | 1.1.1：界面统一 macOS 原生风格 |
+| 735f9ac | 文档：工作流与排坑指南 |
 
 ---
 
@@ -336,18 +180,27 @@ open dist/AgentsBin-1.0.22.dmg
 | 资源 | 地址 |
 | --- | --- |
 | 官网 | https://www.agentsbin.com |
+| 下载 | https://www.agentsbin.com/downloads/AgentsBin-1.1.4.dmg |
 | 统计后台 | https://www.agentsbin.com/agentsbin-jz-admin |
-| 统计写入 API | https://www.agentsbin.com/api/track |
-| 统计查询 API | https://www.agentsbin.com/api/stats |
-| Google 登录 | https://www.agentsbin.com/api/auth/google |
+| 统计 API | https://www.agentsbin.com/api/track |
+| Sitemap | https://www.agentsbin.com/sitemap.xml |
 | GitHub | https://github.com/zhaolongfei-shareye/AgentsBin |
 
 ---
 
 ## 11. 下一步计划
 
-- 修复 Swift 工具链后重新打包 DMG，更新官网下载
-- 新版应用上线后开始积累真实统计
-- 官网统计展示区接入真实数据
-- AgentsBin Audio、AgentsBin Watermark 产品开发
-- 正式签名与公证，开放正式版下载
+- 确认新版 App 后更新官网下载与版本文案
+- 上架 Mac App Store 准备（Xcode、证书、沙盒、隐私说明）
+- 官网继续沉淀 AI 关键词 SEO 与内容
+- AgentsBin Audio / Watermark 产品规划
+- 统计后台丰富：留存、会话时长、地区地图
+
+---
+
+## 12. 维护提示
+
+- 详细工作流与踩坑清单见 docs/AgentsBin-Workflow.md
+- Codex 专属技能 agentsbin-dev 已沉淀开发流程
+- 改动 UI 先出英文效果图 → 确认 → 开发 → 本地验证 → 等部署指令
+- 编辑脚本注意：多条件替换脚本不要因部分未匹配而不写入，避免出现“看似改了实际没改”
