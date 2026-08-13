@@ -146,18 +146,18 @@ final class APIKeyStore: ObservableObject {
 
     static func defaultConfigs() -> [AgentAPIConfig] {
         [
-            AgentAPIConfig(id: "openai", name: "OpenAI", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.openai.com/v1", model: "gpt-4o-mini")]),
+            AgentAPIConfig(id: "openai", name: "OpenAI", note: "OpenAI-compatible standard", credentials: [APICredential(label: "Default", baseURL: "https://api.openai.com/v1", model: "gpt-4o-mini")]),
             AgentAPIConfig(id: "anthropic", name: "Anthropic Claude", note: "Anthropic Messages API", credentials: [APICredential(label: "Default", baseURL: "https://api.anthropic.com", model: "claude-3-5-sonnet")]),
-            AgentAPIConfig(id: "google", name: "Google Gemini", note: "OpenAI 兼容端点", credentials: [APICredential(label: "Default", baseURL: "https://generativelanguage.googleapis.com/v1beta/openai", model: "gemini-2.0-flash")]),
-            AgentAPIConfig(id: "deepseek", name: "DeepSeek", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.deepseek.com/v1", model: "deepseek-chat")]),
-            AgentAPIConfig(id: "kimi", name: "Kimi (Moonshot)", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.moonshot.cn/v1", model: "moonshot-v1-8k")]),
-            AgentAPIConfig(id: "qwen", name: "Qwen (DashScope)", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1", model: "qwen-plus")]),
-            AgentAPIConfig(id: "grok", name: "Grok (xAI)", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://api.x.ai/v1", model: "grok-2-latest")]),
-            AgentAPIConfig(id: "doubao", name: "豆包 Doubao", note: "火山方舟 OpenAI 兼容", credentials: [APICredential(label: "Default", baseURL: "https://ark.cn-beijing.volces.com/api/v3", model: "doubao-pro-32k")]),
-            AgentAPIConfig(id: "chatglm", name: "智谱 ChatGLM", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://open.bigmodel.cn/api/paas/v4", model: "glm-4-plus")]),
-            AgentAPIConfig(id: "wenxin", name: "文心一言 Wenxin", note: "千帆 OpenAI 兼容", credentials: [APICredential(label: "Default", baseURL: "https://qianfan.baidubce.com/v2", model: "ernie-4.0-8k")]),
-            AgentAPIConfig(id: "xinghuo", name: "讯飞星火 Xinghuo", note: "OpenAI 兼容标准", credentials: [APICredential(label: "Default", baseURL: "https://spark-api-open.xf-yun.com/v1", model: "generalv3.5")]),
-            AgentAPIConfig(id: "yuanbao", name: "腾讯元宝 Yuanbao", note: "混元 OpenAI 兼容", credentials: [APICredential(label: "Default", baseURL: "https://api.hunyuan.cloud.tencent.com/v1", model: "hunyuan-pro")])
+            AgentAPIConfig(id: "google", name: "Google Gemini", note: "OpenAI-compatible endpoint", credentials: [APICredential(label: "Default", baseURL: "https://generativelanguage.googleapis.com/v1beta/openai", model: "gemini-2.0-flash")]),
+            AgentAPIConfig(id: "deepseek", name: "DeepSeek", note: "OpenAI-compatible standard", credentials: [APICredential(label: "Default", baseURL: "https://api.deepseek.com/v1", model: "deepseek-chat")]),
+            AgentAPIConfig(id: "kimi", name: "Kimi (Moonshot)", note: "OpenAI-compatible standard", credentials: [APICredential(label: "Default", baseURL: "https://api.moonshot.cn/v1", model: "moonshot-v1-8k")]),
+            AgentAPIConfig(id: "qwen", name: "Qwen (DashScope)", note: "OpenAI-compatible standard", credentials: [APICredential(label: "Default", baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1", model: "qwen-plus")]),
+            AgentAPIConfig(id: "grok", name: "Grok (xAI)", note: "OpenAI-compatible standard", credentials: [APICredential(label: "Default", baseURL: "https://api.x.ai/v1", model: "grok-2-latest")]),
+            AgentAPIConfig(id: "doubao", name: "Doubao", note: "Volcano Ark", credentials: [APICredential(label: "Default", baseURL: "https://ark.cn-beijing.volces.com/api/v3", model: "doubao-pro-32k")]),
+            AgentAPIConfig(id: "chatglm", name: "ChatGLM", note: "Zhipu AI", credentials: [APICredential(label: "Default", baseURL: "https://open.bigmodel.cn/api/paas/v4", model: "glm-4-plus")]),
+            AgentAPIConfig(id: "wenxin", name: "Wenxin", note: "Baidu Qianfan", credentials: [APICredential(label: "Default", baseURL: "https://qianfan.baidubce.com/v2", model: "ernie-4.0-8k")]),
+            AgentAPIConfig(id: "xinghuo", name: "Xinghuo", note: "iFlytek Spark", credentials: [APICredential(label: "Default", baseURL: "https://spark-api-open.xf-yun.com/v1", model: "generalv3.5")]),
+            AgentAPIConfig(id: "yuanbao", name: "Tencent Yuanbao", note: "Hunyuan", credentials: [APICredential(label: "Default", baseURL: "https://api.hunyuan.cloud.tencent.com/v1", model: "hunyuan-pro")])
         ]
     }
 

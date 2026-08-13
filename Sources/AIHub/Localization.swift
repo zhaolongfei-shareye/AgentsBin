@@ -27,12 +27,28 @@ enum AppLanguage: String, CaseIterable {
         case .pt: return "Português"
         }
     }
+
+    var languageCode: String {
+        switch self {
+        case .zh: return "zh-CN"
+        case .zhHant: return "zh-TW"
+        case .en: return "en"
+        case .ja: return "ja"
+        case .ko: return "ko"
+        case .es: return "es"
+        case .fr: return "fr"
+        case .de: return "de"
+        case .ru: return "ru"
+        case .pt: return "pt"
+        }
+    }
 }
 
 final class LocalizedStore: ObservableObject {
     @Published var language: AppLanguage {
         didSet {
             UserDefaults.standard.set(language.rawValue, forKey: "aihome.language")
+            NotificationCenter.default.post(name: .agentsbinLanguageChanged, object: nil)
         }
     }
 
@@ -59,7 +75,14 @@ final class LocalizedStore: ObservableObject {
         let table: [String: [AppLanguage: String]] = [
             "豆包": [.zh: "豆包", .zhHant: "豆包", .en: "Doubao", .ja: "豆包", .ko: "두바오", .es: "Doubao", .fr: "Doubao", .de: "Doubao", .ru: "Doubao", .pt: "Doubao"],
             "千问": [.zh: "千问", .zhHant: "千問", .en: "Qwen", .ja: "千問", .ko: "큐원", .es: "Qwen", .fr: "Qwen", .de: "Qwen", .ru: "Qwen", .pt: "Qwen"],
+            "智谱清言": [.zh: "智谱清言", .zhHant: "智譜清言", .en: "ChatGLM", .ja: "智譜清言", .ko: "차트글엠", .es: "ChatGLM", .fr: "ChatGLM", .de: "ChatGLM", .ru: "ChatGLM", .pt: "ChatGLM"],
+            "海螺 AI": [.zh: "海螺 AI", .zhHant: "海螺 AI", .en: "Hailuo AI", .ja: "海螺 AI", .ko: "하이루오 AI", .es: "Hailuo AI", .fr: "Hailuo AI", .de: "Hailuo AI", .ru: "Hailuo AI", .pt: "Hailuo AI"],
+            "文心一言": [.zh: "文心一言", .zhHant: "文心一言", .en: "Wenxin", .ja: "文心一言", .ko: "원신", .es: "Wenxin", .fr: "Wenxin", .de: "Wenxin", .ru: "Wenxin", .pt: "Wenxin"],
+            "讯飞星火": [.zh: "讯飞星火", .zhHant: "訊飛星火", .en: "Xinghuo", .ja: "訊飛星火", .ko: "쉰페이 싱후오", .es: "Xinghuo", .fr: "Xinghuo", .de: "Xinghuo", .ru: "Xinghuo", .pt: "Xinghuo"],
             "腾讯元宝": [.zh: "腾讯元宝", .zhHant: "騰訊元寶", .en: "Tencent Yuanbao", .ja: "テンセント元宝", .ko: "텐센트 위안바오", .es: "Tencent Yuanbao", .fr: "Tencent Yuanbao", .de: "Tencent Yuanbao", .ru: "Tencent Yuanbao", .pt: "Tencent Yuanbao"],
+            "天工": [.zh: "天工", .zhHant: "天工", .en: "Tiangong", .ja: "天工", .ko: "톈궁", .es: "Tiangong", .fr: "Tiangong", .de: "Tiangong", .ru: "Tiangong", .pt: "Tiangong"],
+            "秘塔 AI": [.zh: "秘塔 AI", .zhHant: "秘塔 AI", .en: "Metaso AI", .ja: "秘塔 AI", .ko: "메타소 AI", .es: "Metaso AI", .fr: "Metaso AI", .de: "Metaso AI", .ru: "Metaso AI", .pt: "Metaso AI"],
+            "文小言": [.zh: "文小言", .zhHant: "文小言", .en: "Wenxiaoyan", .ja: "文小言", .ko: "원샤오옌", .es: "Wenxiaoyan", .fr: "Wenxiaoyan", .de: "Wenxiaoyan", .ru: "Wenxiaoyan", .pt: "Wenxiaoyan"],
             "通义": [.zh: "通义", .zhHant: "通義", .en: "Tongyi", .ja: "通義", .ko: "통이", .es: "Tongyi", .fr: "Tongyi", .de: "Tongyi", .ru: "Tongyi", .pt: "Tongyi"],
             "Kimi": [.zh: "Kimi", .zhHant: "Kimi", .en: "Kimi", .ja: "Kimi", .ko: "Kimi", .es: "Kimi", .fr: "Kimi", .de: "Kimi", .ru: "Kimi", .pt: "Kimi"],
             "ChatGPT": [.zh: "ChatGPT", .zhHant: "ChatGPT", .en: "ChatGPT", .ja: "ChatGPT", .ko: "ChatGPT", .es: "ChatGPT", .fr: "ChatGPT", .de: "ChatGPT", .ru: "ChatGPT", .pt: "ChatGPT"],
@@ -268,9 +291,16 @@ final class LocalizedStore: ObservableObject {
             .ru: "Проверка API...", .pt: "Verificando API..."
         ],
         "api_failed": [
-            .zh: "API 连接失败", .zhHant: "API 連線失敗", .en: "API failed", .ja: "APIエラー",
-            .ko: "API 실패", .es: "Error de API", .fr: "Échec de l'API", .de: "API-Fehler",
-            .ru: "Ошибка API", .pt: "Falha na API"
+            .zh: "API 请求失败", .zhHant: "API 請求失敗", .en: "API request failed", .ja: "APIリクエスト失敗",
+            .ko: "API 요청 실패", .es: "Error en la solicitud de API", .fr: "Échec de la requête API",
+            .de: "API-Anfrage fehlgeschlagen", .ru: "Ошибка запроса API", .pt: "Falha na solicitação da API"
+        ],
+        "api_insufficient_balance": [
+            .zh: "账户余额不足，请先充值后重试", .zhHant: "帳戶餘額不足，請先儲值後重試", .en: "Insufficient account balance. Please top up and retry.",
+            .ja: "アカウント残高が不足しています。チャージしてから再試行してください", .ko: "계정 잔액이 부족합니다. 충전 후 다시 시도하세요.",
+            .es: "Saldo insuficiente. Recarga tu cuenta e inténtalo de nuevo.", .fr: "Solde insuffisant. Rechargez votre compte et réessayez.",
+            .de: "Kontoguthaben unzureichend. Bitte aufladen und erneut versuchen.", .ru: "Недостаточно средств на счёте. Пополните баланс и повторите.",
+            .pt: "Saldo insuficiente. Recarregue a conta e tente novamente."
         ],
         "api_key_invalid": [
             .zh: "API Key 无效或已过期，请检查 API 配置", .zhHant: "API Key 無效或已過期，請檢查 API 設定", .en: "Invalid or expired API key. Please check your API config.",
@@ -320,10 +350,16 @@ final class LocalizedStore: ObservableObject {
             .de: "Zum Sortieren ziehen", .ru: "Перетащите для сортировки", .pt: "Arraste para ordenar"
         ],
         "home_slogan": [
-            .zh: "所有 AI 智能体，一个菜单栏就够了", .zhHant: "所有 AI 智能體，一個選單列就夠了", .en: "All your AI agents, one menu bar away",
-            .ja: "すべての AI エージェントをメニューバーに", .ko: "모든 AI 에이전트를 메뉴바 하나로", .es: "Todos tus agentes AI, a un clic",
-            .fr: "Tous vos agents IA, à un clic", .de: "Alle KI-Agenten, ein Klick entfernt", .ru: "Все AI-агенты в одном меню",
-            .pt: "Todos os seus agentes de IA em um menu"
+            .zh: "支持 37 款云端智能体 + 6 款本地大模型，共 43 款，一个菜单栏全搞定",
+            .zhHant: "支援 37 款雲端智能體 + 6 款本地大模型，共 43 款，一個選單列全搞定",
+            .en: "Supports 37 cloud AI agents + 6 local LLM apps, 43 in total, all in one menu bar.",
+            .ja: "クラウド 37 種 + ローカル 6 種、計 43 種をメニューバーひとつで。",
+            .ko: "클라우드 37개 + 로컬 6개, 총 43개를 메뉴바 하나로.",
+            .es: "37 agentes IA en la nube + 6 apps locales, 43 en total, en un menú.",
+            .fr: "37 agents IA cloud + 6 apps locales, 43 au total, dans un menu.",
+            .de: "37 Cloud-KI-Agenten + 6 lokale Apps, 43 insgesamt, im Menü.",
+            .ru: "37 облачных ИИ + 6 локальных, всего 43, в одном меню.",
+            .pt: "37 agentes de IA na nuvem + 6 apps locais, 43 no total, em um menu."
         ],
         "home_open": [
             .zh: "开启", .zhHant: "開啟", .en: "Open", .ja: "開始", .ko: "시작",
@@ -669,6 +705,11 @@ final class LocalizedStore: ObservableObject {
             .ja: "グループ追加", .ko: "그룹 추가", .es: "Añadir grupo", .fr: "Ajouter un groupe",
             .de: "Gruppe hinzufügen", .ru: "Добавить группу", .pt: "Adicionar grupo"
         ],
+        "add_new": [
+            .zh: "新增", .zhHant: "新增", .en: "Add",
+            .ja: "追加", .ko: "추가", .es: "Añadir", .fr: "Ajouter",
+            .de: "Hinzufügen", .ru: "Добавить", .pt: "Adicionar"
+        ],
         "select_agent_first": [
             .zh: "请先选择左侧智能体", .zhHant: "請先選擇左側智能體", .en: "Select an agent first",
             .ja: "左のエージェントを選択", .ko: "왼쪽 에이전트를 선택하세요", .es: "Seleccione un agente primero",
@@ -685,6 +726,12 @@ final class LocalizedStore: ObservableObject {
             .zh: "编辑", .zhHant: "編輯", .en: "Edit",
             .ja: "編集", .ko: "편집", .es: "Editar", .fr: "Modifier",
             .de: "Bearbeiten", .ru: "Правка", .pt: "Editar"
+        ],
+        "save_and_return": [
+            .zh: "保存并返回", .zhHant: "儲存並返回", .en: "Save and return",
+            .ja: "保存して戻る", .ko: "저장 후 돌아가기", .es: "Guardar y volver",
+            .fr: "Enregistrer et revenir", .de: "Speichern und zurück",
+            .ru: "Сохранить и вернуться", .pt: "Salvar e voltar"
         ],
         "edit_agents_hint": [
             .zh: "管理显示", .zhHant: "管理顯示", .en: "Manage visibility",
@@ -781,6 +828,40 @@ final class LocalizedStore: ObservableObject {
             .ja: "サイドバー切替", .ko: "사이드바 토글", .es: "Alternar barra lateral",
             .fr: "Basculer la barre latérale", .de: "Seitenleiste umschalten",
             .ru: "Свернуть/развернуть панель", .pt: "Alternar barra lateral"
+        ],
+        "collapse_window": [
+            .zh: "折叠窗口", .zhHant: "摺疊視窗", .en: "Collapse window",
+            .ja: "ウィンドウを折りたたむ", .ko: "창 접기", .es: "Contraer ventana",
+            .fr: "Réduire la fenêtre", .de: "Fenster einklappen",
+            .ru: "Свернуть окно", .pt: "Recolher janela"
+        ],
+        "expand_window": [
+            .zh: "展开窗口", .zhHant: "展開視窗", .en: "Expand window",
+            .ja: "ウィンドウを展開", .ko: "창 펼치기", .es: "Expandir ventana",
+            .fr: "Agrandir la fenêtre", .de: "Fenster ausklappen",
+            .ru: "Развернуть окно", .pt: "Expandir janela"
+        ],
+        "click_to_open": [
+            .zh: "点击展开", .zhHant: "點擊展開", .en: "Click to open",
+            .ja: "クリックで展開", .ko: "클릭하여 열기", .es: "Clic para abrir",
+            .fr: "Cliquer pour ouvrir", .de: "Zum Öffnen klicken",
+            .ru: "Нажмите, чтобы открыть", .pt: "Clique para abrir"
+        ],
+        "collapse_to_icon": [
+            .zh: "收起为图标", .zhHant: "收起為圖示", .en: "Collapse to icon",
+            .ja: "アイコンに折りたたむ", .ko: "아이콘으로 접기", .es: "Contraer a icono",
+            .fr: "Réduire en icône", .de: "Zu Symbol einklappen",
+            .ru: "Свернуть в значок", .pt: "Recolher em ícone"
+        ],
+        "more_agents": [
+            .zh: "更多", .zhHant: "更多", .en: "More",
+            .ja: "もっと", .ko: "더보기", .es: "Más",
+            .fr: "Plus", .de: "Mehr", .ru: "Ещё", .pt: "Mais"
+        ],
+        "agent_panel": [
+            .zh: "智能体", .zhHant: "智能體", .en: "Agents",
+            .ja: "エージェント", .ko: "에이전트", .es: "Agentes",
+            .fr: "Agents", .de: "Agents", .ru: "Агенты", .pt: "Agentes"
         ],
         "custom_agent_title": [
             .zh: "自定义智能体", .zhHant: "自訂智能體", .en: "Custom Agent",
@@ -976,6 +1057,96 @@ final class LocalizedStore: ObservableObject {
             .de: "Keine Antwort erkannt. Melden Sie sich an und schließen Sie ein Gespräch ab, bevor Sie speichern.",
             .ru: "Ответ не обнаружен. Войдите и завершите диалог перед сохранением.",
             .pt: "Nenhuma resposta detectada. Faça login e conclua uma conversa antes de salvar."
+        ],
+        "local_scanning": [
+            .zh: "正在检测本地大模型...", .zhHant: "偵測本地大模型...", .en: "Scanning for local AI apps...", .ja: "ローカルAIを検出中...",
+            .ko: "로컬 AI 앱 확인 중...", .es: "Buscando apps de IA locales...", .fr: "Recherche d'apps IA locales...",
+            .de: "Lokale KI-Apps werden erkannt...", .ru: "Поиск локальных ИИ-приложений...", .pt: "Procurando apps de IA locais..."
+        ],
+        "local_not_installed": [
+            .zh: "未安装", .zhHant: "未安裝", .en: "Not installed", .ja: "未インストール", .ko: "설치 안 됨",
+            .es: "No instalado", .fr: "Non installé", .de: "Nicht installiert", .ru: "Не установлено", .pt: "Não instalado"
+        ],
+        "local_not_installed_hint": [
+            .zh: "本地服务未运行。可点击安装自动完成，或在终端中手动执行脚本。",
+            .zhHant: "本地服務未執行。可點擊安裝自動完成，或在終端機中手動執行指令碼。",
+            .en: "No local service detected. Install it automatically, or run the script manually in Terminal.",
+            .ja: "ローカルサービスが未起動です。自動インストールするか、ターミナルで手動実行してください。",
+            .ko: "로컬 서비스가 감지되지 않았습니다. 자동 설치하거나 터미널에서 직접 실행하세요.",
+            .es: "No se detectó el servicio local. Instálalo automáticamente o ejecuta el script en Terminal.",
+            .fr: "Service local introuvable. Installez-le automatiquement ou exécutez le script dans Terminal.",
+            .de: "Lokaler Dienst nicht erkannt. Automatisch installieren oder im Terminal ausführen.",
+            .ru: "Локальный сервис не запущен. Установите автоматически или выполните скрипт в Терминале.",
+            .pt: "Serviço local não detectado. Instale automaticamente ou execute o script no Terminal."
+        ],
+        "local_install_script": [
+            .zh: "安装脚本（只读）", .zhHant: "安裝指令碼（唯讀）", .en: "Install script (read-only)", .ja: "インストールスクリプト（読取専用）",
+            .ko: "설치 스크립트(읽기 전용)", .es: "Script de instalación (solo lectura)", .fr: "Script d'installation (lecture seule)",
+            .de: "Installationsskript (nur lesen)", .ru: "Скрипт установки (только чтение)", .pt: "Script de instalação (somente leitura)"
+        ],
+        "local_installing": [
+            .zh: "正在安装...", .zhHant: "安裝中...", .en: "Installing...", .ja: "インストール中...", .ko: "설치 중...",
+            .es: "Instalando...", .fr: "Installation...", .de: "Wird installiert...", .ru: "Установка...", .pt: "Instalando..."
+        ],
+        "local_connecting": [
+            .zh: "正在连接本地模型...", .zhHant: "連線本地模型...", .en: "Connecting to local model...", .ja: "ローカルモデルに接続中...",
+            .ko: "로컬 모델 연결 중...", .es: "Conectando con el modelo local...", .fr: "Connexion au modèle local...",
+            .de: "Verbindung zum lokalen Modell...", .ru: "Подключение к локальной модели...", .pt: "Conectando ao modelo local..."
+        ],
+        "install": [
+            .zh: "安装", .zhHant: "安裝", .en: "Install", .ja: "インストール", .ko: "설치",
+            .es: "Instalar", .fr: "Installer", .de: "Installieren", .ru: "Установить", .pt: "Instalar"
+        ],
+        "open_terminal": [
+            .zh: "在终端打开", .zhHant: "在終端機開啟", .en: "Open in Terminal", .ja: "ターミナルで開く", .ko: "터미널에서 열기",
+            .es: "Abrir en Terminal", .fr: "Ouvrir dans Terminal", .de: "Im Terminal öffnen", .ru: "Открыть в Терминале", .pt: "Abrir no Terminal"
+        ],
+        "select_model": [
+            .zh: "选择模型", .zhHant: "選擇模型", .en: "Select model", .ja: "モデルを選択", .ko: "모델 선택",
+            .es: "Seleccionar modelo", .fr: "Choisir un modèle", .de: "Modell wählen", .ru: "Выбрать модель", .pt: "Selecionar modelo"
+        ],
+        "refresh": [
+            .zh: "刷新", .zhHant: "重新整理", .en: "Refresh", .ja: "更新", .ko: "새로고침",
+            .es: "Actualizar", .fr: "Actualiser", .de: "Aktualisieren", .ru: "Обновить", .pt: "Atualizar"
+        ],
+        "local_model": [
+            .zh: "本地模型", .zhHant: "本地模型", .en: "Local model", .ja: "ローカルモデル", .ko: "로컬 모델",
+            .es: "Modelo local", .fr: "Modèle local", .de: "Lokales Modell", .ru: "Локальная модель", .pt: "Modelo local"
+        ],
+        "local_detected": [
+            .zh: "已就绪", .zhHant: "已就緒", .en: "Ready", .ja: "準備完了", .ko: "준비됨",
+            .es: "Listo", .fr: "Prêt", .de: "Bereit", .ru: "Готово", .pt: "Pronto"
+        ],
+        "delete_local_title": [
+            .zh: "移除本地智能体？", .zhHant: "移除本地智能體？", .en: "Remove Local Agent?", .ja: "ローカルエージェントを削除？",
+            .ko: "로컬 에이전트를 제거할까요?", .es: "¿Eliminar agente local?", .fr: "Supprimer l'agent local ?",
+            .de: "Lokalen Agenten entfernen?", .ru: "Удалить локального агента?", .pt: "Remover agente local?"
+        ],
+        "delete_local_message": [
+            .zh: "只会从列表移除，不会卸载本地应用。", .zhHant: "只會從清單移除，不會解除安裝本地應用。", .en: "This only removes the agent from your list. The app is not uninstalled.",
+            .ja: "リストから削除するだけで、アプリはアンインストールされません。",
+            .ko: "목록에서만 제거되며 앱은 삭제되지 않습니다.",
+            .es: "Solo se elimina de la lista. La app no se desinstala.",
+            .fr: "L'agent est seulement retiré de la liste. L'app n'est pas désinstallée.",
+            .de: "Nur aus der Liste entfernen. Die App wird nicht deinstalliert.",
+            .ru: "Удаляется только из списка. Приложение не удаляется.",
+            .pt: "Remove apenas da lista. O app não é desinstalado."
+        ],
+        "terminal": [
+            .zh: "终端", .zhHant: "終端機", .en: "Terminal", .ja: "ターミナル", .ko: "터미널",
+            .es: "Terminal", .fr: "Terminal", .de: "Terminal", .ru: "Терминал", .pt: "Terminal"
+        ],
+        "visit_website": [
+            .zh: "访问官网", .zhHant: "造訪官網", .en: "Visit Website", .ja: "公式サイト", .ko: "공식 사이트",
+            .es: "Sitio web", .fr: "Site web", .de: "Website besuchen", .ru: "Посетить сайт", .pt: "Visitar site"
+        ],
+        "local_tag": [
+            .zh: " - Local", .zhHant: " - Local", .en: " - Local", .ja: " - Local", .ko: " - Local",
+            .es: " - Local", .fr: " - Local", .de: " - Local", .ru: " - Local", .pt: " - Local"
+        ],
+        "api_tag": [
+            .zh: " - API", .zhHant: " - API", .en: " - API", .ja: " - API", .ko: " - API",
+            .es: " - API", .fr: " - API", .de: " - API", .ru: " - API", .pt: " - API"
         ]
     ]
 }

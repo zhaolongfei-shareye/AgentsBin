@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
+Disallow: /agentsbin-jz-admin
+Disallow: /api/
+
 Sitemap: https://www.agentsbin.com/sitemap.xml

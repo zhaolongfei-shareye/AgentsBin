@@ -118,6 +118,85 @@ struct ToolbarTextButton: View {
     }
 }
 
+struct CollapseWindowButton: View {
+    @EnvironmentObject private var localization: LocalizedStore
+    @State private var collapsed = false
+    var disabled = false
+
+    var body: some View {
+        Button {
+            guard !disabled else { return }
+            NotificationCenter.default.post(name: .agentsbinToggleCollapse, object: nil)
+        } label: {
+            VStack(spacing: 3) {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(collapsed ? brandBlue : Color.primary.opacity(0.9))
+                    .frame(width: 16, height: 5)
+                Rectangle()
+                    .fill(Color.primary.opacity(0.22))
+                    .frame(width: 18, height: 1)
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color.primary.opacity(0.5))
+                    .frame(width: 16, height: collapsed ? 2 : 5)
+            }
+            .frame(width: 30, height: 30)
+            .background(
+                collapsed ? brandBlue.opacity(0.16) : Color.clear,
+                in: RoundedRectangle(cornerRadius: 7)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 7)
+                    .stroke(Color.primary.opacity(0.14), lineWidth: 1)
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .opacity(disabled ? 0.45 : 1)
+        .disabled(disabled)
+        .help(localization.text(collapsed ? "expand_window" : "collapse_window"))
+        .onReceive(NotificationCenter.default.publisher(for: .agentsbinCollapseStateChanged)) { note in
+            collapsed = (note.object as? NSNumber)?.boolValue ?? false
+        }
+    }
+}
+
+struct AgentPanelButton: View {
+    @EnvironmentObject private var localization: LocalizedStore
+    let isOpen: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.primary.opacity(isOpen ? 0.9 : 0.55), lineWidth: 1.2)
+                    .frame(width: 12, height: 10)
+                    .offset(x: -3, y: 3)
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(Color.primary.opacity(isOpen ? 0.14 : 0))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 3)
+                            .stroke(Color.primary.opacity(isOpen ? 0.9 : 0.75), lineWidth: 1.4)
+                    )
+                    .frame(width: 13, height: 11)
+                    .offset(x: 3, y: -3)
+            }
+            .frame(width: 30, height: 30)
+            .background(
+                isOpen ? Color.primary.opacity(0.10) : Color.clear,
+                in: RoundedRectangle(cornerRadius: 7)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 7)
+                    .stroke(Color.primary.opacity(isOpen ? 0.35 : 0.14), lineWidth: 1)
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(localization.text("agent_panel"))
+    }
+}
+
 extension Color {
     init(hex: String) {
         var value: UInt64 = 0
@@ -138,18 +217,22 @@ struct MainPopoverView: View {
     @EnvironmentObject private var faviconStore: FaviconStore
     @EnvironmentObject private var localization: LocalizedStore
     @EnvironmentObject private var apiKeyStore: APIKeyStore
+    @ObservedObject private var localService = LocalModelService.shared
     @State private var setupDone = false
     @State private var mode: RightMode = .chat
     @State private var chatTab = ChatTab.web
     @State private var pendingSettingsTab = 0
+    @State private var pendingManageConfigID: String?
     @State private var hoveredAgentID: String?
     @State private var draggedAgentID: String?
-    @State private var sidebarHovered = false
-    @State private var hideTask: Task<Void, Never>?
+    @State private var agentPanelOpen = false
+    @State private var panelHintAgent: String?
     @State private var manageAgents = false
     @State private var showAgentPicker = false
     @State private var launchAtLogin = false
     @State private var selectedSetupIDs: Set<String> = ["chatgpt", "claude", "gemini", "deepseek", "kimi", "qwen", "grok"]
+    @State private var localScanning = false
+    @State private var agentStripPage = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -159,7 +242,11 @@ struct MainPopoverView: View {
                 mainContent
             }
         }
-        .frame(minWidth: 720, minHeight: 420)
+        .frame(
+            minWidth: 720,
+            minHeight: setupDone ? 172 : 420,
+            alignment: .top
+        )
         .onAppear {
             let currentVersion = appVersion
             let lastVersion = UserDefaults.standard.string(forKey: "agentsbin.lastVersion")
@@ -170,10 +257,54 @@ struct MainPopoverView: View {
             setupDone = UserDefaults.standard.bool(forKey: "agentsbin.setupDone")
             faviconStore.ensureLoaded(for: agentStore.agents)
             launchAtLogin = SMAppService.mainApp.status == .enabled
+            localScanning = true
+            Task {
+                await localService.detectAllAsync()
+                localScanning = false
+                autoSelectDetectedLocal()
+            }
         }
         .onChange(of: agentStore.agents) { _ in
             faviconStore.ensureLoaded(for: agentStore.agents)
         }
+        .onChange(of: localService.detected) { _ in
+            autoSelectDetectedLocal()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .agentsbinOpenAgentPanel)) { _ in
+            agentPanelOpen = true
+            mode = .chat
+            manageAgents = false
+            showAgentPicker = false
+        }
+
+        .onReceive(NotificationCenter.default.publisher(for: .agentsbinOpenSettings)) { note in
+            pendingSettingsTab = note.object as? Int ?? 0
+            pendingManageConfigID = nil
+            mode = .manage
+            manageAgents = false
+            showAgentPicker = false
+            agentPanelOpen = false
+        }
+    }
+
+    private func autoSelectDetectedLocal() {
+        guard !setupDone else { return }
+        for provider in LocalProviderList.all where localService.isDetected(provider.id) {
+            selectedSetupIDs.insert(provider.id)
+        }
+    }
+
+    private func addCredential(forAgentID agentID: String) {
+        let configID = apiKeyStore.config(forAgentID: agentID)?.id
+            ?? APIKeyStore.agentToConfigMap[agentID]
+            ?? agentID
+        apiKeyStore.addCredential(to: configID)
+        pendingManageConfigID = configID
+        pendingSettingsTab = 1
+        mode = .manage
+        manageAgents = false
+        showAgentPicker = false
+        agentPanelOpen = false
     }
 
     private var setupHome: some View {
@@ -185,10 +316,20 @@ struct MainPopoverView: View {
                 .font(.system(size: 13))
                 .foregroundStyle(.secondary)
                 .padding(.top, 8)
+            if localScanning {
+                HStack(spacing: 5) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text(localization.text("local_scanning"))
+                        .font(.system(size: 11))
+                        .foregroundStyle(.tertiary)
+                }
+                .padding(.top, 6)
+            }
 
             ScrollView {
                 FlowLayout(spacing: 10) {
-                    ForEach(agentStore.agents) { agent in
+                    ForEach(setupAgents) { agent in
                         setupChip(agent)
                     }
                 }
@@ -234,6 +375,17 @@ struct MainPopoverView: View {
         .background(Color(nsColor: .windowBackgroundColor))
     }
 
+    private var setupAgents: [Agent] {
+        agentStore.agents.sorted { a, b in
+            let aSelected = selectedSetupIDs.contains(a.id)
+            let bSelected = selectedSetupIDs.contains(b.id)
+            if aSelected != bSelected {
+                return aSelected && !bSelected
+            }
+            return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+        }
+    }
+
     private func setupChip(_ agent: Agent) -> some View {
         let selected = selectedSetupIDs.contains(agent.id)
         return Button {
@@ -259,6 +411,9 @@ struct MainPopoverView: View {
     }
 
     private func finishSetup() {
+        for agent in agentStore.agents where agent.isEnabled != selectedSetupIDs.contains(agent.id) {
+            agentStore.setEnabled(agent.id, selectedSetupIDs.contains(agent.id))
+        }
         agentStore.selectedIDs = selectedSetupIDs
         if !selectedSetupIDs.contains(agentStore.activeID), let first = agentStore.agents.first(where: { selectedSetupIDs.contains($0.id) }) {
             agentStore.activeID = first.id
@@ -276,39 +431,155 @@ struct MainPopoverView: View {
     }
 
     private var mainContent: some View {
-        ZStack(alignment: .topLeading) {
+        ZStack(alignment: .topTrailing) {
             VStack(spacing: 0) {
                 rightPane
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color(nsColor: .textBackgroundColor))
                 rightFooterBar
             }
+            if agentPanelOpen {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        agentPanelOpen = false
+                        manageAgents = false
+                    }
+            }
             floatingPanel
+        }
+        .clipped()
+    }
+
+    private func panelHintText(for agent: Agent) -> String {
+        let name = panelHintAgent ?? localization.agentName(agent.name)
+        return name + " \u{00b7} " + localization.text("click_to_open")
+    }
+
+    private let topLogoSize: CGFloat = 24
+    private let smallLogoSize: CGFloat = 16
+    private let topLogoSpacing: CGFloat = 8
+    private let topVisibleCount = 10
+
+    private func agentStripOrder() -> [Agent] {
+        let enabled = agentStore.enabledAgents
+        guard let active = enabled.first(where: { $0.id == agentStore.activeID }) else {
+            return enabled
+        }
+        let recents = agentStore.recentAgents.filter { $0.isEnabled && $0.id != active.id }
+        let remaining = enabled.filter { agent in
+            agent.id != active.id && !recents.contains { $0.id == agent.id }
+        }
+        return [active] + recents + remaining
+    }
+
+    @ViewBuilder
+    private func topAgentStrip(collapsed: Bool) -> some View {
+        let order = agentStripOrder()
+        let others = Array(order.dropFirst())
+        let pageCount = max(1, Int(ceil(Double(others.count) / Double(topVisibleCount - 1))))
+        let page = min(max(0, agentStripPage), pageCount - 1)
+        let start = page * (topVisibleCount - 1)
+        let end = min(others.count, start + topVisibleCount - 1)
+        HStack(spacing: topLogoSpacing) {
+            if let current = order.first {
+                topLogoButton(current, collapsed: collapsed, isCurrent: true)
+            }
+            if !others.isEmpty {
+                Rectangle()
+                    .fill(Color.primary.opacity(0.14))
+                    .frame(width: 1, height: smallLogoSize)
+                ForEach(others[start..<end]) { agent in
+                    topLogoButton(agent, collapsed: collapsed)
+                }
+                if pageCount > 1 {
+                    moreAgentsButton()
+                }
+            }
+        }
+        .frame(height: topLogoSize)
+        .onChange(of: agentStore.activeID) { _ in
+            agentStripPage = 0
         }
     }
 
-    private var showPanel: Bool {
-        manageAgents || showAgentPicker || sidebarHovered
-    }
-
-    private func setHovered(_ hovering: Bool) {
-        if hovering {
-            hideTask?.cancel()
-            hideTask = nil
-            sidebarHovered = true
-        } else {
-            hideTask?.cancel()
-            hideTask = Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 1_000_000_000)
-                guard !Task.isCancelled else { return }
-                sidebarHovered = false
+    private func topLogoButton(_ agent: Agent, collapsed: Bool, isCurrent: Bool = false) -> some View {
+        Button {
+            if collapsed {
+                selectAgentAndExpand(agent)
+            } else {
+                selectAgent(agent)
+            }
+        } label: {
+            if isCurrent {
+                activeLogo(agent)
+            } else {
+                avatar(agent, size: smallLogoSize)
+            }
+        }
+        .buttonStyle(.plain)
+        .help(panelHintText(for: agent))
+        .onHover { hovering in
+            panelHintAgent = hovering ? localization.agentName(agent.name) : nil
+        }
+        .contextMenu {
+            Button(localization.text("visit_website")) {
+                openExternal(localService.website(forAgent: agent))
             }
         }
     }
 
+    private func activeLogo(_ agent: Agent) -> some View {
+        avatar(agent, size: topLogoSize)
+            .background(
+                RoundedRectangle(cornerRadius: topLogoSize * 0.42)
+                    .fill(brandBlue.opacity(0.35))
+                    .frame(width: topLogoSize + 10, height: topLogoSize + 10)
+                    .blur(radius: 6)
+            )
+            .shadow(color: brandBlue.opacity(0.75), radius: 5)
+    }
+
+    private func moreAgentsButton() -> some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                let others = agentStripOrder().dropFirst().count
+                let pageCount = max(1, Int(ceil(Double(others) / Double(topVisibleCount - 1))))
+                agentStripPage = (agentStripPage + 1) % pageCount
+            }
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .frame(width: smallLogoSize + 2, height: smallLogoSize + 2)
+                .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 7)
+                        .stroke(Color.primary.opacity(0.14), lineWidth: 1)
+                )
+        }
+        .buttonStyle(.plain)
+        .help(localization.text("more_agents"))
+    }
+
+    private func selectAgent(_ agent: Agent) {
+        agentStore.select(agent.id)
+        webPool.markRead(agent.id)
+        Analytics.track(kind: "agent_open", name: agent.id)
+        mode = .chat
+        chatTab = agent.isLocal ? .api : .web
+        agentPanelOpen = false
+        agentStripPage = 0
+    }
+
+    private func selectAgentAndExpand(_ agent: Agent) {
+        selectAgent(agent)
+        NotificationCenter.default.post(name: .agentsbinToggleCollapse, object: nil)
+    }
+
     private var floatingPanel: some View {
         Group {
-            if showPanel {
+            if agentPanelOpen && mode != .manage {
                 VStack(spacing: 0) {
                     agentList
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -317,9 +588,9 @@ struct MainPopoverView: View {
                             manageAgents.toggle()
                         } label: {
                             HStack(spacing: 4) {
-                                Image(systemName: "wrench.adjustable")
+                                Image(systemName: manageAgents ? "checkmark" : "wrench.adjustable")
                                     .font(.system(size: 12, weight: .regular))
-                                Text(localization.text("edit_agents"))
+                                Text(manageAgents ? localization.text("save_and_return") : localization.text("edit_agents"))
                                     .font(.system(size: 12, weight: .regular))
                             }
                             .foregroundStyle(manageAgents ? Color.white : Color.primary)
@@ -328,41 +599,20 @@ struct MainPopoverView: View {
                             .background(manageAgents ? brandBlue : Color.secondary.opacity(0.14), in: RoundedRectangle(cornerRadius: 8))
                         }
                         .buttonStyle(.plain)
-                        .help(localization.text("edit_agents_hint"))
-
-                        Button {
-                            showAgentPicker = true
-                        } label: {
-                            HStack(spacing: 4) {
-                                Image(systemName: "plus")
-                                    .font(.system(size: 12, weight: .regular))
-                                Text(localization.text("add_custom_agent"))
-                                    .font(.system(size: 12, weight: .regular))
-                            }
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 26)
-                            .background(brandBlue, in: RoundedRectangle(cornerRadius: 8))
-                        }
-                        .buttonStyle(.plain)
-                        .help(localization.text("add_custom_agent_hint"))
+                        .help(manageAgents ? localization.text("save_and_return") : localization.text("edit_agents_hint"))
                     }
                     .padding(8)
                 }
-                .frame(width: 230)
-                .frame(maxHeight: 320)
+                .frame(width: 260)
+                .frame(maxHeight: 340)
                 .background(Color(nsColor: .windowBackgroundColor), in: RoundedRectangle(cornerRadius: 10))
                 .shadow(color: .black.opacity(0.22), radius: 12, y: 4)
-                .padding(.leading, 8)
-                .padding(.top, 46)
-                .padding(.bottom, 8)
-                .onHover { hovering in
-                    setHovered(hovering)
-                }
+                .padding(.trailing, 48)
+                .padding(.top, 50)
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
-        .animation(.easeInOut(duration: 0.16), value: showPanel)
+        .animation(.easeInOut(duration: 0.16), value: agentPanelOpen)
         .sheet(isPresented: $showAgentPicker) {
             AgentPickerView()
         }
@@ -371,11 +621,37 @@ struct MainPopoverView: View {
     private var agentList: some View {
         ScrollView {
             VStack(spacing: 2) {
-                ForEach(manageAgents ? agentStore.agents : agentStore.enabledAgents) { agent in
+                ForEach(sortedAgentList) { agent in
                     agentRow(agent)
                 }
+                Button {
+                    showAgentPicker = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 12, weight: .medium))
+                        Text(localization.text("add_custom_agent"))
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 26)
+                    .background(Color.secondary.opacity(0.10), in: RoundedRectangle(cornerRadius: 8))
+                }
+                .buttonStyle(.plain)
+                .help(localization.text("add_custom_agent_hint"))
             }
             .padding(6)
+        }
+    }
+
+    private var sortedAgentList: [Agent] {
+        let source = manageAgents ? agentStore.agents : agentStore.enabledAgents
+        return source.sorted { a, b in
+            if a.isEnabled != b.isEnabled {
+                return a.isEnabled && !b.isEnabled
+            }
+            return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
         }
     }
 
@@ -396,7 +672,7 @@ struct MainPopoverView: View {
 
             HStack(spacing: 8) {
                 agentStatusDots(agent)
-                Text(localization.agentName(agent.name))
+                Text(agentDisplayName(agent))
                     .font(.system(size: 13, weight: .regular))
                     .foregroundStyle(isActive ? Color.white : Color.primary)
                     .lineLimit(1)
@@ -416,11 +692,7 @@ struct MainPopoverView: View {
             )
             .contentShape(Rectangle())
             .onTapGesture {
-                agentStore.select(agent.id)
-                webPool.markRead(agent.id)
-                Analytics.track(kind: "agent_open", name: agent.id)
-                mode = .chat
-                sidebarHovered = false
+                selectAgent(agent)
             }
             .onHover { hovering in
                 hoveredAgentID = hovering ? agent.id : nil
@@ -456,19 +728,34 @@ struct MainPopoverView: View {
         }
     }
 
+    @ViewBuilder
     private func agentStatusDots(_ agent: Agent) -> some View {
-        let webColor: Color = webAvailable(for: agent) ? .blue : .gray
-        let apiColor: Color = apiKeyStore.hasAPIKey(forAgentID: agent.id) ? .green : .gray
-        let hint = localization.text("api_ready") + " / " + localization.text("api_missing")
-        return HStack(spacing: 3) {
+        if agent.isLocal {
+            let detected = localService.isDetected(agent.id)
             Circle()
-                .fill(webColor)
+                .fill(detected ? Color.green : Color.gray)
                 .frame(width: 7, height: 7)
+                .help(localization.text("local_model") + (detected ? " \u{00b7} " + localization.text("local_detected") : ""))
+        } else {
+            let apiReady = apiKeyStore.hasAPIKey(forAgentID: agent.id)
+            let webOK = webAvailable(for: agent)
+            let color: Color = apiReady ? .green : (webOK ? .blue : .gray)
+            let hint = localization.text("api_ready") + " / " + localization.text("api_missing")
             Circle()
-                .fill(apiColor)
+                .fill(color)
                 .frame(width: 7, height: 7)
+            .help(hint)
         }
-        .help(hint)
+    }
+
+    private func agentDisplayName(_ agent: Agent) -> String {
+        var name = localization.agentName(agent.name)
+        if agent.isLocal {
+            name += localization.text("local_tag")
+        } else if apiKeyStore.hasAPIKey(forAgentID: agent.id) {
+            name += localization.text("api_tag")
+        }
+        return name
     }
 
     private func webAvailable(for agent: Agent) -> Bool {
@@ -476,29 +763,30 @@ struct MainPopoverView: View {
         return URL(string: target)?.host != nil
     }
 
-    private func avatar(_ agent: Agent) -> some View {
+    private func avatar(_ agent: Agent, size: CGFloat = 16) -> some View {
+        let corner = max(4, size * 0.25)
         let base: AnyView
         if let image = faviconStore.images[agent.id] {
             base = AnyView(
                 Image(nsImage: image)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 16, height: 16)
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                    .frame(width: size, height: size)
+                    .clipShape(RoundedRectangle(cornerRadius: corner))
             )
         } else {
             base = AnyView(
                 Text(agent.letter)
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: max(9, size * 0.56), weight: .bold))
                     .foregroundStyle(.white)
-                    .frame(width: 16, height: 16)
-                    .background(Color(hex: agent.colorHex), in: RoundedRectangle(cornerRadius: 4))
+                    .frame(width: size, height: size)
+                    .background(Color(hex: agent.colorHex), in: RoundedRectangle(cornerRadius: corner))
             )
         }
         return AnyView(
             base
                 .overlay(
-                    RoundedRectangle(cornerRadius: 4)
+                    RoundedRectangle(cornerRadius: corner)
                         .stroke(Color.primary.opacity(0.18), lineWidth: 1)
                 )
                 .shadow(color: .black.opacity(0.28), radius: 1.5, y: 1)
@@ -521,192 +809,429 @@ struct MainPopoverView: View {
             chatPane
         case .manage:
             ManageView(onBack: {
+                pendingManageConfigID = nil
                 mode = .chat
                 manageAgents = false
-                sidebarHovered = false
-            }, initialTab: pendingSettingsTab)
+                agentPanelOpen = false
+            }, initialTab: pendingSettingsTab, initialConfigID: pendingManageConfigID)
         }
     }
 
     private var tabSelector: some View {
-        let webColor: Color = webAvailable(for: agentStore.activeAgent) ? .blue : .gray
-        let apiColor: Color = apiKeyStore.hasAPIKey(forAgentID: agentStore.activeAgent.id) ? .green : .gray
-        return HStack(spacing: 3) {
-            Button {
-                chatTab = .web
-            } label: {
-                HStack(spacing: 5) {
-                    Circle()
-                        .fill(webColor)
-                        .frame(width: 6, height: 6)
-                    Text(localization.text("web_mode"))
-                        .font(.system(size: 12, weight: .medium))
+        let agent = agentStore.activeAgent
+        let isLocal = agent.isLocal
+        let webColor: Color = webAvailable(for: agent) ? .blue : .gray
+        let apiColor: Color = isLocal
+            ? (localService.isDetected(agent.id) ? .green : .gray)
+            : (apiKeyStore.hasAPIKey(forAgentID: agent.id) ? .green : .gray)
+        return HStack(spacing: 2) {
+            if !isLocal {
+                Button {
+                    chatTab = .web
+                } label: {
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(webColor)
+                            .frame(width: 7, height: 7)
+                        Text(localization.text("web_mode"))
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .padding(.horizontal, 12)
+                    .frame(height: 24)
+                    .background(
+                        chatTab == .web ? Color(nsColor: .windowBackgroundColor) : Color.clear,
+                        in: Capsule()
+                    )
+                    .shadow(color: chatTab == .web ? Color.black.opacity(0.16) : Color.clear, radius: 2, y: 0.5)
+                    .contentShape(Capsule())
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 5)
-                .background(
-                    chatTab == .web ? brandBlue.opacity(0.22) : Color.clear,
-                    in: RoundedRectangle(cornerRadius: 6)
-                )
-                .contentShape(Rectangle())
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
 
             Button {
                 chatTab = .api
             } label: {
-                HStack(spacing: 5) {
+                HStack(spacing: 6) {
                     Circle()
                         .fill(apiColor)
-                        .frame(width: 6, height: 6)
+                        .frame(width: 7, height: 7)
                     Text(localization.text("client_mode"))
                         .font(.system(size: 12, weight: .medium))
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 5)
+                .padding(.horizontal, 12)
+                .frame(height: 24)
                 .background(
-                    chatTab == .api ? brandBlue.opacity(0.22) : Color.clear,
-                    in: RoundedRectangle(cornerRadius: 6)
+                    chatTab == .api ? Color(nsColor: .windowBackgroundColor) : Color.clear,
+                    in: Capsule()
                 )
-                .contentShape(Rectangle())
+                .shadow(color: chatTab == .api ? Color.black.opacity(0.16) : Color.clear, radius: 2, y: 0.5)
+                .contentShape(Capsule())
             }
             .buttonStyle(.plain)
         }
         .padding(3)
-        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
-        .frame(width: 210)
+        .background(Color(nsColor: .controlBackgroundColor), in: Capsule())
     }
 
     private var chatPane: some View {
-        VStack(spacing: 0) {
+        let agent = agentStore.activeAgent
+        return VStack(spacing: 0) {
             HStack(spacing: 8) {
-                Button {
-                } label: {
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 18, height: 18)
-                        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 5))
-                }
-                .buttonStyle(.plain)
-                .onHover { hovering in
-                    if !manageAgents && !showAgentPicker && mode != .manage {
-                        setHovered(hovering)
-                    }
-                }
-                .help(localization.text("toggle_sidebar"))
-
-                avatar(agentStore.activeAgent)
-                Text(localization.agentName(agentStore.activeAgent.name))
-                    .font(.system(size: 13, weight: .semibold))
-                    .lineLimit(1)
-
-                ForEach(agentStore.recentAgents) { agent in
-                    Button {
-                        agentStore.select(agent.id)
-                        webPool.markRead(agent.id)
-                        Analytics.track(kind: "agent_open", name: agent.id)
-                        mode = .chat
-                        sidebarHovered = false
-                    } label: {
-                        avatar(agent)
-                    }
-                    .buttonStyle(.plain)
-                    .help(localization.agentName(agent.name))
-                }
+                topAgentStrip(collapsed: false)
 
                 Spacer(minLength: 0)
 
+                Text(localization.agentName(agent.name))
+                    .font(.system(size: 14, weight: .semibold))
+                    .lineLimit(1)
+
                 Button {
-                    openExternal(agentStore.activeAgent.urlString)
+                    openExternal(localService.website(forAgent: agent))
                 } label: {
-                    Image(systemName: "safari")
-                        .font(.system(size: 13, weight: .semibold))
+                    Text(websiteDomain(localService.website(forAgent: agent)))
+                        .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(.secondary)
-                        .frame(width: 22, height: 22)
+                        .underline()
+                        .lineLimit(1)
                 }
                 .buttonStyle(.plain)
-                .help(localization.text("browser"))
-
-                tabSelector
+                .onHover { inside in
+                    if inside {
+                        NSCursor.pointingHand.push()
+                    } else {
+                        NSCursor.pop()
+                    }
+                }
             }
-            .padding(.horizontal, 16)
-            .frame(height: 44)
-            .background(Color(nsColor: .textBackgroundColor))
+            .padding(.horizontal, 10)
+            .frame(height: 30)
+            .background(
+                RoundedRectangle(cornerRadius: 15)
+                    .fill(Color(nsColor: .controlBackgroundColor).opacity(0.9))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 15)
+                            .stroke(Color(nsColor: .separatorColor), lineWidth: 0.5)
+                    )
+            )
+            .padding(.horizontal, 12)
+            .padding(.top, 8)
+            .padding(.bottom, 6)
             switch chatTab {
             case .web:
-                WebViewPoolView(agent: agentStore.activeAgent, pool: webPool)
-                    .id(agentStore.activeAgent.id)
-                    .padding(6)
-            case .api:
-                ClientChatView(agent: agentStore.activeAgent) {
-                    pendingSettingsTab = 1
-                    mode = .manage
+                if agent.isLocal {
+                    ClientChatView(
+                        agent: agent,
+                        onOpenSettings: {
+                            pendingSettingsTab = 1
+                            pendingManageConfigID = nil
+                            mode = .manage
+                        },
+                        onAddCredential: {
+                            addCredential(forAgentID: agent.id)
+                        }
+                    )
+                    .id(agent.id)
+                } else {
+                    WebViewPoolView(agent: agent, pool: webPool)
+                        .id(agent.id)
+                        .padding(6)
                 }
-                .id(agentStore.activeAgent.id)
+            case .api:
+                ClientChatView(
+                    agent: agent,
+                    onOpenSettings: {
+                        pendingSettingsTab = 1
+                        pendingManageConfigID = nil
+                        mode = .manage
+                    },
+                    onAddCredential: {
+                        addCredential(forAgentID: agent.id)
+                    }
+                )
+                .id(agent.id)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            if agentStore.activeAgent.isLocal { chatTab = .api }
+        }
+        .onChange(of: agentStore.activeAgent.id) { _ in
+            chatTab = agentStore.activeAgent.isLocal ? .api : .web
+        }
     }
 
     private var rightFooterBar: some View {
-        HStack(spacing: 8) {
-            Button {
-                openExternal("https://www.agentsbin.com")
-            } label: {
-                Image(systemName: "globe")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 20, height: 20)
-            }
-            .buttonStyle(.plain)
-            .help("https://www.agentsbin.com")
-
-            Text("AgentsBin V\(appVersion)")
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(.tertiary)
-            Spacer()
-            HStack(spacing: 6) {
-                Image(systemName: "globe")
-                    .foregroundStyle(.secondary)
-                Picker("", selection: $localization.language) {
-                    ForEach(AppLanguage.allCases, id: \.self) { lang in
-                        Text(lang.displayName).tag(lang)
-                    }
+        ZStack {
+            HStack(spacing: 8) {
+                Button {
+                    openExternal("https://www.agentsbin.com")
+                } label: {
+                    Image(systemName: "globe")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 18, height: 18)
                 }
-                .pickerStyle(.menu)
-                .labelsHidden()
-                .frame(width: 86)
+                .buttonStyle(.plain)
+                .help("https://www.agentsbin.com")
+
+                Text("AgentsBin V\(appVersion)")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.tertiary)
+
+                Spacer(minLength: 0)
+
+                HStack(spacing: 6) {
+                    Button {
+                        agentPanelOpen.toggle()
+                    } label: {
+                        Image(systemName: "wrench.adjustable")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 18, height: 18)
+                    }
+                    .buttonStyle(.plain)
+                    .help(localization.text("edit_agents"))
+
+                    Button {
+                        agentPanelOpen = false
+                        pendingSettingsTab = 0
+                        pendingManageConfigID = nil
+                        mode = .manage
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 18, height: 18)
+                    }
+                    .buttonStyle(.plain)
+                    .help(localization.text("settings"))
+                }
             }
-            Button {
-                pendingSettingsTab = 0
-                mode = .manage
-            } label: {
-                Image(systemName: "gearshape")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 22, height: 22)
+            if mode == .chat {
+                tabSelector
             }
-            .buttonStyle(.plain)
-            .help(localization.text("settings"))
-            Button {
-                NSApp.terminate(nil)
-            } label: {
-                Image(systemName: "power")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 22, height: 22)
-            }
-            .buttonStyle(.plain)
-            .help(localization.text("quit"))
         }
+        .padding(.horizontal, 10)
+        .frame(height: 30)
+        .background(
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color(nsColor: .controlBackgroundColor).opacity(0.9))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(Color(nsColor: .separatorColor), lineWidth: 0.5)
+                )
+        )
         .padding(.horizontal, 12)
-        .frame(height: 44)
-        .background(Color(nsColor: .textBackgroundColor))
+        .padding(.bottom, 8)
     }
 
     private var appVersion: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
+    }
+
+    private func openExternal(_ urlString: String) {
+        guard let url = URL(string: urlString.hasPrefix("http") ? urlString : "https://" + urlString) else { return }
+        NSWorkspace.shared.open(url)
+    }
+
+    private func websiteDomain(_ urlString: String) -> String {
+        let trimmed = urlString.hasPrefix("http") ? urlString : "https://" + urlString
+        guard let host = URL(string: trimmed)?.host else { return urlString }
+        return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
+    }
+}
+
+struct CollapsedBarRootView: View {
+    @EnvironmentObject private var agentStore: AgentStore
+    @EnvironmentObject private var webPool: WebViewPool
+    @EnvironmentObject private var faviconStore: FaviconStore
+    @EnvironmentObject private var localization: LocalizedStore
+    @ObservedObject private var localService = LocalModelService.shared
+
+    @State private var panelHintAgent: String?
+    @State private var agentStripPage = 0
+
+    private let topLogoSize: CGFloat = 24
+    private let topLogoSpacing: CGFloat = 8
+    private let topVisibleCount = 10
+
+    var body: some View {
+        HStack(spacing: 8) {
+            topAgentStrip
+
+            Button {
+                NotificationCenter.default.post(name: .agentsbinToggleCollapse, object: nil)
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 10, weight: .bold))
+                    Text(panelHintText(for: agentStore.activeAgent))
+                        .font(.system(size: 11, weight: .medium))
+                        .lineLimit(1)
+                }
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 9)
+                .frame(height: 24)
+                .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(Color.primary.opacity(0.12), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .help(panelHintText(for: agentStore.activeAgent))
+
+            Spacer(minLength: 0)
+
+            AgentPanelButton(isOpen: false) {
+                NotificationCenter.default.post(name: .agentsbinToggleCollapse, object: nil)
+                NotificationCenter.default.post(name: .agentsbinOpenAgentPanel, object: nil)
+            }
+
+            CollapseWindowButton()
+                .padding(.leading, 2)
+        }
+        .padding(.horizontal, 16)
+        .frame(minWidth: 720, maxWidth: .infinity, minHeight: 44, maxHeight: 44)
+        .background(Color(nsColor: .textBackgroundColor))
+        .onChange(of: agentStore.activeID) { _ in
+            agentStripPage = 0
+        }
+    }
+
+    private var topAgentStrip: some View {
+        let order = agentStripOrder()
+        let others = Array(order.dropFirst())
+        let pageCount = max(1, Int(ceil(Double(others.count) / Double(topVisibleCount - 1))))
+        let page = min(max(0, agentStripPage), pageCount - 1)
+        let start = page * (topVisibleCount - 1)
+        let end = min(others.count, start + topVisibleCount - 1)
+        return HStack(spacing: topLogoSpacing) {
+            if let current = order.first {
+                topLogoButton(current, isCurrent: true)
+            }
+            if !others.isEmpty {
+                Rectangle()
+                    .fill(Color.primary.opacity(0.14))
+                    .frame(width: 1, height: 20)
+                ForEach(others[start..<end]) { agent in
+                    topLogoButton(agent)
+                }
+                if pageCount > 1 {
+                    moreAgentsButton()
+                }
+            }
+        }
+        .frame(height: topLogoSize)
+    }
+
+    private func topLogoButton(_ agent: Agent, isCurrent: Bool = false) -> some View {
+        Button {
+            selectAgentAndExpand(agent)
+        } label: {
+            if isCurrent {
+                activeLogo(agent)
+            } else {
+                avatar(agent, size: topLogoSize)
+            }
+        }
+        .buttonStyle(.plain)
+        .help(panelHintText(for: agent))
+        .onHover { hovering in
+            panelHintAgent = hovering ? localization.agentName(agent.name) : nil
+        }
+        .contextMenu {
+            Button(localization.text("visit_website")) {
+                openExternal(localService.website(forAgent: agent))
+            }
+        }
+    }
+
+    private func activeLogo(_ agent: Agent) -> some View {
+        avatar(agent, size: topLogoSize)
+            .background(
+                RoundedRectangle(cornerRadius: topLogoSize * 0.42)
+                    .fill(brandBlue.opacity(0.35))
+                    .frame(width: topLogoSize + 10, height: topLogoSize + 10)
+                    .blur(radius: 6)
+            )
+            .shadow(color: brandBlue.opacity(0.75), radius: 5)
+    }
+
+    private func moreAgentsButton() -> some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                let others = agentStripOrder().dropFirst().count
+                let pageCount = max(1, Int(ceil(Double(others) / Double(topVisibleCount - 1))))
+                agentStripPage = (agentStripPage + 1) % pageCount
+            }
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .frame(width: topLogoSize + 2, height: topLogoSize + 2)
+                .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 7)
+                        .stroke(Color.primary.opacity(0.14), lineWidth: 1)
+                )
+        }
+        .buttonStyle(.plain)
+        .help(localization.text("more_agents"))
+    }
+
+    private func selectAgentAndExpand(_ agent: Agent) {
+        agentStore.select(agent.id)
+        webPool.markRead(agent.id)
+        Analytics.track(kind: "agent_open", name: agent.id)
+        NotificationCenter.default.post(name: .agentsbinToggleCollapse, object: nil)
+    }
+
+    private func panelHintText(for agent: Agent) -> String {
+        let name = panelHintAgent ?? localization.agentName(agent.name)
+        return name + " \u{00b7} " + localization.text("click_to_open")
+    }
+
+    private func agentStripOrder() -> [Agent] {
+        let enabled = agentStore.enabledAgents
+        guard let active = enabled.first(where: { $0.id == agentStore.activeID }) else {
+            return enabled
+        }
+        let recents = agentStore.recentAgents.filter { $0.isEnabled && $0.id != active.id }
+        let remaining = enabled.filter { agent in
+            agent.id != active.id && !recents.contains { $0.id == agent.id }
+        }
+        return [active] + recents + remaining
+    }
+
+    private func avatar(_ agent: Agent, size: CGFloat = 16) -> some View {
+        let corner = max(4, size * 0.25)
+        let base: AnyView
+        if let image = faviconStore.images[agent.id] {
+            base = AnyView(
+                Image(nsImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: size, height: size)
+                    .clipShape(RoundedRectangle(cornerRadius: corner))
+            )
+        } else {
+            base = AnyView(
+                Text(agent.letter)
+                    .font(.system(size: max(9, size * 0.56), weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: size, height: size)
+                    .background(Color(hex: agent.colorHex), in: RoundedRectangle(cornerRadius: corner))
+            )
+        }
+        return AnyView(
+            base
+                .overlay(
+                    RoundedRectangle(cornerRadius: corner)
+                        .stroke(Color.primary.opacity(0.18), lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.28), radius: 1.5, y: 1)
+        )
     }
 
     private func openExternal(_ urlString: String) {
@@ -719,6 +1244,7 @@ struct ManageView: View {
     @EnvironmentObject private var apiKeyStore: APIKeyStore
     @EnvironmentObject private var localization: LocalizedStore
     let onBack: () -> Void
+    let initialConfigID: String?
     @State private var selectedConfigID: String?
     @State private var settingsTab = 0
     @State private var generalItem = 0
@@ -731,9 +1257,11 @@ struct ManageView: View {
     @State private var launchAtLogin = false
     @State private var darkModeEnabled = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
 
-    init(onBack: @escaping () -> Void, initialTab: Int = 0) {
+    init(onBack: @escaping () -> Void, initialTab: Int = 0, initialConfigID: String? = nil) {
         self.onBack = onBack
+        self.initialConfigID = initialConfigID
         _settingsTab = State(initialValue: initialTab)
+        _selectedConfigID = State(initialValue: initialConfigID)
     }
 
     var body: some View {
@@ -775,6 +1303,7 @@ struct ManageView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
             Spacer()
+            CollapseWindowButton()
         }
         .padding(.horizontal, 12)
         .frame(height: 44)
@@ -1134,7 +1663,10 @@ struct ManageView: View {
                 .disabled(apiKeyStore.apiKey(for: credential.id).isEmpty)
             }
 
-            HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(localization.text("base_url"))
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
                 TextField(localization.text("base_url"), text: Binding(
                     get: { credential.baseURL },
                     set: { value in
@@ -1144,6 +1676,12 @@ struct ManageView: View {
                     }
                 ))
                 .textFieldStyle(.roundedBorder)
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(localization.text("model"))
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
                 TextField(localization.text("model"), text: Binding(
                     get: { credential.model },
                     set: { value in
@@ -1153,7 +1691,6 @@ struct ManageView: View {
                     }
                 ))
                 .textFieldStyle(.roundedBorder)
-                .frame(width: 180)
             }
 
             HStack(spacing: 8) {

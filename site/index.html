@@ -1,116 +1,354 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title id="pageTitle">AgentsBin · All-in-One AI Chat Hub for macOS | ChatGPT, Claude, Gemini, DeepSeek, Qwen</title>
-  <meta name="description" id="pageDesc" content="AgentsBin is the all-in-one AI chat hub for macOS. Launch ChatGPT, Claude, Gemini, DeepSeek, Qwen, Grok and 30+ AI agents from the menu bar. Switch between web chat and API mode, manage API keys locally, and stay one click away from every major AI assistant. Free beta for macOS 13+.">
-  <meta name="keywords" content="AI chat hub, AI agents, ChatGPT, Claude, Gemini, DeepSeek, Qwen, Grok, Kimi, AI assistant, macOS AI app, menu bar AI, AI aggregator, multi AI chat, API key manager, AI launcher">
-  <meta name="robots" content="index, follow">
-  <meta name="theme-color" content="#0b0f14">
-  <link rel="canonical" href="https://www.agentsbin.com/">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="AgentsBin">
-  <meta property="og:title" content="AgentsBin · All-in-One AI Chat Hub for macOS | ChatGPT, Claude, Gemini, DeepSeek, Qwen">
-  <meta property="og:description" content="Launch ChatGPT, Claude, Gemini, DeepSeek, Qwen and 30+ AI agents from the macOS menu bar. Web chat or API mode, local encrypted API keys. Free beta.">
-  <meta property="og:url" content="https://www.agentsbin.com/">
-  <meta property="og:image" content="https://www.agentsbin.com/assets/screenshots/default.png">
-  <meta property="og:image:alt" content="AgentsBin default chat screen">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="AgentsBin · All-in-One AI Chat Hub for macOS">
-  <meta name="twitter:description" content="ChatGPT, Claude, Gemini, DeepSeek, Qwen and 30+ AI agents in the macOS menu bar. Web or API mode, local keys.">
-  <meta name="twitter:image" content="https://www.agentsbin.com/assets/screenshots/default.png">
-  <link rel="stylesheet" href="styles.css?v=1.1.7">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "AgentsBin",
-    "applicationCategory": "UtilityApplication",
-    "operatingSystem": "macOS 13+",
-    "description": "All-in-one AI chat hub for macOS. 37 mainstream AI agents including ChatGPT, Claude, Gemini, DeepSeek, Qwen, Grok, web chat and API mode, encrypted local API key vault.",
-    "keywords": "AI chat hub, AI agents, ChatGPT, Claude, Gemini, DeepSeek, Qwen, Grok, Kimi, AI assistant, macOS AI app, menu bar AI, AI aggregator, multi AI chat, API key manager",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "downloadUrl": "https://www.agentsbin.com/downloads/AgentsBin-1.1.4.dmg",
-    "fileSize": "0.9MB",
-    "author": {
-      "@type": "Person",
-      "name": "Jacky Zhao",
-      "email": "mailto:zhaolongfei@gmail.com",
-      "sameAs": [
-        "https://github.com/zhaolongfei-shareye",
-        "https://x.com/longfei_shareye"
-      ]
-    }
-  }
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebSite",
-        "name": "AgentsBin",
-        "url": "https://www.agentsbin.com/",
-        "description": "All-in-one AI chat hub for macOS with 37 mainstream AI agents.",
-        "inLanguage": "en"
-      },
-      {
-        "@type": "Organization",
-        "name": "AgentsBin",
-        "url": "https://www.agentsbin.com/",
-        "email": "mailto:zhaolongfei@gmail.com",
-        "founder": {
-          "@type": "Person",
-          "name": "Jacky Zhao"
-        }
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Which AI agents does AgentsBin support?",
-            "acceptedAnswer": { "@type": "Answer", "text": "AgentsBin supports 37 mainstream AI agents including ChatGPT, Claude, Gemini, DeepSeek, Qwen, Kimi, Grok, Doubao and more, plus custom agents you add yourself." }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I chat with both the web page and the API?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Yes. Web mode opens the official chat page, while API mode calls the provider directly using your own API keys, with per-agent verification." }
-          },
-          {
-            "@type": "Question",
-            "name": "Is AgentsBin free?",
-            "acceptedAnswer": { "@type": "Answer", "text": "The beta is free for macOS 13 and later. When you use your own API keys, providers may bill you for usage." }
-          },
-          {
-            "@type": "Question",
-            "name": "How are my API keys stored?",
-            "acceptedAnswer": { "@type": "Answer", "text": "API keys are encrypted locally with AES on your Mac and are never uploaded to the cloud." }
-          }
-        ]
-      }
-    ]
-  }
-  </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentsBin — Home V9</title>
+<style>
+:root {
+  --bg: #080a0f;
+  --panel: rgba(17,22,29,0.72);
+  --panel2: #141a23;
+  --line: rgba(255,255,255,0.1);
+  --text: #f2f5f8;
+  --muted: #8b98a8;
+  --blue: #0a84ff;
+  --cyan: #22d3ee;
+  --green: #34c759;
+  --amber: #ffb020;
+  --purple: #7c3aed;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "PingFang SC", sans-serif;
+  line-height: 1.6;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(900px 420px at 18% -5%, rgba(10,132,255,0.28), transparent 60%),
+    radial-gradient(760px 420px at 85% 12%, rgba(34,211,238,0.18), transparent 60%),
+    linear-gradient(180deg, #080a0f 0%, #0c1320 100%);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(circle at 70% 30%, #000 0%, transparent 70%);
+}
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(8,10,15,0.82);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(16px);
+}
+.nav-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand { font-weight: 800; font-size: 18px; text-decoration: none; color: var(--text); }
+.nav-links { display: flex; align-items: center; gap: 22px; font-size: 14px; }
+.nav-links a { text-decoration: none; color: var(--muted); }
+.lang { background: rgba(255,255,255,0.05); border: 1px solid var(--line); color: var(--muted); font: inherit; font-size: 12px; border-radius: 8px; padding: 6px 10px; }
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 12px 22px;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(10,132,255,0.35);
+}
+.button.ghost { background: rgba(255,255,255,0.07); color: var(--text); box-shadow: none; border: 1px solid var(--line); }
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 86px 24px 70px;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 56px;
+  align-items: center;
+}
+.hero > div:first-child { position: relative; z-index: 2; }
+.hero-bg {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 72%;
+  z-index: 0;
+  overflow: hidden;
+}
+.hero-bg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #080a0f 0%, rgba(8,10,15,0.6) 32%, rgba(8,10,15,0.08) 58%);
+}
+.hero h1 { font-size: 58px; line-height: 1.05; letter-spacing: -0.03em; }
+.grad { background: linear-gradient(90deg, #0a84ff, #22d3ee); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero .lead { font-size: 18px; color: var(--muted); max-width: 520px; margin: 18px 0 28px; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.trust { display: block; margin-top: 14px; font-size: 12px; color: var(--muted); }
+
+.hero-visual { position: relative; height: 420px; }
+.hero-photo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 90px rgba(0,0,0,0.55);
+  background: #0d1117;
+}
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8,10,15,0.08) 0%, rgba(8,10,15,0.5) 100%);
+}
+.float-card {
+  position: absolute;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+.float-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fc-1 { width: 340px; height: 220px; left: 20px; top: 10px; transform: rotate(-2deg); }
+.fc-2 { width: 250px; height: 170px; right: 0; top: 150px; transform: rotate(3deg); }
+.fc-3 { width: 220px; height: 150px; left: 90px; bottom: 0; transform: rotate(-1deg); }
+.glow-dot {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34,211,238,0.45), transparent 70%);
+  filter: blur(6px);
+  right: 60px;
+  top: 30px;
+}
+.hero-visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(34,211,238,0.05) 0 1px, transparent 1px 7px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 2;
+  border-radius: 20px;
+}
+.scanline {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(34,211,238,0.9), transparent);
+  animation: scan 2.6s linear infinite;
+  z-index: 3;
+}
+@keyframes scan { from { top: 6%; } to { top: 96%; } }
+.ring {
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  border: 1px dashed rgba(34,211,238,0.55);
+  left: 300px;
+  top: 250px;
+  animation: spin 14s linear infinite;
+  z-index: 3;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.live-badge {
+  position: absolute;
+  left: 18px;
+  top: 14px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(255,59,48,0.88);
+  border-radius: 20px;
+  padding: 5px 11px;
+  box-shadow: 0 6px 18px rgba(255,59,48,0.4);
+}
+.pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  70% { box-shadow: 0 0 0 10px rgba(255,59,48,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,59,48,0); }
+}
+.data-chip {
+  position: absolute;
+  z-index: 4;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cyan);
+  background: rgba(8,12,18,0.8);
+  border: 1px solid rgba(34,211,238,0.35);
+  border-radius: 20px;
+  padding: 5px 11px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.4);
+}
+.visit-btn { padding: 10px 18px; font-size: 13px; }
+.mini-card { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.mini-chat { display: flex; gap: 12px; align-items: center; padding: 16px; }
+.mini-dots { display: flex; flex-direction: column; gap: 8px; }
+.mini-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.mini-bubbles { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.mini-bubble { height: 12px; border-radius: 8px; background: rgba(255,255,255,0.12); }
+.mini-bubble.b1 { width: 70%; }
+.mini-bubble.b2 { width: 90%; }
+.mini-wm { position: relative; width: 100%; height: 100%; background: linear-gradient(180deg, #1b3a5c 0%, #2f6f8f 55%, #17281f 100%); }
+.wm-mask { position: absolute; right: 16%; bottom: 14%; width: 28%; height: 32%; border: 2px dashed #ff9f43; border-radius: 6px; }
+.wm-check { position: absolute; right: 10%; top: 10%; width: 22px; height: 22px; border-radius: 50%; background: #34c759; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; }
+.mini-chart { display: flex; gap: 12px; align-items: center; padding: 14px; }
+.mini-metrics { display: flex; flex-direction: column; gap: 6px; font-size: 10px; font-weight: 800; color: #22d3ee; }
+
+main { max-width: 1160px; margin: 0 auto; padding: 0 24px 90px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; }
+.section-head h2 { font-size: 30px; }
+.section-head .sub { color: var(--muted); font-size: 14px; }
+
+.feature-grid { display: flex; flex-direction: column; gap: 22px; margin-bottom: 60px; }
+.feature-card {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 30px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 22px;
+  backdrop-filter: blur(14px);
+  align-items: center;
+}
+.feature-card .preview {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #0d1117;
+  height: 240px;
+}
+.feature-card .preview img { width: 100%; height: 100%; object-fit: cover; }
+.info { display: flex; flex-direction: column; gap: 12px; }
+.logo-row { display: flex; align-items: center; gap: 14px; }
+.logo-row img, .logo-row .icon { width: 56px; height: 56px; border-radius: 15px; object-fit: cover; }
+.icon { display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; }
+.icon.qs { background: linear-gradient(135deg, #2563eb, #7c3aed); font-size: 22px; }
+.icon.tts { background: linear-gradient(135deg, #0ea5e9, #6366f1); }
+.app-name { font-size: 23px; font-weight: 800; }
+.ver { font-size: 12px; color: var(--muted); font-weight: 600; margin-left: 8px; }
+.tagline { font-size: 15px; font-weight: 600; color: var(--cyan); }
+.desc { color: var(--muted); font-size: 14px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--muted); background: var(--panel2); border: 1px solid var(--line); border-radius: 20px; padding: 5px 11px; }
+.tag i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.foot { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+.status { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+.status.live { color: var(--green); background: rgba(52,199,89,0.14); }
+.status.dev { color: var(--amber); background: rgba(255,176,32,0.14); }
+.card-link { font-size: 14px; font-weight: 700; color: var(--cyan); text-decoration: none; }
+
+.dev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 60px; }
+.dev-card {
+  position: relative;
+  background: linear-gradient(150deg, rgba(10,132,255,0.16) 0%, rgba(34,211,238,0.05) 38%, rgba(17,22,29,0.9) 100%);
+  border: 1px solid rgba(34,211,238,0.16);
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(14px);
+}
+.dev-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(90deg, #0a84ff, #22d3ee, transparent);
+}
+.dev-card .preview { height: 210px; background: #0d1117; }
+.dev-card .preview img { width: 100%; height: 100%; object-fit: cover; }
+.dev-card .info { padding: 20px; }
+.section-head { margin-top: 20px; }
+main .section-head:first-of-type { margin-top: 64px; }
+
+footer { border-top: 1px solid var(--line); padding: 26px 24px; text-align: center; color: var(--muted); font-size: 13px; }
+
+.nav-group { display:flex; align-items:center; gap:10px; }
+.nav-actions { display:flex; align-items:center; gap:14px; }
+.nav-actions a { color:var(--muted); text-decoration:none; font-size:14px; }
+.crumb { font-size:13px; color:var(--muted); }
+.lang-toggle { background:rgba(255,255,255,0.05); border:1px solid var(--line); color:var(--muted); font:inherit; font-size:12px; border-radius:8px; padding:6px 10px; }
+.products-btn { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); border:1px solid var(--line); color:var(--text); font:inherit; font-size:13px; font-weight:700; border-radius:8px; padding:7px 11px; cursor:pointer; }
+.products-overlay { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,0.55); display:flex; align-items:flex-start; justify-content:center; padding-top:70px; }
+.products-overlay[hidden] { display:none; }
+.products-panel { width:min(760px,92vw); background:#10141b; border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 30px 80px rgba(0,0,0,0.6); }
+.panel-head { display:flex; align-items:center; justify-content:space-between; font-weight:700; margin-bottom:14px; }
+.panel-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.product-card { display:flex; flex-direction:column; gap:4px; background:#141a23; border:1px solid var(--line); border-radius:12px; padding:14px; text-decoration:none; color:var(--text); }
+.pc-name { font-weight:700; }
+.pc-sub { font-size:11px; color:var(--muted); }
+.pc-desc { font-size:12px; color:var(--muted); }
+.pc-foot { display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
+.pc-status { font-size:11px; font-weight:700; padding:3px 8px; border-radius:20px; }
+.pc-status.live { color:#34c759; background:rgba(52,199,89,0.14); }
+.pc-status.soon { color:#ffb020; background:rgba(255,176,32,0.14); }
+.pc-arrow { color:var(--cyan); }
+.close-products { background:transparent; border:0; color:var(--muted); font-size:20px; cursor:pointer; }
+
+.panel-search { display:flex; align-items:center; gap:8px; margin:10px 0; }
+.panel-search input { flex:1; background:#0d1117; border:1px solid var(--line); border-radius:8px; color:var(--text); font:inherit; font-size:12px; padding:8px 10px; }
+.panel-filter, .panel-cats { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+.panel-filter button, .panel-cats button { background:rgba(255,255,255,0.05); border:1px solid var(--line); color:var(--muted); font:inherit; font-size:12px; border-radius:8px; padding:6px 10px; cursor:pointer; }
+.panel-filter button.on, .panel-cats button.on { background:var(--cyan); color:#05121a; border-color:var(--cyan); }
+.product-card[hidden] { display:none; }
+</style>
 </head>
 <body>
   <header class="nav">
     <div class="nav-inner">
       <div class="nav-group">
-        <a class="brand" href="#">
-          <img src="assets/appicon.png" alt="AgentsBin logo" width="28" height="28">
-          <span>AgentsBin.com</span>
-        </a>
-        <button class="products-btn" id="productsBtn" type="button" aria-haspopup="dialog">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-          <span data-i18n="nav_products">Products</span>
-        </button>
+        <a class="brand" href="/">AgentsBin.com</a>
+        <span class="crumb">| <span data-i18n="nav_home">Home</span></span>
+        <button class="products-btn" id="productsBtn" type="button"><span data-i18n="nav_products">Products</span></button>
       </div>
       <div class="nav-actions">
+        <a href="/#about" data-i18n="nav_about">About</a>
         <select class="lang-toggle" id="langSelect" aria-label="Language">
           <option value="en">English</option>
           <option value="zh">简体中文</option>
@@ -120,237 +358,181 @@
           <option value="es">Español</option>
           <option value="fr">Français</option>
           <option value="de">Deutsch</option>
-          <option value="ru">Русский</option>
-          <option value="pt">Português</option>
         </select>
-        <a class="button button-small" href="#download" data-i18n="nav_download">Download</a>
       </div>
     </div>
   </header>
-
   <div class="products-overlay" id="productsOverlay" hidden>
-    <div class="products-panel" role="dialog" aria-modal="true" aria-label="AgentsBin products">
-      <div class="panel-head">
-        <span class="panel-title" data-i18n="pm_title">Explore products</span>
-        <div class="panel-search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input id="productSearch" type="search" data-i18n-ph="pm_search" placeholder="Search products">
-        </div>
-        <div class="panel-filter" id="productFilter">
-          <button class="on" data-filter="all" data-i18n="pm_all">All</button>
-          <button data-filter="released" data-i18n="pm_released">Released</button>
-          <button data-filter="soon" data-i18n="pm_soon">Coming Soon</button>
-        </div>
+    <div class="products-panel">
+      <div class="panel-head"><span data-i18n="popup_title">Explore products</span><button class="close-products" id="closeProducts" type="button">×</button></div>
+      <div class="panel-search"><input id="productSearch" type="search" placeholder="Search products" data-i18n-ph="popup_search"></div>
+      <div class="panel-filter" id="productFilter">
+        <button class="on" data-filter="all" data-i18n="filter_all">All</button>
+        <button data-filter="released" data-i18n="filter_released">Released</button>
+        <button data-filter="soon" data-i18n="filter_soon">Coming Soon</button>
       </div>
       <div class="panel-cats" id="productCats">
-        <button class="on" data-cat="all" data-i18n="pm_cat_all">All</button>
-        <button data-cat="assistants" data-i18n="pm_cat_assistants">AI Assistants</button>
-        <button data-cat="audio" data-i18n="pm_cat_audio">Audio</button>
-        <button data-cat="media" data-i18n="pm_cat_media">Media Tools</button>
+        <button class="on" data-cat="all" data-i18n="cat_all">All</button>
+        <button data-cat="assistants" data-i18n="cat_assistants">AI Assistants</button>
+        <button data-cat="audio" data-i18n="cat_audio">Audio</button>
+        <button data-cat="media" data-i18n="cat_media">Media Tools</button>
       </div>
-      <div class="panel-grid" id="productGrid">
-        <a class="product-card" href="#download" data-search="AgentsBin macOS menu bar" data-cat="assistants" data-state="released">
-          <span class="pc-icon pc-icon-main">AB</span>
-          <span class="pc-name" data-i18n="p1n">AgentsBin</span>
-          <span class="pc-sub" data-i18n="p1s">macOS · Menu Bar</span>
-          <span class="pc-desc" data-i18n="p1d">37 AI agents in one menu bar, with encrypted API key backup and 10 languages.</span>
-          <span class="pc-foot"><span class="pc-status live" data-i18n="pm_live">Released</span><span class="pc-arrow">→</span></span>
+      <div class="panel-grid">
+        <a class="product-card" href="/agentsbin/" data-search="AgentsBin macOS menu bar AI chat hub 43 agents" data-cat="assistants" data-state="released">
+          <span class="pc-name" data-i18n="p_agentsbin">AgentsBin</span><span class="pc-sub">macOS · Menu Bar</span>
+          <span class="pc-desc" data-i18n="p_agentsbin_desc">All-in-one AI chat hub for macOS with 43 AI agents.</span>
+          <span class="pc-foot"><span class="pc-status live" data-i18n="status_released">Released</span><span class="pc-arrow">→</span></span>
         </a>
-        <div class="product-card soon" data-search="AgentsBin Audio audio transcription podcast" data-cat="audio" data-state="soon">
-          <span class="pc-icon pc-icon-audio">♪</span>
-          <span class="pc-name" data-i18n="p2n">AgentsBin Audio</span>
-          <span class="pc-sub" data-i18n="p2s">macOS · Audio AI</span>
-          <span class="pc-desc" data-i18n="p2d">Audio transcription, summaries and smart editing. In development.</span>
-          <span class="pc-foot"><span class="pc-status soon" data-i18n="pm_soon_s">Coming Soon</span></span>
+        <a class="product-card" href="/wf/" data-search="Watermark Factory AI watermark removal macOS offline" data-cat="media" data-state="released">
+          <span class="pc-name" data-i18n="p_wf">Watermark Factory</span><span class="pc-sub">macOS · Media Tools</span>
+          <span class="pc-desc" data-i18n="p_wf_desc">Local AI watermark identification and restoration. 30+ sources, offline.</span>
+          <span class="pc-foot"><span class="pc-status live" data-i18n="status_released">Released</span><span class="pc-arrow">→</span></span>
+        </a>
+        <div class="product-card" data-search="AgentsQS quant strategy backtest copilot" data-cat="media" data-state="soon">
+          <span class="pc-name" data-i18n="p_qs">AgentsQS</span><span class="pc-sub">macOS · Quant</span>
+          <span class="pc-desc" data-i18n="p_qs_desc">Quantitative strategy research and backtesting copilot.</span>
+          <span class="pc-foot"><span class="pc-status soon" data-i18n="status_soon">In Development</span></span>
         </div>
-        <div class="product-card soon" data-search="AgentsBin Watermark image video batch" data-cat="media" data-state="soon">
-          <span class="pc-icon pc-icon-media">◈</span>
-          <span class="pc-name" data-i18n="p3n">AgentsBin Watermark</span>
-          <span class="pc-sub" data-i18n="p3s">macOS · Media Tools</span>
-          <span class="pc-desc" data-i18n="p3d">Batch watermark and copyright protection for images and video. In development.</span>
-          <span class="pc-foot"><span class="pc-status soon" data-i18n="pm_soon_s">Coming Soon</span></span>
+        <div class="product-card" data-search="AgentsTTS podcast text to speech audio multilingual" data-cat="audio" data-state="soon">
+          <span class="pc-name" data-i18n="p_tts">AgentsTTS</span><span class="pc-sub">macOS · Audio</span>
+          <span class="pc-desc" data-i18n="p_tts_desc">Multilingual TTS and podcast episode tool.</span>
+          <span class="pc-foot"><span class="pc-status soon" data-i18n="status_soon">In Development</span></span>
         </div>
       </div>
     </div>
   </div>
 
+  <section class="hero">
+    <div>
+      <h1 data-i18n-html="home_hero_title">AI tools for macOS,<br>built <span class="grad">small and sharp</span>.</h1>
+      <p class="lead" data-i18n="home_hero_lead">Four tools. One local-first studio. Every app runs locally and ships clean.</p>
+      <div class="hero-actions">
+        <a class="button" href="#products" data-i18n="cta_explore">Explore products</a>
+        <a class="button ghost" href="/wf/" data-i18n="cta_wf">Watermark Factory</a>
+      </div>
+      <span class="trust" data-i18n="home_trust">Free · macOS 13+ · No account</span>
+    </div>
+    <div class="hero-bg">
+      <img src="assets/home/hero-visual.jpg" alt="">
+      <div class="scanline"></div>
+      <div class="ring" style="left:auto; right:70px; top:60px"></div>
+      <div class="live-badge" style="left:auto; right:24px; top:18px"><span class="pulse"></span><span data-i18n="home_live_badge">LIVE · LOCAL AI</span></div>
+      <div class="data-chip" style="right:24px; top:120px" data-i18n="home_chip_sources">30+ sources</div>
+      <div class="data-chip" style="right:150px; bottom:56px" data-i18n="home_chip_local">100% local</div>
+    </div>
+  </section>
 
-  <main>
-    <section class="hero">
-      <div class="hero-copy">
-        <h1 data-i18n="hero_title">All your AI agents, one menu bar away</h1>
-        <p class="lead" data-i18n="hero_lead">AgentsBin lives in the menu bar. Pick your default agents on first launch, then start chatting instantly — no tabs, no typing URLs.</p>
-        <div class="hero-actions">
-          <a class="button" href="downloads/AgentsBin-1.1.4.dmg" download data-i18n="hero_cta">Download AgentsBin 1.1.4</a>
-          <span class="muted" data-i18n="hero_badge">37 AI agents · macOS 13+ · Free</span>
+  <main id="products">
+    <div class="section-head">
+      <h2 data-i18n="section_released">Released</h2>
+      <span class="sub" data-i18n="section_released_sub">Available now, free to try.</span>
+    </div>
+    <div class="dev-grid">
+      <div class="dev-card">
+        <div class="info" style="min-height:240px">
+          <div class="logo-row"><img src="assets/appicon.png" alt=""><div class="app-name"><span data-i18n="p_agentsbin">AgentsBin</span> <span class="ver">V2.0.2</span></div></div>
+          <div class="tagline" data-i18n="ab_tagline">All your AI agents, one menu bar away.</div>
+          <div class="desc" data-i18n="p_agentsbin_desc">Launch 43 cloud and local AI agents from the macOS menu bar. Web chat or API mode, encrypted local keys, 10 languages.</div>
+          <div class="tags"><span class="tag"><i style="background:#0a84ff"></i><span data-i18n="tag_menu">Menu bar</span></span><span class="tag"><i style="background:#22d3ee"></i><span data-i18n="tag_43">43 agents</span></span><span class="tag"><i style="background:#34c759"></i><span data-i18n="tag_api">API mode</span></span></div>
+          <div class="foot"><span class="status live" data-i18n="status_released">Released</span><a class="button visit-btn" href="/agentsbin/" data-i18n="btn_download">下载</a></div>
         </div>
       </div>
-      <div class="app-window" aria-label="AgentsBin app preview">
-        <div class="window-bar">
-          <span class="traffic traffic-close"></span>
-          <span class="traffic traffic-min"></span>
-          <span class="traffic traffic-full"></span>
-          <span class="window-title">AgentsBin</span>
-        </div>
-        <div class="window-body">
-          <aside class="window-side">
-            <div class="side-tabs"><span class="active" data-i18n="w_agents">Agents</span></div>
-            <div class="side-item active"><span class="dot blue"></span>ChatGPT</div>
-            <div class="side-item"><span class="dot teal"></span>Claude</div>
-            <div class="side-item"><span class="dot green"></span>DeepSeek</div>
-            <div class="side-item"><span class="dot orange"></span>Gemini</div>
-            <div class="side-item"><span class="dot purple"></span>Qwen</div>
-          </aside>
-          <div class="window-main">
-            <div class="chat-head">
-              <span class="avatar">C</span>
-              <strong>ChatGPT</strong>
-              <span class="status" data-i18n="w_status">Answered</span>
-            </div>
-            <div class="chat-body">
-              <div class="bubble user" data-i18n="w_user">Explain RAG in three points</div>
-              <div class="bubble bot" data-i18n="w_bot">RAG retrieves external knowledge, fuses it with generation, and cites sources to reduce hallucinations.</div>
-            </div>
-            <div class="chat-composer">
-              <span class="composer-text" data-i18n="w_placeholder">Type a question…</span>
-              <span class="composer-send" data-i18n="w_send">Send</span>
-            </div>
-          </div>
+      <div class="dev-card">
+        <div class="info" style="min-height:240px">
+          <div class="logo-row"><img src="assets/home/wf-logo.png" alt=""><div class="app-name"><span data-i18n="p_wf">Watermark Factory</span> <span class="ver">V1.0.2</span></div></div>
+          <div class="tagline" data-i18n="wf_tagline">Restore clean images, 100% locally.</div>
+          <div class="desc" data-i18n="p_wf_desc">Identify and restore watermarked images from 30+ AI platforms and common sources. Offline, batch, private, macOS native.</div>
+          <div class="tags"><span class="tag"><i style="background:#22d3ee"></i><span data-i18n="tag_offline">Offline</span></span><span class="tag"><i style="background:#ffb020"></i><span data-i18n="tag_sources">30+ sources</span></span><span class="tag"><i style="background:#34c759"></i><span data-i18n="tag_batch">Batch</span></span></div>
+          <div class="foot"><span class="status live" data-i18n="status_released">Released</span><a class="button visit-btn" href="/wf/" data-i18n="btn_download">下载</a></div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section class="features">
-      <div class="feature">
-        <h3 data-i18n="f1t">Lives in the menu bar</h3>
-        <p data-i18n="f1d">Always one click away, always on top.</p>
-      </div>
-      <div class="feature">
-        <h3 data-i18n="f2t">Instant popup</h3>
-        <p data-i18n="f2d">Click the menu bar icon and start chatting in seconds.</p>
-      </div>
-      <div class="feature">
-        <h3 data-i18n="f3t">Manage your agents</h3>
-        <p data-i18n="f3d">37 mainstream agents, custom agents, drag-to-reorder sidebar.</p>
-      </div>
-      <div class="feature">
-        <h3 data-i18n="f4t">No URL hunting</h3>
-        <p data-i18n="f4d">No typing website addresses or digging through bookmarks.</p>
-      </div>
-    </section>
-
-    <section class="analytics">
-      <div class="analytics-head">
-        <div>
-          <h2 data-i18n="analytics_title">AgentsBin Analytics</h2>
-          <div class="analytics-sub" data-i18n="analytics_sub">Download and agent usage</div>
-        </div>
-        <span class="analytics-period" data-i18n="analytics_period">Last 30 days</span>
-      </div>
-      <div class="analytics-kpis">
-        <div class="analytics-kpi"><div class="analytics-kpi-label" data-i18n="kpi_downloads">Total Downloads</div><div class="analytics-kpi-value">1,284</div><div class="analytics-kpi-delta">▲ +126 this week</div></div>
-        <div class="analytics-kpi"><div class="analytics-kpi-label" data-i18n="kpi_opens">Agent Opens</div><div class="analytics-kpi-value">52,410</div><div class="analytics-kpi-delta">▲ 4.2% vs last week</div></div>
-        <div class="analytics-kpi"><div class="analytics-kpi-label" data-i18n="kpi_session">Avg. Session</div><div class="analytics-kpi-value">6m 18s</div><div class="analytics-kpi-delta">▲ 18s longer</div></div>
-        <div class="analytics-kpi"><div class="analytics-kpi-label" data-i18n="kpi_active">Active Agents</div><div class="analytics-kpi-value">37 / 37</div><div class="analytics-kpi-delta">All available</div></div>
-      </div>
-      <div class="analytics-panel">
-        <div class="analytics-panel-title" data-i18n="chart_title">Top AI agents by opens</div>
-        <div class="analytics-panel-sub" data-i18n="chart_sub">Opens through AgentsBin in the last 30 days</div>
-        <div class="analytics-row"><span class="analytics-rank top">1</span><span class="analytics-agent"><span class="analytics-logo" style="background:#10a37f">C</span>ChatGPT</span><span class="analytics-track"><span class="analytics-bar hot" style="width:100%"></span></span><span class="analytics-count">12,408<small>opens</small></span></div>
-        <div class="analytics-row"><span class="analytics-rank top">2</span><span class="analytics-agent"><span class="analytics-logo" style="background:#4285f4">G</span>Gemini</span><span class="analytics-track"><span class="analytics-bar" style="width:79%"></span></span><span class="analytics-count">9,875<small>opens</small></span></div>
-        <div class="analytics-row"><span class="analytics-rank top">3</span><span class="analytics-agent"><span class="analytics-logo" style="background:#d97757">C</span>Claude</span><span class="analytics-track"><span class="analytics-bar" style="width:65%"></span></span><span class="analytics-count">8,112<small>opens</small></span></div>
-        <div class="analytics-row"><span class="analytics-rank">4</span><span class="analytics-agent"><span class="analytics-logo" style="background:#4d6bfe">D</span>DeepSeek</span><span class="analytics-track"><span class="analytics-bar" style="width:58%"></span></span><span class="analytics-count">7,320<small>opens</small></span></div>
-        <div class="analytics-row"><span class="analytics-rank">5</span><span class="analytics-agent"><span class="analytics-logo" style="background:#111827">G</span>Grok</span><span class="analytics-track"><span class="analytics-bar" style="width:32%"></span></span><span class="analytics-count">4,022<small>opens</small></span></div>
-      </div>
-    </section>
-
-    <section class="agents">
-      <h2 data-i18n="agents_title">Built-in agents</h2>
-      <div class="agent-chips" id="agentChips"></div>
-      <div class="agent-cloud" id="agentCloud"></div>
-    </section>
-
-    <section class="details">
-      <h2 data-i18n="feature_details_title">What's inside</h2>
-      <div class="shots">
-        <figure><img src="assets/screenshots/default.png" alt="AgentsBin default screen"><figcaption data-i18n="shot_default"></figcaption></figure>
-        <figure><img src="assets/screenshots/api.png" alt="AgentsBin API settings screen"><figcaption data-i18n="shot_api"></figcaption></figure>
-      </div>
-      <div class="detail-grid">
-        <div class="detail-card"><h3 data-i18n="d1t">Encrypted API key vault</h3><p data-i18n="d1d"></p></div>
-        <div class="detail-card"><h3 data-i18n="d2t">37 mainstream agents</h3><p data-i18n="d2d"></p></div>
-        <div class="detail-card"><h3 data-i18n="d3t">10 languages</h3><p data-i18n="d3d"></p></div>
-        <div class="detail-card"><h3 data-i18n="d4t">Appearance & launch</h3><p data-i18n="d4d"></p></div>
-        <div class="detail-card"><h3 data-i18n="d5t">Web & API chat</h3><p data-i18n="d5d"></p></div>
-        <div class="detail-card"><h3 data-i18n="d6t">Free placement</h3><p data-i18n="d6d"></p></div>
-      </div>
-    </section>
-
-    <section class="howto">
-      <h2 data-i18n="howto_title">How to use</h2>
-      <div class="howto-grid">
-        <div class="howto-step"><span>1</span><div><strong data-i18n="h1t">Install & launch</strong><p data-i18n="h1d"></p></div></div>
-        <div class="howto-step"><span>2</span><div><strong data-i18n="h2t">Pick & chat</strong><p data-i18n="h2d"></p></div></div>
-        <div class="howto-step"><span>3</span><div><strong data-i18n="h3t">Web or API mode</strong><p data-i18n="h3d"></p></div></div>
-        <div class="howto-step"><span>4</span><div><strong data-i18n="h4t">Customize</strong><p data-i18n="h4d"></p></div></div>
-      </div>
-    </section>
-
-    <section class="faq">
-      <h2>AI Chat Hub FAQ</h2>
-      <div class="faq-grid">
-        <div class="faq-item"><h3>Which AI agents does AgentsBin support?</h3><p>37 mainstream AI agents including ChatGPT, Claude, Gemini, DeepSeek, Qwen, Kimi, Grok, Doubao, plus custom agents.</p></div>
-        <div class="faq-item"><h3>Can I chat with both the web page and the API?</h3><p>Yes. Web mode opens the official chat page; API mode calls the provider directly with your own API keys and per-agent verification.</p></div>
-        <div class="faq-item"><h3>Is AgentsBin free?</h3><p>The beta is free for macOS 13+. If you use your own API keys, providers may bill usage directly.</p></div>
-        <div class="faq-item"><h3>How are my API keys stored?</h3><p>Keys are AES-encrypted locally on your Mac and never uploaded to the cloud.</p></div>
-      </div>
-    </section>
-
-    <section class="download" id="download">
-      <h2 data-i18n="dl_title">Download AgentsBin</h2>
-      <div class="download-card">
-        <div>
-          <strong data-i18n="dl_name">AgentsBin 1.1.4</strong>
-          <p class="muted" data-i18n="dl_meta">macOS 13+ · ~511 KB</p>
-          <p class="hash">SHA-256<br>4a96b0d86bf7d6b4f8ca7d5de5803efa6c4584dea5d9ebc7afe3574055c492e6</p>
-        </div>
-        <a class="button" href="downloads/AgentsBin-1.1.4.dmg" download data-i18n="dl_btn">Download DMG</a>
-      </div>
-      <p class="note" data-i18n="dl_note">Open the DMG and drag AgentsBin to Applications.</p>
-    </section>
-
-    <section class="contact">
-      <div class="contact-card">
-        <img id="authorAvatar" class="author-avatar" alt="Jacky Zhao">
-        <div class="author-main">
-          <strong data-i18n="author_name">Jacky Zhao</strong>
-          <span data-i18n="author_role">Indie developer · macOS tools</span>
-        </div>
-        <div class="contact-links">
-          <a class="contact-link" href="mailto:zhaolongfei@gmail.com">
-            <svg viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><path d="m3 6 9 7 9-7"/></svg>
-            <span class="contact-text"><span data-i18n="c_email">Email</span><small>zhaolongfei@gmail.com</small></span>
-          </a>
-          <div class="contact-link">
-            <svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.6 1.3 4.9 3.4 6.4-.1.8-.4 2-.9 2.9 0 0 2.2-.3 4-1.4 1.1.3 2.3.5 3.5.5 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg>
-            <span class="contact-text"><span data-i18n="c_wechat">WeChat</span><small>shareye</small></span>
-          </div>
-          <a class="contact-link" href="https://www.facebook.com/zhaolongfei@gmail.com" target="_blank" rel="noreferrer">
-            <svg viewBox="0 0 24 24"><path d="M14 8h3V5h-3c-2.2 0-4 1.8-4 4v2H7v3h3v7h3v-7h3l1-3h-4V9c0-.6.4-1 1-1z"/></svg>
-            <span class="contact-text"><span data-i18n="c_facebook">Facebook</span><small>zhaolongfei@gmail.com</small></span>
-          </a>
-          <a class="contact-link" href="https://x.com/longfei_shareye" target="_blank" rel="noreferrer">
-            <svg viewBox="0 0 24 24"><path d="M4 4l7.2 9.3L4.4 20h2.4l5.4-5.4L16.8 20H20l-7.5-9.7L19.2 4h-2.4l-4.9 5L8.2 4H4z"/></svg>
-            <span class="contact-text"><span data-i18n="c_x">X</span><small>@longfei_shareye</small></span>
-          </a>
+    <div class="section-head">
+      <h2 data-i18n="section_dev">In Development</h2>
+      <span class="sub" data-i18n="section_dev_sub">Coming next from the same workshop.</span>
+    </div>
+    <div class="dev-grid">
+      <div class="dev-card">
+        <div class="info" style="min-height:220px">
+          <div class="logo-row"><div class="icon qs">QS</div><div class="app-name"><span data-i18n="p_qs">AgentsQS</span> <span class="ver" data-i18n="in_dev">In Dev</span></div></div>
+          <div class="tagline" data-i18n="qs_tagline">Think in strategies, test with data.</div>
+          <div class="desc" data-i18n="p_qs_desc">Quantitative strategy research and backtesting copilot with AI assistance.</div>
+          <div class="foot"><span class="status dev" data-i18n="status_soon">In Development</span></div>
         </div>
       </div>
-    </section>
+      <div class="dev-card">
+        <div class="info" style="min-height:220px">
+          <div class="logo-row"><div class="icon tts"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="4" height="6" rx="1"/><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="10" y="8" width="4" height="8" rx="1"/><rect x="14" y="3" width="4" height="18" rx="1"/><rect x="18" y="10" width="4" height="4" rx="1"/></svg></div><div class="app-name"><span data-i18n="p_tts">AgentsTTS</span> <span class="ver" data-i18n="in_dev">In Dev</span></div></div>
+          <div class="tagline" data-i18n="tts_tagline">Turn scripts into voice, naturally.</div>
+          <div class="desc" data-i18n="p_tts_desc">Multilingual TTS, voice previews and simple episode export for creators.</div>
+          <div class="foot"><span class="status dev" data-i18n="status_soon">In Development</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="aboutPlaceholder"></div>
   </main>
 
-  <footer>
-    <p data-i18n="footer">AgentsBin · Menu bar AI agent hub for macOS</p>
-  </footer>
-  <script src="app.js?v=1.1.7"></script>
+  <footer><span data-i18n="home_footer">© 2026 AgentsBin · macOS AI tools studio</span></footer>
+
+<script>
+(function () {
+  if (location.protocol !== "https:" && location.protocol !== "http:") return;
+  var payload = JSON.stringify({ kind: "page_view", name: "agentsbin_home", version: "2.0.2", source: "web", product: "agentsbin" });
+  if (navigator.sendBeacon) navigator.sendBeacon("/api/track", new Blob([payload], { type: "application/json" }));
+  document.querySelectorAll("[data-track='download']").forEach(function (el) {
+    el.addEventListener("click", function () {
+      var data = JSON.stringify({ kind: "download", name: el.getAttribute("data-name") || "agentsbin_home", version: "2.0.2", source: "web", product: el.getAttribute("data-product") || "agentsbin" });
+      if (navigator.sendBeacon) navigator.sendBeacon("/api/track", new Blob([data], { type: "application/json" }));
+    });
+  });
+})();
+</script>
+
+<script>
+(function () {
+  var btn = document.getElementById("productsBtn");
+  var overlay = document.getElementById("productsOverlay");
+  var close = document.getElementById("closeProducts");
+  if (!btn || !overlay) return;
+  btn.addEventListener("click", function () { overlay.hidden = false; });
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) overlay.hidden = true; });
+  if (close) close.addEventListener("click", function () { overlay.hidden = true; });
+
+  var search = document.getElementById("productSearch");
+  var filterBtns = document.querySelectorAll("#productFilter button");
+  var catBtns = document.querySelectorAll("#productCats button");
+  var cards = document.querySelectorAll(".product-card");
+  var state = "all";
+  var cat = "all";
+  function apply() {
+    var q = search ? search.value.toLowerCase() : "";
+    cards.forEach(function (c) {
+      var text = (c.getAttribute("data-search") || "").toLowerCase();
+      var okState = state === "all" || c.getAttribute("data-state") === state;
+      var okCat = cat === "all" || c.getAttribute("data-cat") === cat;
+      var okQ = !q || text.indexOf(q) >= 0;
+      c.hidden = !(okState && okCat && okQ);
+    });
+  }
+  filterBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      state = b.getAttribute("data-filter");
+      filterBtns.forEach(function (x) { x.classList.toggle("on", x === b); });
+      apply();
+    });
+  });
+  catBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      cat = b.getAttribute("data-cat");
+      catBtns.forEach(function (x) { x.classList.toggle("on", x === b); });
+      apply();
+    });
+  });
+  if (search) search.addEventListener("input", apply);
+})();
+</script><script src="/_shared/about.js"></script>
+<script src="/_shared/i18n.js"></script>
 </body>
 </html>

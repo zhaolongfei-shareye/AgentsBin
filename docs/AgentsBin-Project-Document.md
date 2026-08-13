@@ -1,7 +1,7 @@
 # AgentsBin 项目文档
 
 文档更新：2026-08-04
-当前版本：V1.1.4（免费内测版）
+当前版本：V1.1.28（免费内测版）
 仓库：https://github.com/zhaolongfei-shareye/AgentsBin
 官网：https://www.agentsbin.com
 作者：Jacky Zhao（zhaolongfei@gmail.com）
@@ -21,7 +21,7 @@ AgentsBin 是一款 macOS 菜单栏 AI 智能体快速入口应用：
 
 ---
 
-## 2. 当前功能清单（V1.1.4）
+## 2. 当前功能清单（V1.1.28）
 
 ### 2.1 macOS 应用
 
@@ -47,7 +47,7 @@ AgentsBin 是一款 macOS 菜单栏 AI 智能体快速入口应用：
 - 首页右侧 App 预览为模拟操作动画：智能体高亮自动切换 + 对话淡入循环
 - 功能详解、操作说明（网页或 API 模式、桌面自由摆放）、FAQ（AI 关键词问答）
 - SEO：AI 热门关键词、FAQPage/WebSite/Organization 结构化数据、sitemap、Google Search Console 已验证
-- 下载区：AgentsBin 1.1.4 DMG（约 913 KB），SHA-256 校验
+- 下载区：AgentsBin 1.1.28 DMG（约 1.1 MB），SHA-256 校验
 - 作者联系方式：邮箱、微信、Facebook、X
 
 ### 2.3 统计后台
@@ -149,7 +149,7 @@ npx wrangler d1 execute agentsbin-stats --remote --command "..."
 ```bash
 export PATH="$HOME/Library/Developer/Toolchains/swift-6.3.2-RELEASE.xctoolchain/usr/bin:$PATH"
 ./Scripts/build_dmg.sh
-open dist/AgentsBin-1.1.4.dmg
+open dist/AgentsBin-1.1.28.dmg
 ```
 
 - build_dmg.sh 自动递增 PATCH；发布指定版本时临时将递增改为 +0，构建后恢复脚本
@@ -162,6 +162,7 @@ open dist/AgentsBin-1.1.4.dmg
 
 | 提交 | 说明 |
 | --- | --- |
+| 未提交 | 1.1.28：折叠/浮层/本地模型等迭代，官网截图与下载刷新 |
 | 5e2d219 | 修复首页误删，移除 Demo 残留，首页动画预览 v1.1.7 |
 | ca758b0 | 移除官网 Demo 弹窗，新增首页预览动画 |
 | c48c491 | 官网新增交互式 macOS Demo（后撤销） |
@@ -180,7 +181,7 @@ open dist/AgentsBin-1.1.4.dmg
 | 资源 | 地址 |
 | --- | --- |
 | 官网 | https://www.agentsbin.com |
-| 下载 | https://www.agentsbin.com/downloads/AgentsBin-1.1.4.dmg |
+| 下载 | https://www.agentsbin.com/downloads/AgentsBin-1.1.28.dmg |
 | 统计后台 | https://www.agentsbin.com/agentsbin-jz-admin |
 | 统计 API | https://www.agentsbin.com/api/track |
 | Sitemap | https://www.agentsbin.com/sitemap.xml |

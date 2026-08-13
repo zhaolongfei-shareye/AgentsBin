@@ -91,6 +91,11 @@ const loggedIn = `
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
+        <div class="range" id="product">
+          <button class="on" data-product="">All</button>
+          <button data-product="agentsbin">AgentsBin</button>
+          <button data-product="wf">Watermark Factory</button>
+        </div>
         <div class="range" id="range">
           <button data-range="7">7D</button>
           <button class="on" data-range="30">30D</button>
@@ -123,28 +128,30 @@ const loggedIn = `
   <script>
     const fmt = new Intl.NumberFormat();
     let currentRange = 30;
+    let currentProduct = "";
     function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
     async function load(range) {
       currentRange = range;
       document.querySelectorAll("#range button").forEach((b) => b.classList.toggle("on", Number(b.dataset.range) === range));
-      const res = await fetch("/api/stats?range=" + range);
+      const res = await fetch("/api/stats?range=" + range + "&product=" + currentProduct);
       if (res.status === 401) { location.href = "/agentsbin-jz-admin"; return; }
       const data = await res.json();
       const t = data.totals;
       const peak = data.daily.reduce((m, d) => Math.max(m, d.agent_opens || 0), 0);
       const maxAgent = data.topAgents.reduce((m, a) => Math.max(m, a.count), 0) || 1;
       document.getElementById("kpis").innerHTML = [
+        ["Page views", fmt.format(t.page_views), "website"],
         ["Total downloads", fmt.format(t.downloads), "DMG"],
         ["App opens", fmt.format(t.app_opens), "macOS"],
         ["Agent opens", fmt.format(t.agent_opens), "per chat open"],
-        ["Active days", fmt.format(data.daily.filter((d) => d.downloads || d.app_opens || d.agent_opens).length), "of " + range + " days"]
+        ["Active days", fmt.format(data.daily.filter((d) => d.downloads || d.app_opens || d.agent_opens || d.page_views).length), "of " + range + " days"]
       ].map(([label, value, delta]) =>
         '<div class="kpi"><div class="kpi-label">' + esc(label) + '</div><div class="kpi-value">' + value + '</div><div class="kpi-delta">' + esc(delta) + "</div></div>"
       ).join("");
       document.getElementById("dailyTable").innerHTML = data.daily.length
-        ? '<table><thead><tr><th>Date</th><th class="num">Downloads</th><th class="num">App opens</th><th class="num">Agents</th></tr></thead><tbody>' +
+        ? '<table><thead><tr><th>Date</th><th class="num">Views</th><th class="num">Downloads</th><th class="num">App opens</th><th class="num">Agents</th></tr></thead><tbody>' +
           data.daily.map((d) =>
-            "<tr><td>" + esc(d.date) + '</td><td class="num">' + fmt.format(d.downloads || 0) + '</td><td class="num">' + fmt.format(d.app_opens || 0) + '</td><td class="num">' + fmt.format(d.agent_opens || 0) + "</td></tr>"
+            "<tr><td>" + esc(d.date) + '</td><td class="num">' + fmt.format(d.page_views || 0) + '</td><td class="num">' + fmt.format(d.downloads || 0) + '</td><td class="num">' + fmt.format(d.app_opens || 0) + '</td><td class="num">' + fmt.format(d.agent_opens || 0) + "</td></tr>"
           ).join("") + "</tbody></table>"
         : '<div class="empty">No data yet</div>';
       document.getElementById("topAgents").innerHTML = data.topAgents.length
@@ -162,6 +169,11 @@ const loggedIn = `
         : '<div class="empty">No country data yet</div>';
     }
     document.querySelectorAll("#range button").forEach((b) => b.addEventListener("click", () => load(Number(b.dataset.range))));
+    document.querySelectorAll("#product button").forEach((b) => b.addEventListener("click", () => {
+      currentProduct = b.dataset.product || "";
+      document.querySelectorAll("#product button").forEach((x) => x.classList.toggle("on", x === b));
+      load(currentRange);
+    }));
     load(currentRange);
   </script>`;
 

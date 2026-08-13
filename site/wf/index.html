@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Watermark Factory · Remove AI Watermarks Locally on macOS</title>
+  <meta name="description" content="Watermark Factory is a local macOS app that identifies and restores watermarked images from 30+ AI platforms and common sources. Offline, batch, one-click restore.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0b0f14">
+  <link rel="canonical" href="https://www.agentsbin.com/wf/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AgentsBin">
+  <meta property="og:title" content="Watermark Factory · Remove AI Watermarks Locally on macOS">
+  <meta property="og:description" content="Identify and restore watermarked images from 30+ AI platforms. 100% local and offline on macOS.">
+  <meta property="og:url" content="https://www.agentsbin.com/wf/">
+  <meta property="og:image" content="https://www.agentsbin.com/wf/assets/ui-dark.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Watermark Factory">
+  <meta name="twitter:description" content="Local macOS watermark removal. 30+ AI platforms, offline, batch.">
+  <link rel="stylesheet" href="styles.css?v=1.0.2">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Watermark Factory",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "macOS 13+",
+    "description": "Local macOS app that identifies and restores watermarked images from 30+ AI platforms and common sources.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "downloadUrl": "https://www.agentsbin.com/downloads/WatermarkFactory-1.0.2.dmg",
+    "author": { "@type": "Organization", "name": "AgentsBin" }
+  }
+  </script>
+<style>
+.nav-group { display:flex; align-items:center; gap:10px; }
+.nav-actions { display:flex; align-items:center; gap:14px; }
+.nav-actions a { color:var(--muted); text-decoration:none; font-size:14px; }
+.crumb { font-size:13px; color:var(--muted); }
+.lang-toggle { background:rgba(255,255,255,0.05); border:1px solid var(--line); color:var(--muted); font:inherit; font-size:12px; border-radius:8px; padding:6px 10px; }
+.products-btn { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); border:1px solid var(--line); color:var(--text); font:inherit; font-size:13px; font-weight:700; border-radius:8px; padding:7px 11px; cursor:pointer; }
+.products-overlay { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,0.55); display:flex; align-items:flex-start; justify-content:center; padding-top:70px; }
+.products-overlay[hidden] { display:none; }
+.products-panel { width:min(760px,92vw); background:#10141b; border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 30px 80px rgba(0,0,0,0.6); }
+.panel-head { display:flex; align-items:center; justify-content:space-between; font-weight:700; margin-bottom:14px; }
+.panel-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.product-card { display:flex; flex-direction:column; gap:4px; background:#141a23; border:1px solid var(--line); border-radius:12px; padding:14px; text-decoration:none; color:var(--text); }
+.pc-name { font-weight:700; }
+.pc-sub { font-size:11px; color:var(--muted); }
+.pc-desc { font-size:12px; color:var(--muted); }
+.pc-foot { display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
+.pc-status { font-size:11px; font-weight:700; padding:3px 8px; border-radius:20px; }
+.pc-status.live { color:#34c759; background:rgba(52,199,89,0.14); }
+.pc-status.soon { color:#ffb020; background:rgba(255,176,32,0.14); }
+.pc-arrow { color:var(--cyan); }
+.close-products { background:transparent; border:0; color:var(--muted); font-size:20px; cursor:pointer; }
+
+.panel-search { display:flex; align-items:center; gap:8px; margin:10px 0; }
+.panel-search input { flex:1; background:#0d1117; border:1px solid var(--line); border-radius:8px; color:var(--text); font:inherit; font-size:12px; padding:8px 10px; }
+.panel-filter, .panel-cats { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+.panel-filter button, .panel-cats button { background:rgba(255,255,255,0.05); border:1px solid var(--line); color:var(--muted); font:inherit; font-size:12px; border-radius:8px; padding:6px 10px; cursor:pointer; }
+.panel-filter button.on, .panel-cats button.on { background:var(--cyan); color:#05121a; border-color:var(--cyan); }
+.product-card[hidden] { display:none; }
+</style>
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="nav-group">
+        <a class="brand" href="/">AgentsBin.com</a>
+        <span class="crumb">| Watermark Factory</span>
+        <button class="products-btn" id="productsBtn" type="button"><span data-i18n="nav_products">Products</span></button>
+      </div>
+      <div class="nav-actions">
+        <select class="lang-toggle" id="langSelect" aria-label="Language">
+          <option value="en">English</option>
+          <option value="zh">简体中文</option>
+          <option value="zh-Hant">繁體中文</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+        </select>
+        <a href="/#about" data-i18n="nav_about">About</a>
+      </div>
+    </div>
+  </header>
+  <div class="products-overlay" id="productsOverlay" hidden>
+    <div class="products-panel">
+      <div class="panel-head"><span data-i18n="popup_title">Explore products</span><button class="close-products" id="closeProducts" type="button">×</button></div>
+      <div class="panel-search"><input id="productSearch" type="search" placeholder="Search products" data-i18n-ph="popup_search"></div>
+      <div class="panel-filter" id="productFilter">
+        <button class="on" data-filter="all" data-i18n="filter_all">All</button>
+        <button data-filter="released" data-i18n="filter_released">Released</button>
+        <button data-filter="soon" data-i18n="filter_soon">Coming Soon</button>
+      </div>
+      <div class="panel-cats" id="productCats">
+        <button class="on" data-cat="all" data-i18n="cat_all">All</button>
+        <button data-cat="assistants" data-i18n="cat_assistants">AI Assistants</button>
+        <button data-cat="audio" data-i18n="cat_audio">Audio</button>
+        <button data-cat="media" data-i18n="cat_media">Media Tools</button>
+      </div>
+      <div class="panel-grid">
+        <a class="product-card" href="/agentsbin/" data-search="AgentsBin macOS menu bar AI chat hub 43 agents" data-cat="assistants" data-state="released">
+          <span class="pc-name" data-i18n="p_agentsbin">AgentsBin</span><span class="pc-sub">macOS · Menu Bar</span>
+          <span class="pc-desc" data-i18n="p_agentsbin_desc">All-in-one AI chat hub for macOS with 43 AI agents.</span>
+          <span class="pc-foot"><span class="pc-status live" data-i18n="status_released">Released</span><span class="pc-arrow">→</span></span>
+        </a>
+        <a class="product-card" href="/wf/" data-search="Watermark Factory AI watermark removal macOS offline" data-cat="media" data-state="released">
+          <span class="pc-name" data-i18n="p_wf">Watermark Factory</span><span class="pc-sub">macOS · Media Tools</span>
+          <span class="pc-desc" data-i18n="p_wf_desc">Local AI watermark identification and restoration. 30+ sources, offline.</span>
+          <span class="pc-foot"><span class="pc-status live" data-i18n="status_released">Released</span><span class="pc-arrow">→</span></span>
+        </a>
+        <div class="product-card" data-search="AgentsQS quant strategy backtest copilot" data-cat="media" data-state="soon">
+          <span class="pc-name" data-i18n="p_qs">AgentsQS</span><span class="pc-sub">macOS · Quant</span>
+          <span class="pc-desc" data-i18n="p_qs_desc">Quantitative strategy research and backtesting copilot.</span>
+          <span class="pc-foot"><span class="pc-status soon" data-i18n="status_soon">In Development</span></span>
+        </div>
+        <div class="product-card" data-search="AgentsTTS podcast text to speech audio multilingual" data-cat="audio" data-state="soon">
+          <span class="pc-name" data-i18n="p_tts">AgentsTTS</span><span class="pc-sub">macOS · Audio</span>
+          <span class="pc-desc" data-i18n="p_tts_desc">Multilingual TTS and podcast episode tool.</span>
+          <span class="pc-foot"><span class="pc-status soon" data-i18n="status_soon">In Development</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <img class="hero-logo" src="assets/logo.png" alt="Watermark Factory logo">
+        <h1 data-i18n="hero_title">Watermark Factory</h1>
+        <p class="lead" data-i18n="hero_lead">Identify and restore watermarked images from 30+ AI platforms and common sources. 100% local, offline, batch ready on macOS.</p>
+        <div class="hero-actions">
+          <a class="button" href="../downloads/WatermarkFactory-1.0.2.dmg" download data-track="download" data-i18n="hero_cta">Download for macOS</a>
+          <span class="muted" data-i18n="hero_badge">V1.0.2 · macOS 13+ · Free</span>
+        </div>
+      </div>
+      <div class="app-window">
+        <div class="window-bar">
+          <span class="traffic traffic-close"></span>
+          <span class="traffic traffic-min"></span>
+          <span class="traffic traffic-full"></span>
+          <span class="window-title" data-i18n="window_title">Watermark Factory · Identify &amp; Restore</span>
+        </div>
+        <img src="assets/ui-dark.png" alt="Watermark Factory dark UI">
+      </div>
+    </section>
+
+    <section class="steps">
+      <h2 data-i18n="steps_title">Three simple steps</h2>
+      <p class="section-sub" data-i18n="steps_sub">Import, identify, restore. No configuration needed.</p>
+      <div class="steps-grid">
+        <div class="step-card"><div class="step-num">1</div><h3 data-i18n="step1_title">Import</h3><p data-i18n="step1_desc">Drag images or a folder into the app.</p></div>
+        <div class="step-card"><div class="step-num">2</div><h3 data-i18n="step2_title">Identify</h3><p data-i18n="step2_desc">Detect the AI agent and visible watermark locations.</p></div>
+        <div class="step-card"><div class="step-num">3</div><h3 data-i18n="step3_title">Restore</h3><p data-i18n="step3_desc">Restore locally and save to your output folder.</p></div>
+      </div>
+    </section>
+
+    <section class="demo">
+      <h2 data-i18n="demo_title">See it in action</h2>
+      <p class="section-sub" data-i18n="demo_sub">Before and after, processed 100% on your Mac.</p>
+      <div class="demo-grid">
+        <div class="demo-card"><span class="label" data-i18n="demo_before">Before</span><img src="assets/demo-before.jpg" alt="before"></div>
+        <div class="demo-card"><span class="label" data-i18n="demo_after">After</span><img src="assets/demo-after.jpg" alt="after"></div>
+      </div>
+    </section>
+
+    <section class="supported">
+      <h2 data-i18n="supported_title">Supported sources</h2>
+      <p class="section-sub" data-i18n="supported_sub">11 visible marks plus 30+ metadata sources.</p>
+      <div class="chips">
+        <span>Gemini</span><span>Doubao</span><span>Jimeng</span><span>Qwen</span><span>Kling</span>
+        <span>Yuanbao</span><span>Samsung</span><span>RunningHub</span><span>Baidu</span><span>LibLibAI</span>
+        <span>OpenAI</span><span>Adobe Firefly</span><span>Microsoft</span><span>FLUX</span><span>Midjourney</span>
+      </div>
+    </section>
+
+    <section class="download" id="download">
+      <div class="download-card">
+        <h2 data-i18n="dl_title">Download Watermark Factory</h2>
+        <p class="muted" data-i18n="dl_sub">Version 1.0.2 · macOS 13+ · Apple Silicon</p>
+        <a class="button button-large" href="../downloads/WatermarkFactory-1.0.2.dmg" download data-track="download" data-i18n="dl_btn">Download DMG</a>
+        <code class="sha">SHA-256: <span id="shaValue"></span></code>
+      </div>
+    </section>
+
+    <section class="faq">
+      <h2 data-i18n="faq_title">FAQ</h2>
+      <div class="faq-grid">
+        <div class="faq-item"><h3 data-i18n="faq_q1">Does it upload my photos?</h3><p data-i18n="faq_a1">No. Everything runs locally on your Mac.</p></div>
+        <div class="faq-item"><h3 data-i18n="faq_q2">Is it free?</h3><p data-i18n="faq_a2">V1.0.2 is free. Advanced backends come later.</p></div>
+        <div class="faq-item"><h3 data-i18n="faq_q3">Can it remove stock watermarks?</h3><p data-i18n="faq_a3">No. It only supports content you own.</p></div>
+        <div class="faq-item"><h3 data-i18n="faq_q4">How do I update?</h3><p data-i18n="faq_a4">Download the new DMG and replace the app.</p></div>
+      </div>
+    </section>
+  </main>
+
+    <div id="aboutPlaceholder"></div>
+
+  <footer>
+    <a href="https://www.agentsbin.com/" data-i18n="back_home">agentsbin.com</a>
+    <span>·</span>
+    <span data-i18n="footer_note">Watermark Factory V1.0.2</span>
+  </footer>
+
+  <script src="app.js?v=1.0.2"></script>
+
+<script>
+(function () {
+  var btn = document.getElementById("productsBtn");
+  var overlay = document.getElementById("productsOverlay");
+  var close = document.getElementById("closeProducts");
+  if (!btn || !overlay) return;
+  btn.addEventListener("click", function () { overlay.hidden = false; });
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) overlay.hidden = true; });
+  if (close) close.addEventListener("click", function () { overlay.hidden = true; });
+
+  var search = document.getElementById("productSearch");
+  var filterBtns = document.querySelectorAll("#productFilter button");
+  var catBtns = document.querySelectorAll("#productCats button");
+  var cards = document.querySelectorAll(".product-card");
+  var state = "all";
+  var cat = "all";
+  function apply() {
+    var q = search ? search.value.toLowerCase() : "";
+    cards.forEach(function (c) {
+      var text = (c.getAttribute("data-search") || "").toLowerCase();
+      var okState = state === "all" || c.getAttribute("data-state") === state;
+      var okCat = cat === "all" || c.getAttribute("data-cat") === cat;
+      var okQ = !q || text.indexOf(q) >= 0;
+      c.hidden = !(okState && okCat && okQ);
+    });
+  }
+  filterBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      state = b.getAttribute("data-filter");
+      filterBtns.forEach(function (x) { x.classList.toggle("on", x === b); });
+      apply();
+    });
+  });
+  catBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      cat = b.getAttribute("data-cat");
+      catBtns.forEach(function (x) { x.classList.toggle("on", x === b); });
+      apply();
+    });
+  });
+  if (search) search.addEventListener("input", apply);
+})();
+</script><script src="/_shared/about.js"></script>
+<script src="/_shared/i18n.js"></script>
+</body>
+</html>

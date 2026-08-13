@@ -25,6 +25,25 @@ final class WebViewPool: ObservableObject {
     private var lastMonitorText: [String: String] = [:]
     private var monitorStable: [String: Int] = [:]
 
+    init() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reloadAllWebViews),
+            name: .agentsbinLanguageChanged,
+            object: nil
+        )
+    }
+
+    @objc private func reloadAllWebViews() {
+        for (agentID, webView) in webViews {
+            guard let agent = Agent.defaults().first(where: { $0.id == agentID }) else { continue }
+            let target = agent.urlString.hasPrefix("http") ? agent.urlString : "https://" + agent.urlString
+            if let url = URL(string: target) {
+                webView.load(localizedRequest(for: url))
+            }
+        }
+    }
+
     func webView(for agent: Agent) -> WKWebView {
         if let existing = webViews[agent.id] {
             return existing
@@ -92,8 +111,16 @@ final class WebViewPool: ObservableObject {
     private func load(_ agent: Agent, in webView: WKWebView) {
         let target = agent.urlString.hasPrefix("http") ? agent.urlString : "https://" + agent.urlString
         if let url = URL(string: target) {
-            webView.load(URLRequest(url: url))
+            webView.load(localizedRequest(for: url))
         }
+    }
+
+    private func localizedRequest(for url: URL) -> URLRequest {
+        var request = URLRequest(url: url)
+        let raw = UserDefaults.standard.string(forKey: "aihome.language")
+        let language = raw.flatMap(AppLanguage.init(rawValue:)) ?? .en
+        request.setValue(language.languageCode, forHTTPHeaderField: "Accept-Language")
+        return request
     }
 
     private func sendWithRetry(prompt: String, to agent: Agent, activeID: String?, attempt: Int) {

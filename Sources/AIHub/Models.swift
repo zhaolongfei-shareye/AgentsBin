@@ -9,6 +9,49 @@ struct Agent: Codable, Identifiable, Hashable {
     var isOnline: Bool
     var isEnabled: Bool
     var isPinned: Bool
+    var isLocal: Bool
+
+    init(id: String, name: String, letter: String, colorHex: String, urlString: String, isOnline: Bool, isEnabled: Bool, isPinned: Bool, isLocal: Bool = false) {
+        self.id = id
+        self.name = name
+        self.letter = letter
+        self.colorHex = colorHex
+        self.urlString = urlString
+        self.isOnline = isOnline
+        self.isEnabled = isEnabled
+        self.isPinned = isPinned
+        self.isLocal = isLocal
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, name, letter, colorHex, urlString, isOnline, isEnabled, isPinned, isLocal
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        letter = try container.decodeIfPresent(String.self, forKey: .letter) ?? ""
+        colorHex = try container.decodeIfPresent(String.self, forKey: .colorHex) ?? "#007aff"
+        urlString = try container.decode(String.self, forKey: .urlString)
+        isOnline = try container.decodeIfPresent(Bool.self, forKey: .isOnline) ?? false
+        isEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? false
+        isPinned = try container.decodeIfPresent(Bool.self, forKey: .isPinned) ?? false
+        isLocal = try container.decodeIfPresent(Bool.self, forKey: .isLocal) ?? false
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(letter, forKey: .letter)
+        try container.encode(colorHex, forKey: .colorHex)
+        try container.encode(urlString, forKey: .urlString)
+        try container.encode(isOnline, forKey: .isOnline)
+        try container.encode(isEnabled, forKey: .isEnabled)
+        try container.encode(isPinned, forKey: .isPinned)
+        try container.encode(isLocal, forKey: .isLocal)
+    }
 
     static func defaults() -> [Agent] {
         [
@@ -48,7 +91,13 @@ struct Agent: Codable, Identifiable, Hashable {
             Agent(id: "poe", name: "Poe", letter: "P", colorHex: "#4b5563", urlString: "poe.com", isOnline: false, isEnabled: false, isPinned: false),
             Agent(id: "tongyi", name: "通义", letter: "通", colorHex: "#6d28d9", urlString: "tongyi.aliyun.com/qianwen", isOnline: false, isEnabled: false, isPinned: false),
             Agent(id: "you", name: "You.com", letter: "Y", colorHex: "#7c3aed", urlString: "you.com", isOnline: false, isEnabled: false, isPinned: false),
-            Agent(id: "yuanbao", name: "腾讯元宝", letter: "元", colorHex: "#1e6fff", urlString: "yuanbao.tencent.com", isOnline: false, isEnabled: false, isPinned: false)
+            Agent(id: "yuanbao", name: "腾讯元宝", letter: "元", colorHex: "#1e6fff", urlString: "yuanbao.tencent.com", isOnline: false, isEnabled: false, isPinned: false),
+            Agent(id: "ollama", name: "Ollama", letter: "O", colorHex: "#5856d6", urlString: "127.0.0.1:11434", isOnline: true, isEnabled: false, isPinned: false, isLocal: true),
+            Agent(id: "lmstudio", name: "LM Studio", letter: "L", colorHex: "#007aff", urlString: "127.0.0.1:1234", isOnline: true, isEnabled: false, isPinned: false, isLocal: true),
+            Agent(id: "llamacpp", name: "llama.cpp", letter: "C", colorHex: "#30b0c7", urlString: "127.0.0.1:8080", isOnline: false, isEnabled: false, isPinned: false, isLocal: true),
+            Agent(id: "vllm", name: "vLLM", letter: "V", colorHex: "#7c3aed", urlString: "127.0.0.1:8000", isOnline: false, isEnabled: false, isPinned: false, isLocal: true),
+            Agent(id: "jan", name: "Jan", letter: "J", colorHex: "#ff9500", urlString: "127.0.0.1:1337", isOnline: false, isEnabled: false, isPinned: false, isLocal: true),
+            Agent(id: "localai", name: "LocalAI", letter: "A", colorHex: "#34c759", urlString: "127.0.0.1:8081", isOnline: false, isEnabled: false, isPinned: false, isLocal: true)
         ]
     }
 }
