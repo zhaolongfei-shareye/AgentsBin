@@ -1,6 +1,6 @@
 # AgentsBin 项目文档
 
-文档更新：2026-08-04
+文档更新：2026-08-16
 当前版本：V1.1.28（免费内测版）
 仓库：https://github.com/zhaolongfei-shareye/AgentsBin
 官网：https://www.agentsbin.com
@@ -43,12 +43,16 @@ AgentsBin 是一款 macOS 菜单栏 AI 智能体快速入口应用：
 ### 2.2 官网
 
 - 深色科技感设计，动态渐变背景；默认英文、10 语言手动切换
-- 顶部 AgentsBin.com 品牌 + Products 产品弹窗（深灰风格，三卡片 + 搜索/筛选）
+- 顶部 AgentsBin.com 品牌 + Products 产品弹窗（深灰风格，多卡片 + 搜索/筛选）
 - 首页右侧 App 预览为模拟操作动画：智能体高亮自动切换 + 对话淡入循环
 - 功能详解、操作说明（网页或 API 模式、桌面自由摆放）、FAQ（AI 关键词问答）
 - SEO：AI 热门关键词、FAQPage/WebSite/Organization 结构化数据、sitemap、Google Search Console 已验证
 - 下载区：AgentsBin 1.1.28 DMG（约 1.1 MB），SHA-256 校验
 - 作者联系方式：邮箱、微信、Facebook、X
+- SoloHQ 产品页：https://www.agentsbin.com/solohq/（10 语言）
+- SoloHQ 在线 Demo：https://www.agentsbin.com/solohq/demo/（关闭窗口还原默认数据）
+- 首页 Released 区新增 SoloHQ 卡片，产品弹窗新增 Web Apps 分类
+- /solohq/ 与首页共用统一作者信息底部
 
 ### 2.3 统计后台
 
@@ -162,6 +166,10 @@ open dist/AgentsBin-1.1.28.dmg
 
 | 提交 | 说明 |
 | --- | --- |
+| ebd986a | 首页新增 SoloHQ 卡片，/solohq/ 接入统一作者底部 |
+| e0d2cfc | 更新官网 SoloHQ Demo：删除功能、Demo 重置提示 |
+| 303ca80 | 官网新增俄语、葡萄牙语站点翻译 |
+| 46deb40 | 官网新增 SoloHQ 产品页与站内 Demo |
 | 未提交 | 1.1.28：折叠/浮层/本地模型等迭代，官网截图与下载刷新 |
 | 5e2d219 | 修复首页误删，移除 Demo 残留，首页动画预览 v1.1.7 |
 | ca758b0 | 移除官网 Demo 弹窗，新增首页预览动画 |
@@ -181,6 +189,8 @@ open dist/AgentsBin-1.1.28.dmg
 | 资源 | 地址 |
 | --- | --- |
 | 官网 | https://www.agentsbin.com |
+| SoloHQ 产品页 | https://www.agentsbin.com/solohq/ |
+| SoloHQ Demo | https://www.agentsbin.com/solohq/demo/ |
 | 下载 | https://www.agentsbin.com/downloads/AgentsBin-1.1.28.dmg |
 | 统计后台 | https://www.agentsbin.com/agentsbin-jz-admin |
 | 统计 API | https://www.agentsbin.com/api/track |
