@@ -1,4 +1,4 @@
-import { b64urlDecode, b64urlEncode, json, signValue, verifyValue } from "../../_lib.js";
+import { b64urlDecode, b64urlDecodeBytes, b64urlEncode, json, signValue, verifyValue } from "../../_lib.js";
 
 const SESSION_COOKIE = "solohq_session";
 
@@ -54,6 +54,59 @@ export async function ensureWorkspaceTable(db) {
       updated_at TEXT NOT NULL
     )`
   ).run();
+}
+
+export async function ensureGoogleDocsTables(db) {
+  await db.prepare(
+    `CREATE TABLE IF NOT EXISTS solohq_google_docs_credentials (
+      user_id TEXT PRIMARY KEY,
+      refresh_token_ciphertext TEXT NOT NULL,
+      folder_id TEXT DEFAULT '',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )`
+  ).run();
+  await db.prepare(
+    `CREATE TABLE IF NOT EXISTS solohq_google_docs_projects (
+      user_id TEXT NOT NULL,
+      project_id TEXT NOT NULL,
+      document_id TEXT NOT NULL,
+      document_url TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      PRIMARY KEY (user_id, project_id)
+    )`
+  ).run();
+}
+
+async function tokenEncryptionKey(env) {
+  if (!env.SOLOHQ_TOKEN_ENCRYPTION_KEY) return null;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(env.SOLOHQ_TOKEN_ENCRYPTION_KEY));
+  return crypto.subtle.importKey("raw", digest, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+}
+
+export async function encryptGoogleRefreshToken(token, env) {
+  const key = await tokenEncryptionKey(env);
+  if (!key) return null;
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(token));
+  return `${b64urlEncode(iv)}.${b64urlEncode(encrypted)}`;
+}
+
+export async function decryptGoogleRefreshToken(ciphertext, env) {
+  const key = await tokenEncryptionKey(env);
+  if (!key || typeof ciphertext !== "string") return null;
+  const [ivText, encryptedText] = ciphertext.split(".");
+  if (!ivText || !encryptedText) return null;
+  try {
+    const plaintext = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: b64urlDecodeBytes(ivText) },
+      key,
+      b64urlDecodeBytes(encryptedText)
+    );
+    return new TextDecoder().decode(plaintext);
+  } catch {
+    return null;
+  }
 }
 
 export function unauthorized() {

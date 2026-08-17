@@ -45,6 +45,12 @@ export function b64urlDecode(text) {
   return new TextDecoder().decode(bytes);
 }
 
+export function b64urlDecodeBytes(text) {
+  const base64 = text.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+  return Uint8Array.from(atob(padded), (c) => c.charCodeAt(0));
+}
+
 export async function sha256Hex(text) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return Array.from(new Uint8Array(digest))

@@ -1,4 +1,4 @@
-import { signedSessionCookie } from "../_lib.js";
+import { encryptGoogleRefreshToken, ensureGoogleDocsTables, getSoloUser, signedSessionCookie } from "../_lib.js";
 
 function cookieValue(request, name) {
   return (request.headers.get("Cookie") || "")
@@ -14,11 +14,19 @@ function fail(detail) {
   });
 }
 
+function clearOAuthCookies(headers) {
+  headers.append("Set-Cookie", "solohq_oauth_state=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0");
+  headers.append("Set-Cookie", "solohq_oauth_mode=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0");
+  headers.append("Set-Cookie", "solohq_docs_project=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0");
+}
+
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
+  const mode = cookieValue(request, "solohq_oauth_mode");
+  const docsProject = cookieValue(request, "solohq_docs_project") || "";
   if (!code || !state || state !== cookieValue(request, "solohq_oauth_state")) return fail("Login state check failed. Please try again.");
   if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) return fail("Google login is not configured.");
 
@@ -46,10 +54,27 @@ export async function onRequest(context) {
     if (!response.ok) return fail("Google account details could not be read.");
     const profile = await response.json();
     if (!profile.id || !profile.email) return fail("Google did not return a usable account.");
+    if (mode === "docs") {
+      const currentUser = await getSoloUser(request, env);
+      if (!currentUser || currentUser.sub !== String(profile.id)) return fail("Please authorize Google Docs with the same account used for SoloHQ.");
+      if (!env.DB || !token.refresh_token) return fail("Google Docs authorization could not be saved. Please try again.");
+      const ciphertext = await encryptGoogleRefreshToken(token.refresh_token, env);
+      if (!ciphertext) return fail("Google Docs sync is not configured yet.");
+      await ensureGoogleDocsTables(env.DB);
+      const now = new Date().toISOString();
+      await env.DB.prepare(
+        `INSERT INTO solohq_google_docs_credentials (user_id, refresh_token_ciphertext, folder_id, created_at, updated_at)
+         VALUES (?, ?, '', ?, ?)
+         ON CONFLICT(user_id) DO UPDATE SET refresh_token_ciphertext = excluded.refresh_token_ciphertext, updated_at = excluded.updated_at`
+      ).bind(currentUser.sub, ciphertext, now, now).run();
+      const headers = new Headers({ Location: `/solohq/home/?docs=connected&project=${encodeURIComponent(docsProject.slice(0, 128))}`, "Cache-Control": "no-store" });
+      clearOAuthCookies(headers);
+      return new Response(null, { status: 302, headers });
+    }
     const session = await signedSessionCookie({ sub: profile.id, email: String(profile.email).toLowerCase(), name: profile.name || "" }, env);
     const headers = new Headers({ Location: "/solohq/home/?sync=choose", "Cache-Control": "no-store" });
     headers.append("Set-Cookie", session);
-    headers.append("Set-Cookie", "solohq_oauth_state=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0");
+    clearOAuthCookies(headers);
     return new Response(null, { status: 302, headers });
   } catch {
     return fail("Google account details could not be read.");
