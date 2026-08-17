@@ -22,11 +22,14 @@ export async function onRequest(context) {
   if (!code || !state || state !== cookieValue(request, "solohq_oauth_state")) return fail("Login state check failed. Please try again.");
   if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) return fail("Google login is not configured.");
 
+  const origin = url.hostname === "solohq.agentsbin.com"
+    ? "https://solohq.agentsbin.com"
+    : "https://www.agentsbin.com";
   const tokenBody = new URLSearchParams({
     client_id: env.GOOGLE_CLIENT_ID,
     client_secret: env.GOOGLE_CLIENT_SECRET,
     code,
-    redirect_uri: "https://www.agentsbin.com/api/solohq/auth/callback",
+    redirect_uri: `${origin}/api/solohq/auth/callback`,
     grant_type: "authorization_code"
   });
   let token;

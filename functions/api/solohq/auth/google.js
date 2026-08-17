@@ -1,13 +1,16 @@
 export async function onRequest(context) {
-  const { env } = context;
+  const { env, request } = context;
   if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
     return new Response("Google login is not configured.", { status: 503 });
   }
 
+  const origin = new URL(request.url).hostname === "solohq.agentsbin.com"
+    ? "https://solohq.agentsbin.com"
+    : "https://www.agentsbin.com";
   const state = crypto.randomUUID();
   const params = new URLSearchParams({
     client_id: env.GOOGLE_CLIENT_ID,
-    redirect_uri: "https://www.agentsbin.com/api/solohq/auth/callback",
+    redirect_uri: `${origin}/api/solohq/auth/callback`,
     response_type: "code",
     scope: "openid email profile",
     state,
