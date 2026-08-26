@@ -1,4 +1,4 @@
-const SOLOHQ_VERSION = "0.2.3";
+const SOLOHQ_VERSION = "0.2.4";
 
 const STRINGS = {
   en: {
