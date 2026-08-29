@@ -1222,4 +1222,17 @@
     });
   });
 
+  (function trackAgentsBinProductPage() {
+    if (location.protocol !== "https:" && location.protocol !== "http:") return;
+    const ua = navigator.userAgent || "";
+    const source = /iPad|Tablet|Android(?!.*Mobile)/i.test(ua)
+      ? "web-tablet"
+      : /Mobi|Android|iPhone|iPod/i.test(ua)
+        ? "web-mobile"
+        : "web-desktop";
+    const payload = JSON.stringify({ kind: "page_view", name: "agentsbin_product", version: "2.0.4", source, product: "agentsbin" });
+    if (navigator.sendBeacon) navigator.sendBeacon("/api/track", new Blob([payload], { type: "application/json" }));
+    else fetch("/api/track", { method: "POST", headers: { "Content-Type": "application/json" }, body: payload, keepalive: true });
+  })();
+
 })();

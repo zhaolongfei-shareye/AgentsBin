@@ -39,7 +39,7 @@ export async function onRequest(context) {
       .bind(...baseArgs)
       .all(),
     db
-      .prepare(`SELECT name, source, COUNT(*) AS n FROM events WHERE kind = 'engagement' AND date >= ?${productSql} GROUP BY name, source ORDER BY n DESC LIMIT 40`)
+      .prepare(`SELECT kind, name, source, COUNT(*) AS n FROM events WHERE date >= ?${productSql} GROUP BY kind, name, source ORDER BY n DESC LIMIT 80`)
       .bind(...baseArgs)
       .all()
   ]);
@@ -83,6 +83,6 @@ export async function onRequest(context) {
       return acc;
     }, {}),
     countries,
-    categories: (categoryRows.results || []).map((r) => ({ name: r.name, source: r.source, count: r.n }))
+    categories: (categoryRows.results || []).map((r) => ({ kind: r.kind, name: r.name, source: r.source, count: r.n }))
   });
 }

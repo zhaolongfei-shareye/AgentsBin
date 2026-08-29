@@ -175,7 +175,7 @@ const loggedIn = `
         : '<div class="empty">No country data yet</div>';
       const categories = data.categories || [];
       const grouped = categories.reduce((acc, item) => {
-        const key = item.name || "other";
+        const key = (item.kind ? item.kind + ":" : "") + (item.name || "other");
         acc[key] = acc[key] || { total: 0, desktop: 0, mobile: 0, tablet: 0 };
         acc[key].total += item.count || 0;
         const device = String(item.source || "").replace("web-", "");
@@ -185,7 +185,7 @@ const loggedIn = `
       const items = Object.entries(grouped).sort((a, b) => b[1].total - a[1].total);
       document.getElementById("categories").innerHTML = items.length
         ? '<table><thead><tr><th>Event</th><th class="num">Total</th><th class="num">Desktop</th><th class="num">Mobile</th><th class="num">Tablet</th></tr></thead><tbody>' +
-          items.map(([name, value]) => '<tr><td>' + esc(name.replace(/_/g, " ")) + '</td><td class="num">' + fmt.format(value.total) + '</td><td class="num">' + fmt.format(value.desktop) + '</td><td class="num">' + fmt.format(value.mobile) + '</td><td class="num">' + fmt.format(value.tablet) + '</td></tr>').join("") +
+          items.map(([name, value]) => '<tr><td>' + esc(name.replace(/:/g, " · ").replace(/_/g, " ")) + '</td><td class="num">' + fmt.format(value.total) + '</td><td class="num">' + fmt.format(value.desktop) + '</td><td class="num">' + fmt.format(value.mobile) + '</td><td class="num">' + fmt.format(value.tablet) + '</td></tr>').join("") +
           '</tbody></table>'
         : '<div class="empty">No interaction data yet</div>';
     }

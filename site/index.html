@@ -499,11 +499,13 @@ footer { border-top: 1px solid var(--line); padding: 26px 24px; text-align: cent
 <script>
 (function () {
   if (location.protocol !== "https:" && location.protocol !== "http:") return;
-  var payload = JSON.stringify({ kind: "page_view", name: "agentsbin_home", version: "2.0.2", source: "web", product: "agentsbin" });
+  var ua = navigator.userAgent || "";
+  var source = /iPad|Tablet|Android(?!.*Mobile)/i.test(ua) ? "web-tablet" : /Mobi|Android|iPhone|iPod/i.test(ua) ? "web-mobile" : "web-desktop";
+  var payload = JSON.stringify({ kind: "page_view", name: "agentsbin_home", version: "2.0.4", source: source, product: "agentsbin" });
   if (navigator.sendBeacon) navigator.sendBeacon("/api/track", new Blob([payload], { type: "application/json" }));
   document.querySelectorAll("[data-track='download']").forEach(function (el) {
     el.addEventListener("click", function () {
-      var data = JSON.stringify({ kind: "download", name: el.getAttribute("data-name") || "agentsbin_home", version: "2.0.2", source: "web", product: el.getAttribute("data-product") || "agentsbin" });
+      var data = JSON.stringify({ kind: "download", name: el.getAttribute("data-name") || "agentsbin_home", version: "2.0.4", source: "web", product: el.getAttribute("data-product") || "agentsbin" });
       if (navigator.sendBeacon) navigator.sendBeacon("/api/track", new Blob([data], { type: "application/json" }));
     });
   });
