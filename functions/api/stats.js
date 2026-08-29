@@ -22,7 +22,7 @@ export async function onRequest(context) {
   const baseArgs = [cutoff];
   if (product) baseArgs.push(product);
 
-  const [kindRows, agentRows, sourceRows, countryRows] = await Promise.all([
+  const [kindRows, agentRows, sourceRows, countryRows, categoryRows] = await Promise.all([
     db
       .prepare(`SELECT date, kind, COUNT(*) AS n FROM events WHERE date >= ?${productSql} GROUP BY date, kind ORDER BY date ASC`)
       .bind(...baseArgs)
@@ -36,6 +36,10 @@ export async function onRequest(context) {
     db.prepare(`SELECT source, COUNT(*) AS n FROM events WHERE date >= ?${productSql} GROUP BY source`).bind(...baseArgs).all(),
     db
       .prepare(`SELECT country, kind, COUNT(*) AS n FROM events WHERE country != '' AND date >= ?${productSql} GROUP BY country, kind`)
+      .bind(...baseArgs)
+      .all(),
+    db
+      .prepare(`SELECT name, source, COUNT(*) AS n FROM events WHERE kind = 'engagement' AND date >= ?${productSql} GROUP BY name, source ORDER BY n DESC LIMIT 40`)
       .bind(...baseArgs)
       .all()
   ]);
@@ -78,6 +82,7 @@ export async function onRequest(context) {
       acc[r.source] = r.n;
       return acc;
     }, {}),
-    countries
+    countries,
+    categories: (categoryRows.results || []).map((r) => ({ name: r.name, source: r.source, count: r.n }))
   });
 }

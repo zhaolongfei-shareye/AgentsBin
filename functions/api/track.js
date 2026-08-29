@@ -1,6 +1,6 @@
 import { initDB, json, ipHash } from "../_lib.js";
 
-const KINDS = new Set(["download", "app_open", "agent_open", "page_view"]);
+const KINDS = new Set(["download", "app_open", "agent_open", "page_view", "engagement"]);
 
 export async function onRequest(context) {
   const { request, env } = context;

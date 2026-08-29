@@ -95,6 +95,7 @@ const loggedIn = `
           <button class="on" data-product="">All</button>
           <button data-product="agentsbin">AgentsBin</button>
           <button data-product="wf">Watermark Factory</button>
+          <button data-product="agentsqs">AgentsQS</button>
         </div>
         <div class="range" id="range">
           <button data-range="7">7D</button>
@@ -122,6 +123,11 @@ const loggedIn = `
       <h2>Country sources</h2>
       <div class="sub">All events by country, selected range</div>
       <div id="countries"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Event categories & devices</h2>
+      <div class="sub">Anonymous product interactions split by event type and desktop, mobile, or tablet source.</div>
+      <div id="categories"></div>
     </div>
     <div class="foot">Data is collected from agentsbin.com and the macOS app. Timestamps are UTC.</div>
   </div>
@@ -167,6 +173,21 @@ const loggedIn = `
             '<div style="font-size:10px;color:#8b98a8;margin:-4px 0 6px 116px">D ' + fmt.format(c.downloads || 0) + ' · App ' + fmt.format(c.app_opens || 0) + ' · Agents ' + fmt.format(c.agent_opens || 0) + '</div>'
           ).join("")
         : '<div class="empty">No country data yet</div>';
+      const categories = data.categories || [];
+      const grouped = categories.reduce((acc, item) => {
+        const key = item.name || "other";
+        acc[key] = acc[key] || { total: 0, desktop: 0, mobile: 0, tablet: 0 };
+        acc[key].total += item.count || 0;
+        const device = String(item.source || "").replace("web-", "");
+        if (device === "desktop" || device === "mobile" || device === "tablet") acc[key][device] += item.count || 0;
+        return acc;
+      }, {});
+      const items = Object.entries(grouped).sort((a, b) => b[1].total - a[1].total);
+      document.getElementById("categories").innerHTML = items.length
+        ? '<table><thead><tr><th>Event</th><th class="num">Total</th><th class="num">Desktop</th><th class="num">Mobile</th><th class="num">Tablet</th></tr></thead><tbody>' +
+          items.map(([name, value]) => '<tr><td>' + esc(name.replace(/_/g, " ")) + '</td><td class="num">' + fmt.format(value.total) + '</td><td class="num">' + fmt.format(value.desktop) + '</td><td class="num">' + fmt.format(value.mobile) + '</td><td class="num">' + fmt.format(value.tablet) + '</td></tr>').join("") +
+          '</tbody></table>'
+        : '<div class="empty">No interaction data yet</div>';
     }
     document.querySelectorAll("#range button").forEach((b) => b.addEventListener("click", () => load(Number(b.dataset.range))));
     document.querySelectorAll("#product button").forEach((b) => b.addEventListener("click", () => {
