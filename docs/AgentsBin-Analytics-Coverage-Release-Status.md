@@ -2,6 +2,12 @@
 
 Release timestamp: 2026-08-29 23:00 CST
 
+Source revision: `3869dfe2bfea929619ca46151ceb14e67a12e3dc`
+
+Release archive: `releases/AgentsBin-20260829-230000-analytics-coverage.tar.gz`
+
+SHA-256: `6b3c1ff2a10d2a28b5a8cecac7c10c56e11d6410f3e71cbbb93ebd4653090e6c`
+
 ## Scope
 
 - Add a page-view event to the AgentsBin product page.
